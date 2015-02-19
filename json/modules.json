@@ -6,8 +6,14 @@
 }, {
     "name": "codemirror",
     "version": "4.12.0",
-    "local": "/modules/codemirror/lib/codemirror.js",
-    "remote": "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.js"
+    "local": [
+        "/modules/codemirror/lib/codemirror.js",
+        "/modules/codemirror/lib/codemirror.css"
+    ],
+    "remote": [
+        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.css"
+    ]
 }, {
     "name": "pako",
     "version": "0.2.5",
