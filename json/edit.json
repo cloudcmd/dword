@@ -1,0 +1,15 @@
+{
+    "options": {
+        "theme": "ace/theme/tomorrow_night_blue",
+        "enableBasicAutocompletion": true,
+        "enableSnippets": false,
+        "showPrintMargin": false,
+        "showInvisibles": true,
+        "useSoftTabs": true,
+        "tabSize": 4
+    },
+    
+    "extensions": {
+        "emmet": false
+    }
+}
