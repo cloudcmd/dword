@@ -1,11 +1,11 @@
 {
-  "name": "edward",
+  "name": "edo",
   "version": "1.1.25",
   "description": "web editor",
   "main": "lib/server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cloudcmd/edward"
+    "url": "https://github.com/cloudcmd/edo"
   },
   "keywords": [
     "editor",
@@ -15,11 +15,11 @@
   "author": "coderaiser",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cloudcmd/edward/issues"
+    "url": "https://github.com/cloudcmd/edo/issues"
   },
-  "homepage": "https://github.com/cloudcmd/edward",
+  "homepage": "https://github.com/cloudcmd/edo",
   "bin": {
-    "edward": "bin/edward.js"
+    "edo": "bin/edo.js"
   },
   "dependencies": {
     "ashify": "~1.0.1",

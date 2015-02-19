@@ -1,12 +1,12 @@
 {
-  "name": "edward",
+  "name": "edo",
   "version": "1.1.25",
   "homepage": "https://github.com/coderaiser/cloudcmd",
   "authors": [
     "coderaiser <mnemonic.enemy@gmail.com>"
   ],
   "description": "web editor",
-  "main": "bin/edward.js",
+  "main": "bin/edo.js",
   "keywords": [
     "file",
     "edit"
