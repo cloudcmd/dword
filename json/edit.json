@@ -1,6 +1,6 @@
 {
     "options": {
-        "theme": "default",
+        "theme": "pastel-on-dark",
         "enableBasicAutocompletion": true,
         "enableSnippets": false,
         "showPrintMargin": false,
