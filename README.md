@@ -1,17 +1,17 @@
-Edward [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
+dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
 =======
-[NPMIMGURL]:                https://img.shields.io/npm/v/edward.svg?style=flat
-[BuildStatusIMGURL]:        https://img.shields.io/travis/cloudcmd/edward/master.svg?style=flat
-[DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/cloudcmd/edward.svg?style=flat
+[NPMIMGURL]:                https://img.shields.io/npm/v/dword.svg?style=flat
+[BuildStatusIMGURL]:        https://img.shields.io/travis/coderaiser/dword/master.svg?style=flat
+[DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/coderaiser/dword.svg?style=flat
 [LicenseIMGURL]:            https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
-[NPM_INFO_IMG]:             https://nodei.co/npm/edward.png
-[NPMURL]:                   https://npmjs.org/package/edward "npm"
-[DependencyStatusURL]:      https://gemnasium.com/cloudcmd/edward "Dependency Status"
+[NPM_INFO_IMG]:             https://nodei.co/npm/dword.png
+[NPMURL]:                   https://npmjs.org/package/dword "npm"
+[DependencyStatusURL]:      https://gemnasium.com/coderaiser/dword "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
-Web editor used in [Cloud Commander](http://cloudcmd.io).
+Web editor based on CodeMirror [CodeMirror](http://codemirror.net).
 
-![Edward](https://raw.githubusercontent.com/cloudcmd/edward/master/img/edward.png "Edward")
+![dword](https://raw.githubusercontent.com/coderaiser/dword/master/img/dword.png "dword")
 
 ## Features
 - Syntax highlighting based on extension of file for over 110 languages.
@@ -23,11 +23,11 @@ Web editor used in [Cloud Commander](http://cloudcmd.io).
 
 ## Install
 
-`npm i edward -g`
+`npm i dword -g`
 
 ## Command line parameters
 
-Usage: `edward [filename]`
+Usage: `dword [filename]`
 
 |Parameter              |Operation
 |:----------------------|:--------------------------------------------
@@ -47,19 +47,19 @@ Usage: `edward [filename]`
 For more details see [Ace keyboard shortcuts](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts "Ace keyboard shortcuts").
 
 ## API
-Edward could be used as middleware for [express](http://expressjs.com "Express").
+dword could be used as middleware for [express](http://expressjs.com "Express").
 For this purpuse API could be used.
 
 ### Server
 
-#### edward(options)
-Middleware of `edward`. Options could be omitted.
+#### dword(options)
+Middleware of `dword`. Options could be omitted.
 
 ```js
 var express = require('express'),
     app     = express();
 
-app.use(edward({
+app.use(dword({
     minify  : true,  /* default */
     online  : true,  /* default */
     diff    : true,  /* default */
@@ -69,25 +69,25 @@ app.use(edward({
 app.listen(31337);
 ```
 
-#### edward.listen(socket)
+#### dword.listen(socket)
 Could be used with [socket.io](http://socket.io "Socket.io") to handle editor events with.
 
 ```js
 var io      = require('socket.io'),
     socket  = io.listen(server);
 
-edward.listen(socket);
+dword.listen(socket);
 ```
 
 ### Client
-Edward uses [ace](http://ace.c9.io/ "Ace") on client side, so API is similar.
+Dword uses [codemirror](http://codemirror.net/ "CodeMirror") on client side, so API is similar.
 All you need is put minimal `html`, `css`, and `js` into your page.
 
 Minimal html:
 
 ```html
 <div class="edit" data-name="js-edit"></div>
-<script src="/edward/edward.js"></script>
+<script src="/dword/dword.js"></script>
 ```
 
 Minimal css:
@@ -101,8 +101,8 @@ html, body, .edit {
 
 Minimal js:
 ```js
-edward('[data-name="js-edit"]', function(el) {
-    console.log('edward is ready');
+dword('[data-name="js-edit"]', function(el) {
+    console.log('dword is ready');
 });
 ```
 For more information you could always look around into `assets` and `bin` directory.
