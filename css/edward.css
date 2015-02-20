@@ -9,3 +9,7 @@
     opacity             : 0.9;
     transition          : ease 0.5s;
 }
+
+.CodeMirror {
+    height: 100%;
+}
