@@ -1,3 +1,16 @@
+2015.02.20, v0.2.0
+
+feature:
+- (edward) add .CodeMirror: height
+- (dword) set theme "pastel-on-dark"
+- (client) add line numbers
+- (index) edo -> dword
+- (dword) edo -> dword
+- (dword) edo -> dword
+- (dword) cloudcmd -> coderaiser
+- (package) v0.1.1
+
+
 2015.02.19, v0.1.1
 
 feature:
