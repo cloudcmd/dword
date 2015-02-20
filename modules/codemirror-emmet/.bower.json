@@ -1,0 +1,15 @@
+{
+  "name": "codemirror-emmet",
+  "homepage": "https://github.com/emmetio/codemirror",
+  "version": "1.1.0",
+  "_release": "1.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.1.0",
+    "commit": "1eebbcf80a8f56ac56000d35cd8de719ee3d9135"
+  },
+  "_source": "git://github.com/emmetio/codemirror.git",
+  "_target": "~1.1.0",
+  "_originalSource": "codemirror-emmet",
+  "_direct": true
+}
