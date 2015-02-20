@@ -26,4 +26,7 @@ html, body, .edit {
     right: 0;
     bottom: 0;
     left: 0;
+    
+    font-family: 'Droid Sans Mono';
+    font-size: 16px;
 }
