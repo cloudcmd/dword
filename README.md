@@ -9,7 +9,7 @@ Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 [DependencyStatusURL]:      https://gemnasium.com/coderaiser/dword "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
-Web editor based on CodeMirror [CodeMirror](http://codemirror.net).
+Web editor based on [CodeMirror](http://codemirror.net).
 Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 
 ![dword](https://raw.githubusercontent.com/coderaiser/dword/master/img/dword.png "dword")
