@@ -10,6 +10,7 @@ dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
 Web editor based on CodeMirror [CodeMirror](http://codemirror.net).
+Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 
 ![dword](https://raw.githubusercontent.com/coderaiser/dword/master/img/dword.png "dword")
 
@@ -43,8 +44,6 @@ Usage: `dword [filename]`
 | `Ctrl + g`            | go to line
 | `Ctrl + b`            | beautify js, css or html
 | `Ctrl + m`            | minify js, css or html
-
-For more details see [Ace keyboard shortcuts](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts "Ace keyboard shortcuts").
 
 ## API
 dword could be used as middleware for [express](http://expressjs.com "Express").
