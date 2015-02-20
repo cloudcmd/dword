@@ -1,4 +1,4 @@
-dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
+Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
 =======
 [NPMIMGURL]:                https://img.shields.io/npm/v/dword.svg?style=flat
 [BuildStatusIMGURL]:        https://img.shields.io/travis/coderaiser/dword/master.svg?style=flat
