@@ -29,7 +29,7 @@
             cwd         = process.cwd() + '/',
             filename    = path.normalize(cwd + name),
             DIR         = __dirname + '/../assets/',
-            edward      = require('../'),
+            dword      = require('../'),
             http        = require('http'),
             express     = require('express'),
             io          = require('socket.io'),
@@ -49,7 +49,7 @@
                 prefix: '/api/v1/fs'
             }))
             .use(express.static(DIR))
-            .use(edward({
+            .use(dword({
                 minify: false,
                 online: false
             }));
@@ -57,7 +57,7 @@
         server.listen(port, ip);
         
         socket      = io.listen(server),
-        edSocket    = edward.listen(socket);
+        edSocket    = dword.listen(socket);
         
         edSocket.on('connection', function() {
             fs.readFile(name, 'utf8', function(error, data) {
