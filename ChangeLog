@@ -1,3 +1,9 @@
+2015.02.23, v1.0.3
+
+fix:
+- (dword) getCursor
+
+
 2015.02.23, v1.0.2
 
 feature:
