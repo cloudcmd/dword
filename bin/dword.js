@@ -23,10 +23,19 @@
                 console.error(error.message);
        });
     
+    function getPath(name) {
+        var reg = /^(~|\/)/;
+        
+        if (!reg.test(name))
+            name = process.cwd() + '/';
+        
+        return name;
+    }
+    
     function main(name) {
         var socket,
             edSocket,
-            cwd         = process.cwd() + '/',
+            cwd         = getPath(name),
             filename    = path.normalize(cwd + name),
             DIR         = __dirname + '/../assets/',
             dword      = require('../'),
@@ -38,11 +47,13 @@
             app         = express(),
             server      = http.createServer(app),
             
-            port        =   process.env.PORT            ||  /* c9           */
-                            process.env.app_port        ||  /* nodester     */
-                            process.env.VCAP_APP_PORT   ||  /* cloudfoundry */
+            env         = process.env,
+            
+            port        =   env.PORT            ||  /* c9           */
+                            env.app_port        ||  /* nodester     */
+                            env.VCAP_APP_PORT   ||  /* cloudfoundry */
                             1337,
-            ip          =   process.env.IP              ||  /* c9           */
+            ip          =   env.IP              ||  /* c9           */
                             '0.0.0.0';
         
         app .use(restafary({
