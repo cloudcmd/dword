@@ -1,3 +1,9 @@
+2015.02.23, v1.0.2
+
+feature:
+- (dword) when mode json -> set javascript
+
+
 2015.02.23, v1.0.1
 
 feature:
