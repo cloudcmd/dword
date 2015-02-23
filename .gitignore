@@ -7,3 +7,5 @@ modules/ace-builds/demo
 modules/ace-builds/src
 modules/ace-builds/src-min
 modules/ace-builds/src-min-noconflict
+
+modules/jshint/tests

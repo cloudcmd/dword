@@ -25,6 +25,7 @@
     "jsSHA": "~1.5.0",
     "emitify": "~1.1.1",
     "codemirror": "~4.12.0",
-    "codemirror-emmet": "~1.1.0"
+    "codemirror-emmet": "~1.1.0",
+    "jshint": "~2.6.0"
   }
 }
