@@ -1,3 +1,9 @@
+2015.02.23, v0.7.1
+
+feature:
+- (client) add autoCloseBrackets
+
+
 2015.02.23, v0.7.0
 
 fix:
