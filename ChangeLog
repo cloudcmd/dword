@@ -1,3 +1,14 @@
+2015.02.23, v0.6.0
+
+fix:
+- (dword) read file from process.cwd path
+
+feature:
+- (dword) set options from json/edit.json
+- (dword) add useSoftTabs
+- (package) v0.5.4
+
+
 2015.02.23, v0.5.4
 
 fix:
