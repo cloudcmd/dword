@@ -1,3 +1,12 @@
+2015.02.23, v0.5.4
+
+fix:
+- (dword) read file from process.cwd path
+
+feature:
+- (dword) add lint
+
+
 2015.02.20, v0.5.3
 
 feature:
