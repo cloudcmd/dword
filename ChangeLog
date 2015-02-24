@@ -1,3 +1,12 @@
+2015.02.24, v1.1.5
+
+fix:
+- (client) onSave: restafary.write used without callback
+
+feature:
+- (client) onSave: change message
+
+
 2015.02.24, v1.1.4
 
 feature:
