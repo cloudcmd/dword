@@ -41,9 +41,9 @@
         
         self._check(event, callback);
         
-        self.on(event, function() {
+        self.on(event, function fn() {
             callback();
-            self.off(event, callback);
+            self.off(event, fn);
         });
     };
     
