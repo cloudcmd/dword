@@ -1,3 +1,9 @@
+2015.02.25, v1.1.6
+
+feature:
+- (client) onSave: show error.message when exist
+
+
 2015.02.24, v1.1.5
 
 fix:
