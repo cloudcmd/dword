@@ -1,3 +1,10 @@
+2015.02.25, v1.1.8
+
+fix:
+- (lint) startLinging, onChange: state could be undefined
+- (client) setModeForPath: when not in list - lint false
+
+
 2015.02.25, v1.1.7
 
 fix:
