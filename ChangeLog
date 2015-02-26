@@ -1,3 +1,10 @@
+2015.02.26, v1.1.9
+
+feature:
+- (client) setOption: gutters, at init
+- (client) add matchbrackers, matchtags
+
+
 2015.02.25, v1.1.8
 
 fix:
