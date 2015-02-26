@@ -1,0 +1,26 @@
+{
+  "name": "cm-show-invisibles",
+  "version": "1.0.0",
+  "description": "Addon for CodeMirror that helps to show invisibles.",
+  "private": true,
+  "main": "lib/show-invisibles.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/coderaiser/cm-show-invisibles"
+  },
+  "keywords": [
+    "CodeMirror",
+    "show",
+    "invisibles",
+    "addon"
+  ],
+  "author": "coderaiser <mnemonic.enemy@gmail.com> (http://coderaiser.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coderaiser/cm-show-invisibles/issues"
+  },
+  "homepage": "https://github.com/coderaiser/cm-show-invisibles"
+}
