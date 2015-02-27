@@ -2,6 +2,8 @@
 /* global define */
 
 (function(mod) {
+    'use strict';
+    
     if (typeof exports === 'object' && typeof module === 'object') // CommonJS
         mod(require('../../lib/codemirror'));
     else if (typeof define === 'function' && define.amd) // AMD
@@ -43,6 +45,8 @@
                             
                             peek = stream.peek() === ' ';
                         }
+                        
+                        ret = 'cm-eol';
                     }
                     
                     return ret;
@@ -68,7 +72,7 @@
             rules   += rule;
         }
         
-        style.textContent = getStyle() + '\n' + rules;
+        style.textContent = getStyle() + '\n' + getEOL() + '\n' + rules;
         
         document.head.appendChild(style);
     }
@@ -80,6 +84,20 @@
                 'pointer-events: none;',
                 'color: #404F7D;',
             '}'
+        ].join('');
+        
+        return style;
+    }
+    
+    function getEOL() {
+         var style = [
+            '.CodeMirror-code > div > pre > span::after {',
+                'position: absolute;',
+                'pointer-events: none;',
+                'color: #404F7D;',
+                'content: "¬"',
+            '}',
+             
         ].join('');
         
         return style;
