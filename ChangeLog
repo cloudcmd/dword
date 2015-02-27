@@ -1,3 +1,14 @@
+2015.02.27, v1.2.1
+
+fix:
+- (client) isChanged when file has "\r\n" ending of lines Dword always say that file is changed
+- (client) rm yaml, coffeescript - not supported
+
+feature:
+- (client) maxInvisibles: 32
+- (codemirror) meta: add ext "yml"
+
+
 2015.02.27, v1.2.0
 
 feature:
