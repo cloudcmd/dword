@@ -14,7 +14,8 @@
     'use strict';
     
     CodeMirror.defineOption('showInvisibles', false, function(cm, val, prev) {
-        var Maximum = cm.getOption('maxInvisibles') || 16;
+        var Count   = 0,
+            Maximum = cm.getOption('maxInvisibles') || 16;
         
         if (prev === CodeMirror.Init)
             prev = false;
@@ -50,7 +51,7 @@
                          * 6624: if (!flattenSpans || curStyle != style) {}
                          */
                         if (spaces === Maximum)
-                            ret += ' whitespace-rand-' + getRandom();
+                            ret += ' whitespace-rand-' + Count++;
                         
                     } else {
                         while (!stream.eol() && !peek) {
@@ -67,13 +68,6 @@
             });
         }
     });
-    
-    function getRandom() {
-        var random  = Math.random(),
-            result  = Math.round(random * 100);
-        
-        return result;
-    }
     
     function add(max) {
         var i, rule,
