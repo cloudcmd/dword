@@ -92,7 +92,6 @@
     function getEOL() {
          var style = [
             '.CodeMirror-code > div > pre > span::after {',
-                'position: absolute;',
                 'pointer-events: none;',
                 'color: #404F7D;',
                 'content: "¬"',

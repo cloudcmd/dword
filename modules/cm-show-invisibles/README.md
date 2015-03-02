@@ -1,4 +1,4 @@
-# Show Invisibles
+# CodeMirror Show Invisibles
 
 Addon for [CodeMirror](http://codemirror.net) that helps to show invisibles.
 
