@@ -1,3 +1,9 @@
+2015.03.02, v1.2.2
+
+feature:
+- (client) goToLine: change the way dialog showing
+
+
 2015.02.27, v1.2.1
 
 fix:
