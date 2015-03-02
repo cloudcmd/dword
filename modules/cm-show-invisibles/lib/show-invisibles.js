@@ -32,13 +32,26 @@
                         peek    = stream.peek() === ' ';
                     
                     if (peek) {
-                        while (spaces < Maximum && peek) {
+                        while (peek && spaces < Maximum) {
                             ++spaces;
+                            
                             stream.next();
                             peek = stream.peek() === ' ';
                         }
                         
                         ret = 'whitespace whitespace-' + spaces;
+                        
+                        /*
+                         * styles should be different
+                         * could not be two same styles
+                         * beside because of this check in runmode
+                         * function in `codemirror.js`:
+                         *
+                         * 6624: if (!flattenSpans || curStyle != style) {}
+                         */
+                        if (spaces === Maximum)
+                            ret += ' whitespace-rand-' + getRandom();
+                        
                     } else {
                         while (!stream.eol() && !peek) {
                             stream.next();
@@ -54,6 +67,13 @@
             });
         }
     });
+    
+    function getRandom() {
+        var random  = Math.random(),
+            result  = Math.round(random * 100);
+        
+        return result;
+    }
     
     function add(max) {
         var i, rule,

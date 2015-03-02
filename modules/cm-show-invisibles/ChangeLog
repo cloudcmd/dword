@@ -1,3 +1,9 @@
+2015.03.02, v1.1.2
+
+fix:
+- (show-invisibles) when white spaces more then Maximum on a line, they all disappear
+
+
 2015.03.02, v1.1.1
 
 fix:
