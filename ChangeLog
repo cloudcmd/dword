@@ -1,3 +1,12 @@
+2015.03.03, v1.3.0
+
+fix:
+- (loadremote) global[name] -> name && global[name]
+
+feature:
+- (searchbox) add
+
+
 2015.03.02, v1.2.5
 
 feature:
