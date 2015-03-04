@@ -1,3 +1,9 @@
+2015.03.04, v1.3.3
+
+feature:
+- (package) add bower postinstall
+
+
 2015.03.04, v1.3.2
 
 fix:
