@@ -1,5 +1,5 @@
 .dword-msg {
-    z-index             : 1;
+    z-index             : 2;
     background-color    : #7285B7;
     color               : #D1F1A9;
     position            : fixed;
