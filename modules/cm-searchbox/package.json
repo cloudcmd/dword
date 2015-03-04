@@ -1,0 +1,23 @@
+{
+  "name": "cm-searchbox",
+  "version": "1.0.0",
+  "description": "CodeMirror searchbox",
+  "main": "lib/searchbox.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coderaiser/cm-searchbox.git"
+  },
+  "keywords": [
+    "codemirror",
+    "searchbox"
+  ],
+  "author": "coderaiser <mnemonic.enemy@gmail.com> (http://coderaiser.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coderaiser/cm-searchbox/issues"
+  },
+  "homepage": "https://github.com/coderaiser/cm-searchbox"
+}
