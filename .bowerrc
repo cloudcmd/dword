@@ -1,3 +1,4 @@
 {
-  "directory" : "modules"
+  "directory" : "modules",
+  "strict-ssl": false
 }
