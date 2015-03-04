@@ -4,7 +4,6 @@
     'use strict';
     
     var fs              = require('fs'),
-        path            = require('path'),
         rendy           = require('rendy'),
         args            = process.argv.slice(2),
         arg             = args[0];
@@ -35,8 +34,7 @@
     function main(name) {
         var socket,
             edSocket,
-            cwd         = getPath(name),
-            filename    = path.normalize(cwd + name),
+            filename    = getPath(name),
             DIR         = __dirname + '/../assets/',
             dword      = require('../'),
             http        = require('http'),
