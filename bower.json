@@ -27,6 +27,7 @@
     "codemirror": "~5.0.0",
     "codemirror-emmet": "~1.1.0",
     "jshint": "~2.6.0",
-    "cm-show-invisibles": "~1.1.3"
+    "cm-show-invisibles": "~1.1.3",
+    "cm-searchbox": "~1.0.0"
   }
 }
