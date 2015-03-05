@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "ashify": "~1.0.1",
-    "bower": "~1.3.12",
     "express": "~4.12.0",
     "join-io": "~1.3.3",
     "mellow": "~1.0.0",
