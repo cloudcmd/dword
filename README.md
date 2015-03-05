@@ -23,8 +23,12 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Configurable options (could be edited in `json/edit.json`)
 
 ## Install
+Install [bower](http://bower.io "Bower").
+And then run command:
 
-`npm i dword -g`
+```
+npm i dword -g
+```
 
 ## Command line parameters
 
