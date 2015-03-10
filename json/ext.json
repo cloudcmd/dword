@@ -5,6 +5,7 @@
     
     "json": [
         ".jshintrc",
+        ".yaspellerrc",
         ".jscsrc",
         ".bowerrc"
     ]
