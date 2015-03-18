@@ -34,6 +34,6 @@
     "rendy": "~1.0.4",
     "restafary": "~1.1.1",
     "socket-file": "~1.0.1",
-    "socket.io": "~1.3.3"
+    "socket.io": "~1.3.5"
   }
 }
