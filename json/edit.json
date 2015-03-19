@@ -1,12 +1,13 @@
 {
     "options": {
         "theme": "pastel-on-dark",
-        "enableBasicAutocompletion": true,
+        "wrap": 80,
+        "tabSize": 4,
+        "useSoftTabs": true,
+        "showInvisibles": true,
         "enableSnippets": false,
         "showPrintMargin": false,
-        "showInvisibles": true,
-        "useSoftTabs": true,
-        "tabSize": 4
+        "enableBasicAutocompletion": true
     },
     
     "extensions": {
