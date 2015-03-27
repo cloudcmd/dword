@@ -22,7 +22,6 @@
     "dword": "bin/dword.js"
   },
   "scripts": {
-    "postinstall": "bower install"
   },
   "dependencies": {
     "ashify": "~1.0.1",
