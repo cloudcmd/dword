@@ -1,3 +1,9 @@
+2015.03.27, v1.3.13
+
+feature:
+- (package) scripts: rm postinstall
+
+
 2015.03.27, v1.3.12
 
 fix:
