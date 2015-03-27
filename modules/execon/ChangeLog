@@ -1,0 +1,21 @@
+2015.01.28, v1.1.1
+
+feature:
+- (exec) scope -> global
+- (bower) add
+- (package) node-execon -> execon
+- (package) v1.1.0
+- (execon) series: add callback
+
+
+2015.01.15, v1.1.0
+
+feature:
+- (execon) series: add callback
+
+
+2014.11.24, v1.0.1
+
+fix:
+- (package) check -> exec
+

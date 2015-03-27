@@ -1,0 +1,50 @@
+2015.03.06, v1.0.7
+
+fix:
+- (searchbox) replace when selection is empty string
+
+
+2015.03.06, v1.0.6
+
+fix:
+- (searchbox) replaceAndFindNext: this.editor -> this.replace
+- (searchbox) wrong cursor when new find circle
+
+feature:
+- (package) v1.0.5
+- (gitignore) rm
+
+
+2015.03.05, v1.0.5
+
+fix:
+- (searchbox) wrong cursor when new find circle
+
+
+2015.03.04, v1.0.4
+
+feature:
+- (searchbox) find: add options
+
+
+2015.03.04, v1.0.3
+
+feature:
+- (searchbox) add wholeWordOption, regExpOption
+
+
+2015.03.04, v1.0.2
+
+fix:
+- (searchbox) tab
+
+feature:
+- (searchbox) add replaceAll
+- (package) v1.0.1
+
+
+2015.03.04, v1.0.1
+
+fix:
+- (searchbox) tab
+
