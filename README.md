@@ -4,7 +4,7 @@ Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 [BuildStatusIMGURL]:        https://img.shields.io/travis/coderaiser/dword/master.svg?style=flat
 [DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/coderaiser/dword.svg?style=flat
 [LicenseIMGURL]:            https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
-[NPM_INFO_IMG]:             https://nodei.co/npm/dword.png
+[NPM_INFO_IMG]:             https://nodei.co/npm/dword.png?downloads=true&&stars&&downloadRank "npm install dword"
 [NPMURL]:                   https://npmjs.org/package/dword "npm"
 [DependencyStatusURL]:      https://gemnasium.com/coderaiser/dword "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
@@ -27,6 +27,8 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 ```
 npm i dword -g
 ```
+
+![NPM_INFO][NPM_INFO_IMG]
 
 ## Command line parameters
 
