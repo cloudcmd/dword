@@ -9,6 +9,9 @@ Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 [DependencyStatusURL]:      https://gemnasium.com/coderaiser/dword "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
+[beautifile]:               https://github.com/coderaiser/node-beautifile "Beautifile"
+[beautify.json]:            https://github.com/coderaiser/node-beautifile/tree/master/json/beautify.json "beautify.json"
+
 Web editor based on [CodeMirror](http://codemirror.net).
 Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 
@@ -19,7 +22,7 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Built-in `emmet` (for html files)
 - Drag n drop (drag file from desktop to editor).
 - Built-in `jshint` (with options in `.jshintrc` file)
-- Built-in `beautifier` (with options in `json/beautify.json`, could be overriden in `~/.beautify.json`)
+- Built-in [beautifier][beautifile] (with options in [json/beautify.json][beautify.json], could be overriden by `~/.beautify.json`)
 - Configurable options (could be edited in `json/edit.json`)
 
 ## Install
