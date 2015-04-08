@@ -30,7 +30,7 @@
     "mollify": "~1.0.4",
     "patchfile": "~1.0.1",
     "rendy": "~1.0.4",
-    "restafary": "~1.1.1",
+    "restafary": "~1.2.8",
     "socket-file": "~1.1.0",
     "socket.io": "~1.3.5"
   }
