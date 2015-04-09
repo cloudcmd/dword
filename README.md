@@ -1,12 +1,12 @@
 Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
 =======
 [NPMIMGURL]:                https://img.shields.io/npm/v/dword.svg?style=flat
-[BuildStatusIMGURL]:        https://img.shields.io/travis/coderaiser/dword/master.svg?style=flat
-[DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/coderaiser/dword.svg?style=flat
+[BuildStatusIMGURL]:        https://img.shields.io/travis/cloudcmd/dword/master.svg?style=flat
+[DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/cloudcmd/dword.svg?style=flat
 [LicenseIMGURL]:            https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
 [NPM_INFO_IMG]:             https://nodei.co/npm/dword.png?downloads=true&&stars&&downloadRank "npm install dword"
 [NPMURL]:                   https://npmjs.org/package/dword "npm"
-[DependencyStatusURL]:      https://gemnasium.com/coderaiser/dword "Dependency Status"
+[DependencyStatusURL]:      https://gemnasium.com/cloudcmd/dword "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
 [beautifile]:               https://github.com/coderaiser/node-beautifile "Beautifile"
@@ -15,7 +15,7 @@ Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 Web editor based on [CodeMirror](http://codemirror.net).
 Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 
-![dword](https://raw.githubusercontent.com/coderaiser/dword/master/img/dword.png "dword")
+![dword](https://raw.githubusercontent.com/cloudcmd/dword/master/img/dword.png "dword")
 
 ## Features
 - Syntax highlighting based on extension of file for over 90 languages.

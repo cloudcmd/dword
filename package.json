@@ -5,7 +5,7 @@
   "main": "lib/server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/coderaiser/dword"
+    "url": "https://github.com/cloudcmd/dword"
   },
   "keywords": [
     "editor",
@@ -15,9 +15,9 @@
   "author": "coderaiser",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/coderaiser/dword/issues"
+    "url": "https://github.com/cloudcmd/dword/issues"
   },
-  "homepage": "https://github.com/coderaiser/dword",
+  "homepage": "https://github.com/cloudcmd/dword",
   "bin": {
     "dword": "bin/dword.js"
   },
