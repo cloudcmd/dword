@@ -1,3 +1,10 @@
+2015.04.17, v1.5.0
+
+feature:
+- (dword) rm clearSelection
+- (dword) coderaiser -> cloudcmd
+
+
 2015.04.08, v1.4.2
 
 feature:
