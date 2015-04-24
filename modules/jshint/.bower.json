@@ -1,14 +1,14 @@
 {
   "name": "jshint",
   "homepage": "https://github.com/jshint/jshint",
-  "version": "2.6.3",
-  "_release": "2.6.3",
+  "version": "2.7.0",
+  "_release": "2.7.0",
   "_resolution": {
     "type": "version",
-    "tag": "2.6.3",
-    "commit": "983fc8de62dc826670b7af8e64fd67de0a4d1a27"
+    "tag": "2.7.0",
+    "commit": "da0e77f82ce1fe6348445ce9472528a2327f8088"
   },
   "_source": "git://github.com/jshint/jshint.git",
-  "_target": "~2.6.0",
+  "_target": "~2.7.0",
   "_originalSource": "jshint"
 }

@@ -154,10 +154,21 @@ exports.notypeof = function (test) {
     .addError(2, "Invalid typeof value 'double'")
     .addError(3, "Invalid typeof value 'bool'")
     .addError(4, "Invalid typeof value 'obj'")
+    .addError(13, "Invalid typeof value 'symbol'")
     .test(src);
 
   TestRun(test)
+    .addError(1, "Invalid typeof value 'funtion'")
+    .addError(2, "Invalid typeof value 'double'")
+    .addError(3, "Invalid typeof value 'bool'")
+    .addError(4, "Invalid typeof value 'obj'")
+    .test(src, { esnext: true });
+
+  TestRun(test)
     .test(src, { notypeof: true });
+
+  TestRun(test)
+    .test(src, { notypeof: true, esnext: true });
 
   test.done();
 }
@@ -1286,6 +1297,7 @@ exports.strings = function (test) {
     .addError(14, "Bad escaping of EOL. Use option multistr if needed.")
     .addError(15, "Unclosed string.")
     .addError(25, "Octal literals are not allowed in strict mode.")
+    .addError(29, "Bad escaping of EOL. Use option multistr if needed.")
     .test(src, { es3: true });
 
   test.done();
@@ -1618,6 +1630,10 @@ exports.maxparams = function (test) {
     .test(src, { es3: true, maxparams: 3 });
 
   TestRun(test)
+    .addError(4, "This function has too many parameters. (3)")
+    .test(src, {es3: true, maxparams: 0 });
+
+  TestRun(test)
     .test(src, { es3: true });
 
   test.done();
@@ -1896,9 +1912,12 @@ singleGroups.bindingPower.singleExpr = function (test) {
     "var j = (a += 1) / 2;",
     "var k = 'foo' + ('bar' ? 'baz' : 'qux');",
     "var l = 1 + (0 || 3);",
+    "var u = a / (b * c);",
+    "var v = a % (b / c);",
+    "var w = a * (b * c);",
+    "var x = z === (b === c);",
     // Invalid forms:
     "var j = 2 * ((3 - 4) - 5) * 6;",
-    "var k = 2 * (3 - (4 - 5)) * 6;",
     "var l = 2 * ((3 - 4 - 5)) * 6;",
     "var m = typeof(a.b);",
     "var n = 1 - (2 * 3);",
@@ -1911,7 +1930,6 @@ singleGroups.bindingPower.singleExpr = function (test) {
     "if (a in c || (b in c)) {}",
     "if ((a in c) || b in c) {}",
     "if ((a in c) || (b in c)) {}",
-    "if (a * (b * c)) {}",
     "if ((a * b) * c) {}",
     "if (a + (b * c)) {}",
     "(a ? a : (a=[])).push(b);",
@@ -1919,10 +1937,6 @@ singleGroups.bindingPower.singleExpr = function (test) {
   ];
 
   TestRun(test)
-    .addError(14, "Unnecessary grouping operator.")
-    .addError(15, "Unnecessary grouping operator.")
-    .addError(16, "Unnecessary grouping operator.")
-    .addError(17, "Unnecessary grouping operator.")
     .addError(18, "Unnecessary grouping operator.")
     .addError(19, "Unnecessary grouping operator.")
     .addError(20, "Unnecessary grouping operator.")
@@ -1938,6 +1952,8 @@ singleGroups.bindingPower.singleExpr = function (test) {
     .addError(30, "Unnecessary grouping operator.")
     .addError(31, "Unnecessary grouping operator.")
     .addError(32, "Unnecessary grouping operator.")
+    .addError(33, "Unnecessary grouping operator.")
+    .addError(34, "Unnecessary grouping operator.")
     .test(code, { singleGroups: true });
 
   test.done();
@@ -2287,6 +2303,91 @@ exports.futureHostile = function (test) {
         "-WeakSet"
       ]
     });
+
+  test.done();
+};
+
+
+exports.varstmt = function (test) {
+  var code = [
+    "var x;",
+    "var y = 5;",
+    "var fn = function() {",
+    "  var x;",
+    "  var y = 5;",
+    "};"
+  ];
+
+  TestRun(test)
+    .addError(1, "`var` declarations are forbidden. Use `let` or `const` instead.")
+    .addError(2, "`var` declarations are forbidden. Use `let` or `const` instead.")
+    .addError(3, "`var` declarations are forbidden. Use `let` or `const` instead.")
+    .addError(4, "`var` declarations are forbidden. Use `let` or `const` instead.")
+    .addError(5, "`var` declarations are forbidden. Use `let` or `const` instead.")
+    .test(code, { varstmt: true });
+
+  test.done();
+};
+
+exports.errorI003 = function(test) {
+  var code = [
+    "// jshint browser: true",
+    "function f() {",
+    "  // jshint browser: false",
+    "}",
+    "f();"
+  ];
+
+  TestRun(test, "no es5 option with enforceall")
+    .test(code, { enforceall: true });
+
+  TestRun(test, "global overriding es5")
+    .addError(0, "ES5 option is now set per default")
+    .test(code, { es5: true });
+
+  var code2 = [
+    "// jshint browser: true",
+    "function f() {",
+    "  // jshint es5: true",
+    "}",
+    "f();"
+  ];
+
+  TestRun(test, "nested overriding es5")
+    .addError(3, "ES5 option is now set per default")
+    .test(code2, { enforceall: true });
+
+  var code3 = [
+    "// jshint es5: false",
+    "// jshint es5: true",
+    "// jshint es5: false",
+    "// jshint es5: true"
+  ];
+
+  TestRun(test, "toggling es5 option")
+    .test(code3, {});
+
+  var code4 = [
+    "// jshint es5: false",
+    "function a() {",
+    "  // jshint es5: true",
+    "  function b() {",
+    "    // jshint es5: false",
+    "    function c() {",
+    "      // jshint es5: true",
+    "      function d() {",
+    "      }",
+    "      d();",
+    "    }",
+    "    c();",
+    "  }",
+    "  b();",
+    "}",
+    "a();"
+  ];
+
+  TestRun(test, "toggling es5 option through nested scopes")
+    .test(code4, {});
 
   test.done();
 };

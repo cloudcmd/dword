@@ -138,6 +138,7 @@ exports.browser = {
   HTMLTableElement     : false,
   HTMLTableRowElement  : false,
   HTMLTableSectionElement: false,
+  HTMLTemplateElement  : false,
   HTMLTextAreaElement  : false,
   HTMLTitleElement     : false,
   HTMLUListElement     : false,
@@ -691,6 +692,7 @@ exports.mocha = {
 exports.jasmine = {
   jasmine     : false,
   describe    : false,
+  xdescribe   : false,
   it          : false,
   xit         : false,
   beforeEach  : false,

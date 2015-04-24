@@ -148,6 +148,7 @@ exports.relations = function (test) {
     "var f = (a === !'hi');",
     "var g = (!2 === 1);",
     "var h = (![1, 2, 3] === []);",
+    "var i = (!([]) instanceof Array);"
   ];
 
   var run = TestRun(test)
@@ -159,7 +160,8 @@ exports.relations = function (test) {
     .addError(6, "Confusing use of '!'.", {character : 10})
     .addError(7, "Confusing use of '!'.", {character : 16})
     .addError(8, "Confusing use of '!'.", {character : 10})
-    .addError(9, "Confusing use of '!'.", {character : 10});
+    .addError(9, "Confusing use of '!'.", {character : 10})
+    .addError(10, "Confusing use of '!'.", {character : 10});
   run.test(code, {es3: true});
   run.test(code, {}); // es5
   run.test(code, {esnext: true});
@@ -2602,6 +2604,34 @@ exports["make sure var variables can shadow let variables"] = function (test) {
     .addError(7, "'d' is defined but never used.")
     .test(code, { esnext: true, unused: true, undef: true, funcscope: true });
 
+  test.done();
+};
+
+exports["make sure let variables in the closure of functions shadow predefined globals"] = function (test) {
+  var code = [
+    "function x() {",
+    "  let foo;",
+    "  function y() {",
+    "    foo = {};",
+    "  }",
+    "}"
+  ];
+
+  TestRun(test).test(code, { esnext: true, predef: { foo: false } });
+  test.done();
+};
+
+exports["make sure let variables in the closure of blocks shadow predefined globals"] = function (test) {
+  var code = [
+    "function x() {",
+    "  let foo;",
+    "  {",
+    "    foo = {};",
+    "  }",
+    "}"
+  ];
+
+  TestRun(test).test(code, { esnext: true, predef: { foo: false } });
   test.done();
 };
 
@@ -5549,7 +5579,6 @@ exports.trailingCommaInArrayBindingPattern = function (test) {
   ];
 
   TestRun(test)
-    .addError(2, "Trailing ',' is not valid in array destructuring assignment.")
     .test(code, { esnext: true });
 
   test.done();
@@ -5563,8 +5592,171 @@ exports.trailingCommaInArrayBindingPatternParameters = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "Trailing ',' is not valid in array destructuring assignment.")
     .test(code, { esnext: true });
+
+  test.done();
+};
+
+
+exports.commaAfterRestElementInArrayBindingPattern = function (test) {
+  var code = [
+    'function fn(O) {',
+    '  var [a, b, ...c,] = O;',
+    '  var [...d,] = O;',
+    '}',
+    'fn([1, 2, 3]);'
+  ];
+
+  TestRun(test)
+    .addError(2, "Invalid element after rest element.")
+    .addError(3, "Invalid element after rest element.")
+    .test(code, { esnext: true });
+
+  test.done();
+};
+
+
+exports.commaAfterRestElementInArrayBindingPatternParameters = function (test) {
+  var code = [
+    'function fn([a, b, ...c,]) { }',
+    'function fn2([...c,]) { }',
+    'fn([1, 2, 3]);',
+    'fn2([1,2,3]);'
+  ];
+
+  TestRun(test)
+    .addError(1, "Invalid element after rest element.")
+    .addError(2, "Invalid element after rest element.")
+    .test(code, { esnext: true });
+
+  test.done();
+};
+
+
+exports.commaAfterRestParameter = function (test) {
+  var code = [
+    'function fn(a, b, ...c, d) { }',
+    'function fn2(...a, b) { }',
+    'fn(1, 2, 3);',
+    'fn2(1, 2, 3);'
+  ];
+
+  TestRun(test)
+    .addError(1, "Invalid parameter after rest parameter.")
+    .addError(2, "Invalid parameter after rest parameter.")
+    .test(code, { esnext: true });
+
+  test.done();
+};
+
+
+exports.extraRestOperator = function (test) {
+  var code = [
+    'function fn([a, b, ......c]) { }',
+    'function fn2([......c]) { }',
+    'function fn3(a, b, ......) { }',
+    'function fn4(......) { }',
+    'var [......a] = [1, 2, 3];',
+    'var [a, b, ... ...c] = [1, 2, 3];',
+    'var arrow = (......a) => a;',
+    'var arrow2 = (a, b, ......c) => c;',
+    'var arrow3 = ([......a]) => a;',
+    'var arrow4 = ([a, b, ......c]) => c;',
+    'fn([1, 2, 3]);',
+    'fn2([1, 2, 3]);',
+    'fn3(1, 2, 3);',
+    'fn4(1, 2, 3);',
+    'arrow(1, 2, 3);',
+    'arrow2(1, 2, 3);',
+    'arrow3([1, 2, 3]);',
+    'arrow4([1, 2, 3]);',
+  ];
+
+  TestRun(test)
+    .addError(1, "Unexpected '...'.")
+    .addError(2, "Unexpected '...'.")
+    .addError(3, "Unexpected '...'.")
+    .addError(4, "Unexpected '...'.")
+    .addError(5, "Unexpected '...'.")
+    .addError(6, "Unexpected '...'.")
+    .addError(7, "Unexpected '...'.")
+    .addError(8, "Unexpected '...'.")
+    .addError(9, "Unexpected '...'.")
+    .addError(10, "Unexpected '...'.")
+    .test(code, { esnext: true });
+
+  test.done();
+};
+
+
+exports.restOperatorWithoutIdentifier = function (test) {
+  var code = [
+    'function fn([a, b, ...]) { }',
+    'function fn2([...]) { }',
+    'function fn3(a, b, ...) { }',
+    'function fn4(...) { }',
+    'var [...] = [1, 2, 3];',
+    'var [a, b, ...] = [1, 2, 3];',
+    'var arrow = (...) => void 0;',
+    'var arrow2 = (a, b, ...) => a;',
+    'var arrow3 = ([...]) => void 0;',
+    'var arrow4 = ([a, b, ...]) => a;',
+    'fn([1, 2, 3]);',
+    'fn2([1, 2, 3]);',
+    'fn3(1, 2, 3);',
+    'fn3(1, 2, 3);',
+    'arrow(1, 2, 3);',
+    'arrow2(1, 2, 3);',
+    'arrow3([1, 2, 3]);',
+    'arrow4([1, 2, 3]);'
+  ];
+
+  TestRun(test)
+    .addError(1, "Unexpected '...'.")
+    .addError(2, "Unexpected '...'.")
+    .addError(3, "Unexpected '...'.")
+    .addError(4, "Unexpected '...'.")
+    .addError(5, "Unexpected '...'.")
+    .addError(6, "Unexpected '...'.")
+    .addError(7, "Unexpected '...'.")
+    .addError(8, "Unexpected '...'.")
+    .addError(9, "Unexpected '...'.")
+    .addError(10, "Unexpected '...'.")
+    .test(code, { esnext: true });
+
+  test.done();
+};
+
+exports.getAsIdentifierProp = function (test) {
+  TestRun(test)
+    .test('var get; var obj = { get };', { esnext: true });
+
+  TestRun(test)
+    .test('var set; var obj = { set };', { esnext: true });
+
+  TestRun(test)
+    .test('var get, set; var obj = { get, set };', { esnext: true });
+
+  TestRun(test)
+    .test('var get, set; var obj = { set, get };', { esnext: true });
+
+  TestRun(test)
+    .test('var get; var obj = { a: null, get };', { esnext: true });
+
+  TestRun(test)
+    .test('var get; var obj = { a: null, get, b: null };', { esnext: true });
+
+  TestRun(test)
+    .test('var get; var obj = { get, b: null };', { esnext: true });
+
+  TestRun(test)
+    .test('var get; var obj = { get, get a() {} };', { esnext: true });
+
+  TestRun(test)
+    .test([
+      'var set;',
+      'var obj = { set, get a() {}, set a(_) {} };'
+    ], { esnext: true });
 
   test.done();
 };

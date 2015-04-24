@@ -268,6 +268,16 @@ exports.bool = {
     singleGroups: false,
 
     /**
+     * When set to true, the use of VariableStatements are forbidden.
+     * For example:
+     *
+     *     // jshint varstmt: true
+     *
+     *     var a; // Warning: `var` declarations are forbidden. Use `let` or `const` instead.
+     */
+    varstmt: false,
+
+    /**
      * This option is a short hand for the most strict JSHint configuration. It
      * enables all enforcing options and disables all relaxing options.
      *
@@ -342,15 +352,6 @@ exports.bool = {
      *     for (var i = 0, person; (person = people[i]); i++) {}
      */
     boss        : true,
-
-    /**
-     * This option defines globals available when your core is running inside
-     * of the PhantomJS runtime environment. [PhantomJS](http://phantomjs.org/)
-     * is a headless WebKit scriptable with a JavaScript API. It has fast and
-     * native support for various web standards: DOM handling, CSS selector,
-     * JSON, Canvas, and SVG.
-     */
-    phantom     : true,
 
     /**
      * This option suppresses warnings about the use of `eval`. The use of
@@ -699,7 +700,16 @@ exports.bool = {
      * * [JavaScript typed
      *   arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays)
      */
-    typed       : true
+    typed       : true,
+
+    /**
+     * This option defines globals available when your core is running inside
+     * of the PhantomJS runtime environment. [PhantomJS](http://phantomjs.org/)
+     * is a headless WebKit scriptable with a JavaScript API. It has fast and
+     * native support for various web standards: DOM handling, CSS selector,
+     * JSON, Canvas, and SVG.
+     */
+    phantom     : true
   },
 
   // Obsolete options
@@ -944,4 +954,10 @@ exports.removed = {
   gcl: true,
   smarttabs: true,
   trailing: true
+};
+
+// Add options here which should not be automatically enforced by
+// `enforceall`.
+exports.noenforceall = {
+  varstmt: true
 };
