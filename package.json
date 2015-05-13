@@ -21,7 +21,9 @@
   "bin": {
     "dword": "bin/dword.js"
   },
-  "scripts": {},
+  "scripts": {
+    "bower": "bower"
+  },
   "dependencies": {
     "ashify": "~1.0.1",
     "express": "~4.12.0",
@@ -33,5 +35,8 @@
     "restafary": "~1.2.8",
     "socket-file": "~1.1.0",
     "socket.io": "~1.3.5"
+  },
+  "devDependencies": {
+    "bower": "~1.4.1"
   }
 }
