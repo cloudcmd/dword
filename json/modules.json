@@ -5,7 +5,7 @@
     "remote": "//cdn.socket.io/socket.io-{{ version }}.js"
 }, {
     "name": "codemirror",
-    "version": "5.2.0",
+    "version": "5.3.0",
     "local": [
         "/modules/codemirror/lib/codemirror.js",
         "/modules/codemirror/lib/codemirror.css"
