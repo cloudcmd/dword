@@ -1,3 +1,9 @@
+2015.05.29, v1.5.10
+
+fix:
+- (loadRemote) pre overwrite
+
+
 2015.05.28, v1.5.9
 
 fix:
