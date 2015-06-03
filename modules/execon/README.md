@@ -1,9 +1,8 @@
-# Execon
-
+# Execon [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
 Patterns of function calls.
 
 ## Install
-
+![NPM_INFO][NPM_INFO_IMG]
 ```
 npm i execon --save
 # or
@@ -141,3 +140,13 @@ exec.series([one, two], function(error) {
 ## License
 
 MIT
+
+[NPM_INFO_IMG]:             https://nodei.co/npm/execon.png?downloads=true&&stars&&downloadRank "npm install rendy"
+[NPMIMGURL]:                https://img.shields.io/npm/v/execon.svg?style=flat
+[DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/coderaiser/execon.svg?style=flat
+[LicenseIMGURL]:            https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
+[NPMURL]:                   https://npmjs.org/package/execon "npm"
+[BuildStatusURL]:           https://travis-ci.org/coderaiser/execon  "Build Status"
+[DependencyStatusURL]:      https://gemnasium.com/coderaiser/execon "Dependency Status"
+[LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
+

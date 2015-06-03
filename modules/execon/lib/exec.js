@@ -162,13 +162,13 @@
          */
         exec.series             = function(funcs, callback) {
             var fn,
-                done,
                 i           = funcs.length,
-                isArray     = getType(funcs) === 'array',
                 check       = function(error) {
+                    var done;
+                    
                     --i;
                     
-                    if (!i && !done || error) {
+                    if (!i || error) {
                         done = true;
                         exec(callback, error);
                     }
@@ -176,14 +176,31 @@
                     return done;
                 };
             
-            if (isArray) {
-                fn = funcs.shift();
-                
-                exec(fn, function(error) {
-                    if (!check(error))
-                        exec.series(funcs, callback);
-                });
-            }
+            if (!Array.isArray(funcs))
+                throw(Error('funcs should be array!'));
+            
+            fn = funcs.shift();
+            
+            exec(fn, function(error) {
+                if (!check(error))
+                    exec.series(funcs, callback);
+            });
+        };
+        
+        exec.each               = function(array, iterator, callback) {
+            var listeners = array.map(function(item) {
+                return iterator.bind(null, item);
+            });
+            
+            exec.parallel(listeners, callback);
+        };
+        
+        exec.eachSeries         = function(array, iterator, callback) {
+            var listeners = array.map(function(item) {
+                return iterator.bind(null, item);
+            });
+            
+            exec.series(listeners, callback);
         };
         
        /**

@@ -1,3 +1,10 @@
+2015.06.03, v1.2.0
+
+feature:
+- (exec) add each, eachSeries
+- (exec) series: rm getType call
+
+
 2015.01.28, v1.1.1
 
 feature:

@@ -20,7 +20,7 @@
   "dependencies": {
     "zipio": "~1.0.1",
     "daffy": "~1.0.3",
-    "execon": "~1.1.1",
+    "execon": "~1.2.0",
     "load": "~1.1.4",
     "emitify": "~1.1.2",
     "codemirror-emmet": "~1.1.0",
