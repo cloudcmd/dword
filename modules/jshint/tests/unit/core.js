@@ -363,9 +363,8 @@ exports.insideEval = function (test) {
     // The "TestRun" class (and these errors) probably needs some
     // facility for checking the expected scope of the error
     .addError(1, "Unexpected early end of program.")
-    .addError(1, "Expected an identifier and instead saw '(end)'.")
-    .addError(1, "Expected ')' and instead saw ''.")
-    .addError(1, "Missing semicolon.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
 
     .test(src, { es3: true, evil: false });
 
@@ -633,8 +632,40 @@ exports.testForIn = function (test) {
   ];
 
   TestRun(test)
-    .addError(2, "Expected an identifier and instead saw '(string)'.")
+    .addError(2, "Expected an identifier and instead saw 'i'.")
     .test(src);
+
+  src = [
+    "(function (o) {",
+    "for (i, j in o) { i(); }",
+    "for (var x, u in o) { x(); }",
+    "for (z = 0 in o) { z(); }",
+    "for (var q = 0 in o) { q(); }",
+    "})();"
+  ];
+
+  TestRun(test, "bad lhs errors")
+    .addError(2, "Invalid for-in loop left-hand-side: more than one ForBinding.")
+    .addError(3, "Invalid for-in loop left-hand-side: more than one ForBinding.")
+    .addError(4, "Invalid for-in loop left-hand-side: initializer is forbidden.")
+    .addError(5, "Invalid for-in loop left-hand-side: initializer is forbidden.")
+    .test(src);
+
+  src = [
+    "(function (o) {",
+    "for (let i, j in o) { i(); }",
+    "for (const x, u in o) { x(); }",
+    "for (let z = 0 in o) { z(); }",
+    "for (const q = 0 in o) { q(); }",
+    "})();"
+  ];
+
+  TestRun(test, "bad lhs errors (lexical)")
+    .addError(2, "Invalid for-in loop left-hand-side: more than one ForBinding.")
+    .addError(3, "Invalid for-in loop left-hand-side: more than one ForBinding.")
+    .addError(4, "Invalid for-in loop left-hand-side: initializer is forbidden.")
+    .addError(5, "Invalid for-in loop left-hand-side: initializer is forbidden.")
+    .test(src, { esnext: true });
 
   test.done();
 };
@@ -742,6 +773,110 @@ exports.testES6ModulesNamedExportsAffectUnused = function (test) {
   test.done();
 };
 
+exports.testConstRedeclaration = function (test) {
+
+  // consts cannot be redeclared, but they can shadow
+  var src = [
+    "const a = 1;",
+    "const a = 2;",
+    "if (a) {",
+    "  const a = 3;",
+    "}",
+    "for(const a in a) {",
+    "  const a = 4;",
+    "}",
+    "function a() {",
+    "}",
+    "function b() {",
+    "}",
+    "const b = 1;"
+  ];
+
+  TestRun(test)
+      .addError(2, "const 'a' has already been declared.")
+      .addError(9, "const 'a' has already been declared.")
+      .test(src, {
+        esnext: true
+      });
+
+  test.done();
+};
+
+exports.testConstModification = function (test) {
+
+  var src = [
+    "const a = 1;",
+    "const b = { a: 2 };",
+    // const errors
+    "a = 2;",
+    "b = 2;",
+    "a++;",
+    "--a;",
+    "a += 1;",
+    "let y = a = 3;",
+    // valid const access
+    "b.a++;",
+    "--b.a;",
+    "b.a = 3;",
+    "a.b += 1;",
+    "const c = () => 1;",
+    "c();",
+    "const d = [1, 2, 3];",
+    "d[0] = 2;",
+    "let x = -a;",
+    "x = +a;",
+    "x = a + 1;",
+    "x = a * 2;",
+    "x = a / 2;",
+    "x = a % 2;",
+    "x = a & 1;",
+    "x = a ^ 1;",
+    "x = a === true;",
+    "x = a == 1;",
+    "x = a !== true;",
+    "x = a != 1;",
+    "x = a > 1;",
+    "x = a >= 1;",
+    "x = a < 1;",
+    "x = a <= 1;",
+    "x = 1 + a;",
+    "x = 2 * a;",
+    "x = 2 / a;",
+    "x = 2 % a;",
+    "x = 1 & a;",
+    "x = 1 ^ a;",
+    "x = true === a;",
+    "x = 1 == a;",
+    "x = true !== a;",
+    "x = 1 != a;",
+    "x = 1 > a;",
+    "x = 1 >= a;",
+    "x = 1 < a;",
+    "x = 1 <= a;",
+    "x = typeof a;",
+    "x = a.a;",
+    "x = a[0];",
+    "delete a.a;",
+    "delete a[0];",
+    "new a();",
+    "new a;",
+  ];
+
+  TestRun(test)
+      .addError(3, "Attempting to override 'a' which is a constant.")
+      .addError(4, "Attempting to override 'b' which is a constant.")
+      .addError(5, "Attempting to override 'a' which is a constant.")
+      .addError(6, "Attempting to override 'a' which is a constant.")
+      .addError(7, "Attempting to override 'a' which is a constant.")
+      .addError(8, "Attempting to override 'a' which is a constant.")
+      .addError(8, "You might be leaking a variable (a) here.")
+      .addError(53, "Missing '()' invoking a constructor.")
+      .test(src, {
+        esnext: true
+      });
+
+  test.done();
+};
 
 exports["class declaration export (default)"] = function (test) {
   var source = fs.readFileSync(__dirname + "/fixtures/class-declaration.js", "utf8");

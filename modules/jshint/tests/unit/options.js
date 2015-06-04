@@ -641,7 +641,10 @@ exports.unused = function (test) {
     [20, "'bar' is defined but never used."],
     [22, "'i' is defined but never used."],
     [36, "'cc' is defined but never used."],
-    [39, "'dd' is defined but never used."]
+    [39, "'dd' is defined but never used."],
+    [58, "'constUsed' is defined but never used."],
+    [62, "'letUsed' is defined but never used."],
+    [63, "'anotherUnused' is defined but never used."]
   ];
 
   var last_param_errors = [
@@ -649,7 +652,10 @@ exports.unused = function (test) {
     [22, "'i' is defined but never used."],
     [28, "'a' is defined but never used."],
     [28, "'b' is defined but never used."],
-    [28, "'c' is defined but never used."]
+    [28, "'c' is defined but never used."],
+    [68, "'y' is defined but never used."],
+    [69, "'y' is defined but never used."],
+    [70, "'z' is defined but never used."]
   ];
 
   var all_param_errors = [
@@ -657,7 +663,8 @@ exports.unused = function (test) {
     [22, "'i' is defined but never used."],
     [28, "'a' is defined but never used."],
     [28, "'b' is defined but never used."],
-    [28, "'c' is defined but never used."]
+    [28, "'c' is defined but never used."],
+    [71, "'y' is defined but never used."]
   ];
 
   var true_run = TestRun(test, {esnext: true});
@@ -683,11 +690,12 @@ exports.unused = function (test) {
   vars_run.test(src, { esnext: true, unused: "vars"});
 
   var unused = JSHINT.data().unused;
-  test.equal(12, unused.length);
+  test.equal(19, unused.length);
   test.ok(unused.some(function (err) { return err.line === 1 && err.character == 5 && err.name === "a"; }));
   test.ok(unused.some(function (err) { return err.line === 6 && err.character == 18 && err.name === "f"; }));
   test.ok(unused.some(function (err) { return err.line === 7 && err.character == 9 && err.name === "c"; }));
   test.ok(unused.some(function (err) { return err.line === 15 && err.character == 10 && err.name === "foo"; }));
+  test.ok(unused.some(function (err) { return err.line === 68 && err.character == 5 && err.name === "y"; }));
 
   test.done();
 };
@@ -1065,10 +1073,9 @@ exports.immed = function (test) {
     .addError(1, "Expected an identifier and instead saw ')'.")
     .addError(1, "Expected an assignment or function call and instead saw an expression.")
     .addError(1, "Unmatched '{'.")
-    .addError(1, "Unmatched '('.")
-    .addError(1, "Wrapping non-IIFE function literals in parens is unnecessary.")
     .addError(1, "Expected an assignment or function call and instead saw an expression.")
     .addError(1, "Missing semicolon.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
     .test("(function () { if (true) { }());", { es3: true, immed: true });
 
   test.done();
@@ -1356,8 +1363,7 @@ exports.quotesAndTemplateLiterals = function (test) {
   TestRun(test)
     .addError(2, "Unexpected '`'.")
     .addError(2, "Unexpected early end of program.")
-    .addError(2, "Expected an identifier and instead saw '(end)'.")
-    .addError(2, "Missing semicolon.")
+    .addError(2, "Unrecoverable syntax error. (100% scanned).")
     .test(src);
 
   // With esnext
@@ -1509,6 +1515,9 @@ exports.browser = function (test) {
     .addError(25, "'DocumentFragment' is not defined.")
     .addError(26, "'Range' is not defined.")
     .addError(27, "'Text' is not defined.")
+    .addError(31, "'document' is not defined.")
+    .addError(32, "'fetch' is not defined.")
+    .addError(35, "'URL' is not defined.")
     .test(src, {es3: true, undef: true });
 
   TestRun(test).test(src, {es3: true, browser: true, undef: true });
@@ -2022,10 +2031,11 @@ singleGroups.functionExpression = function (test) {
     "(function() {}());",
     "(function() {}.call());",
     "if (true) {} (function() {}());",
-    "var a",
     "(function() {}());",
+    // These usages are not technically necessary, but parenthesis are commonly
+    // used to signal that a function expression is going to be invoked
+    // immediately.
     "var a = (function() {})();",
-    // Invalid forms:
     "var b = (function() {}).call();",
     "var c = (function() {}());",
     "var d = (function() {}.call());",
@@ -2036,21 +2046,12 @@ singleGroups.functionExpression = function (test) {
     "if ((function() {})()) {}",
     "if ((function() {}).call()) {}",
     "if ((function() {}())) {}",
-    "if ((function() {}.call())) {}"
+    "if ((function() {}.call())) {}",
+    // Invalid forms:
+    "var i = (function() {});"
   ];
 
   TestRun(test)
-    .addError(8, "Unnecessary grouping operator.")
-    .addError(9, "Unnecessary grouping operator.")
-    .addError(10, "Unnecessary grouping operator.")
-    .addError(11, "Unnecessary grouping operator.")
-    .addError(12, "Unnecessary grouping operator.")
-    .addError(13, "Unnecessary grouping operator.")
-    .addError(14, "Unnecessary grouping operator.")
-    .addError(15, "Unnecessary grouping operator.")
-    .addError(16, "Unnecessary grouping operator.")
-    .addError(17, "Unnecessary grouping operator.")
-    .addError(18, "Unnecessary grouping operator.")
     .addError(19, "Unnecessary grouping operator.")
     .test(code, { singleGroups: true, asi: true });
 
@@ -2064,10 +2065,11 @@ singleGroups.generatorExpression = function (test) {
     "(function*() { yield; }());",
     "(function*() { yield; }.call());",
     "if (true) {} (function*() { yield; }());",
-    "var a",
     "(function*() { yield; }());",
+    // These usages are not technically necessary, but parenthesis are commonly
+    // used to signal that a function expression is going to be invoked
+    // immediately.
     "var a = (function*() { yield; })();",
-    // Invalid forms:
     "var b = (function*() { yield; }).call();",
     "var c = (function*() { yield; }());",
     "var d = (function*() { yield; }.call());",
@@ -2078,21 +2080,12 @@ singleGroups.generatorExpression = function (test) {
     "if ((function*() { yield; })()) {}",
     "if ((function*() { yield; }).call()) {}",
     "if ((function*() { yield; }())) {}",
-    "if ((function*() { yield; }.call())) {}"
+    "if ((function*() { yield; }.call())) {}",
+    // Invalid forms:
+    "var i = (function*() { yield; });"
   ];
 
   TestRun(test)
-    .addError(8, "Unnecessary grouping operator.")
-    .addError(9, "Unnecessary grouping operator.")
-    .addError(10, "Unnecessary grouping operator.")
-    .addError(11, "Unnecessary grouping operator.")
-    .addError(12, "Unnecessary grouping operator.")
-    .addError(13, "Unnecessary grouping operator.")
-    .addError(14, "Unnecessary grouping operator.")
-    .addError(15, "Unnecessary grouping operator.")
-    .addError(16, "Unnecessary grouping operator.")
-    .addError(17, "Unnecessary grouping operator.")
-    .addError(18, "Unnecessary grouping operator.")
     .addError(19, "Unnecessary grouping operator.")
     .test(code, { singleGroups: true, asi: true, esnext: true });
 
@@ -2103,14 +2096,30 @@ singleGroups.arrowFunctions = function (test) {
   var code = [
     "var a = () => ({});",
     "var b = (c) => {};",
+    "var g = (() => 3)();",
+    "var h = (() => ({}))();",
+    "var i = (() => 3).length;",
+    "var j = (() => ({})).length;",
+    "var k = (() => 3)[prop];",
+    "var l = (() => ({}))[prop];",
+    "var m = (() => 3) || 3;",
+    "var n = (() => ({})) || 3;",
+    "var o = (() => {})();",
+    "var p = (() => {})[prop];",
+    "var q = (() => {}) || 3;",
     "(() => {})();",
+    // Invalid forms:
     "var d = () => (e);",
-    "var f = () => (3);"
+    "var f = () => (3);",
+    "var r = (() => 3);",
+    "var s = (() => {});"
   ];
 
   TestRun(test)
-    .addError(4, "Unnecessary grouping operator.")
-    .addError(5, "Unnecessary grouping operator.")
+    .addError(15, "Unnecessary grouping operator.")
+    .addError(16, "Unnecessary grouping operator.")
+    .addError(17, "Unnecessary grouping operator.")
+    .addError(18, "Unnecessary grouping operator.")
     .test(code, { singleGroups: true, esnext: true });
 
   test.done();
@@ -2388,6 +2397,119 @@ exports.errorI003 = function(test) {
 
   TestRun(test, "toggling es5 option through nested scopes")
     .test(code4, {});
+
+  test.done();
+};
+
+exports.module = {};
+exports.module.behavior = function(test) {
+  var code = [
+    "var package = 3;",
+    "function f() { return this; }"
+  ];
+
+  TestRun(test)
+    .test(code, {});
+
+  TestRun(test)
+    .addError(0, "The 'module' option is only available when linting ECMAScript 6 code.")
+    .addError(1, "Expected an identifier and instead saw 'package' (a reserved word).")
+    .addError(2, "Possible strict violation.")
+    .test(code, { module: true });
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'package' (a reserved word).")
+    .addError(2, "Possible strict violation.")
+    .test(code, { module: true, esnext: true });
+
+  code = [
+    "/* jshint module: true */",
+    "var package = 3;",
+    "function f() { return this; }"
+  ];
+
+  TestRun(test)
+    .addError(1, "The 'module' option is only available when linting ECMAScript 6 code.")
+    .addError(2, "Expected an identifier and instead saw 'package' (a reserved word).")
+    .addError(3, "Possible strict violation.")
+    .test(code);
+
+  code[0] = "/* jshint module: true, esnext: true */";
+
+  TestRun(test)
+    .addError(2, "Expected an identifier and instead saw 'package' (a reserved word).")
+    .addError(3, "Possible strict violation.")
+    .test(code);
+
+  test.done();
+};
+
+exports.module.declarationRestrictions = function( test ) {
+  TestRun(test)
+    .addError(2, "The 'module' option cannot be set after any executable code.")
+    .test([
+      "(function() {",
+      "  /* jshint module: true */",
+      "})();"
+    ], { esnext: true });
+
+  TestRun(test)
+    .addError(2, "The 'module' option cannot be set after any executable code.")
+    .test([
+      "void 0;",
+      "/* jshint module: true */"
+    ], { esnext: true });
+
+  TestRun(test)
+    .addError(3, "The 'module' option cannot be set after any executable code.")
+    .test([
+      "void 0;",
+      "// hide",
+      "/* jshint module: true */"
+    ], { esnext: true });
+
+  TestRun(test, "First line (following statement)")
+    .addError(1, "The 'module' option cannot be set after any executable code.")
+    .test([
+      "(function() {})(); /* jshint module: true */"
+    ], { esnext: true });
+
+  TestRun(test, "First line (within statement)")
+    .addError(1, "The 'module' option cannot be set after any executable code.")
+    .test([
+      "(function() { /* jshint module: true */",
+      "})();"
+    ], { esnext: true });
+
+  TestRun(test, "First line (before statement)")
+    .test([
+      "/* jshint module: true */ (function() {",
+      "})();"
+    ], { esnext: true });
+
+  TestRun(test, "First line (within expression)")
+    .addError(1, "The 'module' option cannot be set after any executable code.")
+    .test("Math.abs(/*jshint module: true */4);", { esnext: true });
+
+  TestRun(test, "Following single-line comment")
+    .test([
+      "// License boilerplate",
+      "/* jshint module: true */"
+    ], { esnext: true });
+
+  TestRun(test, "Following multi-line comment")
+    .test([
+      "/**",
+      " * License boilerplate",
+      " */",
+      "  /* jshint module: true */"
+    ], { esnext: true });
+
+  TestRun(test, "Following shebang")
+    .test([
+      "#!/usr/bin/env node",
+      "/* jshint module: true */"
+    ], { esnext: true });
 
   test.done();
 };

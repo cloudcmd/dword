@@ -52,3 +52,20 @@ c.delete(hoistedDelete);
 // passed to methods that look like unresolvable-reference-accepting operators.
 function hoistedDelete() {}
 function hoistedTypeof() {}
+
+const constUsed = "this is used";
+while(constUsed) {
+    const constUsed = "unused";
+}
+let letUsed = "this is used";
+if (letUsed) {
+    let letUsed = "unused",
+        anotherUnused;
+}
+
+// GH-2345 - Unused arrow-function parameters should be ignored if "unused" is set to "vars"
+let x = y => y;
+x = y => {};
+x = (y) => {};
+x = (y, z) => y;
+x = (y, z) => z;
