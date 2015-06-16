@@ -7,7 +7,10 @@
         global.Emitify = Emitify;
         
     function Emitify() {
-        this._all = {};
+        if (this instanceof Emitify)
+            this._all = {};
+        else
+            return new Emitify();
     }
     
     Emitify.prototype._check = function(event, callback) {

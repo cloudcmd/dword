@@ -14,7 +14,7 @@ bower i emitify --save
 What you should do first is create new instance of `emitify` with 
 
 ```js
-var emitify = new Emitify();
+var emitify = Emitify();
 ```
 
 Than you could just use API as it is.
