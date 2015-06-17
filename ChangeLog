@@ -1,3 +1,9 @@
+2015.06.17, v1.6.0
+
+feature:
+- (client) setOption: add fontSize
+
+
 2015.06.16, v1.5.14
 
 feature:
