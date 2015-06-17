@@ -3,6 +3,7 @@
         "theme": "pastel-on-dark",
         "wrap": 80,
         "tabSize": 4,
+        "fontSize": 16,
         "useSoftTabs": true,
         "showInvisibles": true,
         "enableSnippets": false,
