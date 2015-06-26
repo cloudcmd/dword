@@ -1,3 +1,9 @@
+2015.06.26, v1.7.2
+
+fix:
+- (dword) /dword -> PREFIX
+
+
 2015.06.22, v1.7.1
 
 feature:
