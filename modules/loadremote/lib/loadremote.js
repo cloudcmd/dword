@@ -85,7 +85,7 @@ var exec, load;
             }
             
             function loadModules(prefix, callback) {
-                var url = prefix + '/json/modules.json';
+                var url = prefix + '/modules.json';
                 
                 load.json(url, callback);
             }

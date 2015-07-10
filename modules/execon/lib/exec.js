@@ -31,13 +31,12 @@
          */
         
         exec.with           =  function(callback) {
-            var result,
-                bind        = Function.bind;
+            var args    = [].slice.call(arguments),
+                bind    = Function.prototype.bind;
             
-            arguments[0]    = null;
-            result          = bind.apply(callback, arguments);
+            args[0]     = null;
             
-            return result;
+            return  bind.apply(callback, args);
         };
          
          /**

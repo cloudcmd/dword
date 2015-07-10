@@ -1,3 +1,15 @@
+2015.06.05, v1.2.2
+
+feature:
+- (exec) with: callback.bind -> bind.apply
+
+
+2015.06.05, v1.2.1
+
+feature:
+- (exec) exec.with: arguments[0] -> slice.call(arguments)
+
+
 2015.06.03, v1.2.0
 
 feature:

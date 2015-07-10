@@ -1,0 +1,27 @@
+{
+  "name": "loadremote",
+  "version": "1.0.0",
+  "homepage": "https://github.com/cloudcmd/loadremote",
+  "authors": [
+    "coderaiser <mnemonic.enemy@gmail.com>"
+  ],
+  "description": "library for loading modules from cdn or local file system",
+  "main": "lib/loadremote.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "load",
+    "remote"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "modules"
+  ],
+  "dependencies": {
+    "execon": "~1.2.2"
+  }
+}
