@@ -16,7 +16,7 @@
     ]
 }, {
     "name": "pako",
-    "version": "0.2.5",
+    "version": "0.2.7",
     "local": "/modules/pako/dist/pako.min.js",
     "remote": "//cdn.jsdelivr.net/pako/{{ version }}/pako.min.js"
 }]

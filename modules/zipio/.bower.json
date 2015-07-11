@@ -31,5 +31,6 @@
   },
   "_source": "git://github.com/coderaiser/zipio.git",
   "_target": "~1.0.1",
-  "_originalSource": "zipio"
+  "_originalSource": "zipio",
+  "_direct": true
 }

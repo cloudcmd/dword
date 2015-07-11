@@ -1,7 +1,7 @@
 {
   "name"            : "pako",
   "description"     : "zlib port to javascript - fast, modularized, with browser support",
-  "version"         : "0.2.6",
+  "version"         : "0.2.7",
   "keywords"        : [ "zlib", "deflate", "inflate", "gzip" ],
   "homepage"        : "https://github.com/nodeca/pako",
 
@@ -19,8 +19,9 @@
                         "benchmark": "*",
                         "ansi":      "*",
                         "browserify":"*",
+                        "eslint": "0.17.1",
+                        "eslint-plugin-nodeca": "~1.0.3",
                         "uglify-js": "*",
-                        "jshint":    "*",
                         "istanbul":  "*",
                         "ndoc":      "*",
                         "lodash":    "*",
