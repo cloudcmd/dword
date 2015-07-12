@@ -1,3 +1,10 @@
+2015.07.12, v1.9.1
+
+fix:
+- (dword) load css event if default
+- (server) edward -> dword
+
+
 2015.07.12, v1.9.0
 
 feature:
