@@ -1,3 +1,9 @@
+2015.07.12, v1.9.0
+
+feature:
+- (dword) add ability to load edit options from ~/.dword.json
+
+
 2015.07.11, v1.8.1
 
 feature:
