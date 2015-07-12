@@ -23,7 +23,7 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Drag n drop (drag file from desktop to editor).
 - Built-in `jshint` (with options in `.jshintrc` file)
 - Built-in [beautifier][beautifile] (with options in [json/beautify.json][beautify.json], could be overriden by `~/.beautify.json`)
-- Configurable options (could be edited in `json/edit.json`)
+- Configurable options (could be edited in `json/edit.json` and load from `~/dword.json`)
 
 ## Install
 
