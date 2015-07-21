@@ -27,8 +27,8 @@
     "cm-searchbox": "~1.0.0",
     "emitify": "~1.2.0",
     "jsSHA": "~2.0.1",
-    "codemirror": "~5.4.0",
     "zipio": "~1.0.1",
-    "loadremote": "~1.0.1"
+    "loadremote": "~1.0.1",
+    "codemirror": "~5.5.0"
   }
 }
