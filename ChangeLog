@@ -1,3 +1,12 @@
+2015.07.21, v1.9.5
+
+fix:
+- (client) loadStyles: unshift
+
+feature:
+- (bower) codemirror v5.5.0
+
+
 2015.07.21, v1.9.4
 
 feature:
