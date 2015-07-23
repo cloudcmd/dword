@@ -12,6 +12,8 @@ Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 [beautifile]:               https://github.com/coderaiser/node-beautifile "Beautifile"
 [beautify.json]:            https://github.com/coderaiser/node-beautifile/tree/master/json/beautify.json "beautify.json"
 
+[edit.json]:                https://github.com/cloudcmd/dword/tree/master/json/edit.json "edit.json"
+
 Web editor based on [CodeMirror](http://codemirror.net).
 Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 
@@ -23,7 +25,7 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Drag n drop (drag file from desktop to editor).
 - Built-in `jshint` (with options in `.jshintrc` file)
 - Built-in [beautifier][beautifile] (with options in [json/beautify.json][beautify.json], could be overriden by `~/.beautify.json`)
-- Configurable options (could be edited in `json/edit.json` and load from `~/dword.json`)
+- Configurable options ([json/edit.json][edit.json] could be overriden by `~/.dword.json`)
 
 ## Install
 
