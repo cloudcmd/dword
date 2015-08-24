@@ -40,7 +40,6 @@
             http        = require('http'),
             express     = require('express'),
             io          = require('socket.io'),
-            restafary   = require('restafary'),
             
             app         = express(),
             server      = http.createServer(app),
@@ -54,10 +53,7 @@
             ip          =   env.IP              ||  /* c9           */
                             '0.0.0.0';
         
-        app .use(restafary({
-                prefix: '/api/v1/fs'
-            }))
-            .use(express.static(DIR))
+        app .use(express.static(DIR))
             .use(dword({
                 minify: false,
                 online: false
