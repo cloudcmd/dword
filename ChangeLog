@@ -1,14 +1,14 @@
 2015.08.24, v2.0.0
 
 feature:
-- feature(dword) move restafary inside middleware
-- feature(package) restafary v1.5.0
+- (dword) move restafary inside middleware
+- (package) restafary v1.5.0
 
 
 2015.08.21, v1.9.8
 
 feature:
-- feature(bower) codemirror v5.6.0
+- (bower) codemirror v5.6.0
 
 
 2015.08.11, v1.9.7
