@@ -1,3 +1,9 @@
+2015.08.29, v2.0.2
+
+feature:
+- (dword) speed up routing with memo
+
+
 2015.08.29, v2.0.1
 
 fix:
