@@ -123,6 +123,9 @@ function Lexer(source) {
   for (var i = 0; i < state.option.indent; i += 1) {
     state.tab += " ";
   }
+
+  // Blank out non-multi-line-commented lines when ignoring linter errors
+  this.ignoreLinterErrors = false;
 }
 
 Lexer.prototype = {
@@ -399,6 +402,7 @@ Lexer.prototype = {
     var rest = this.input.substr(2);
     var startLine = this.line;
     var startChar = this.char;
+    var self = this;
 
     // Create a comment token object and make sure it
     // has all the data JSHint needs to work with special
@@ -453,6 +457,26 @@ Lexer.prototype = {
           commentType = "globals";
           break;
         default:
+          var options = body.split(":").map(function(v) {
+            return v.replace(/^\s+/, "").replace(/\s+$/, "");
+          });
+
+          if (options.length === 2) {
+            switch (options[0]) {
+            case "ignore":
+              switch (options[1]) {
+              case "start":
+                self.ignoringLinterErrors = true;
+                isSpecial = false;
+                break;
+              case "end":
+                self.ignoringLinterErrors = false;
+                isSpecial = false;
+                break;
+              }
+            }
+          }
+
           commentType = str;
         }
       });
@@ -767,12 +791,12 @@ Lexer.prototype = {
           isAllowedDigit = isOctalDigit;
           base = 8;
 
-          if (!state.option.esnext) {
+          if (!state.inES6(true)) {
             this.trigger("warning", {
               code: "W119",
               line: this.line,
               character: this.char,
-              data: [ "Octal integer literal" ]
+              data: [ "Octal integer literal", "6" ]
             });
           }
 
@@ -785,12 +809,12 @@ Lexer.prototype = {
           isAllowedDigit = isBinaryDigit;
           base = 2;
 
-          if (!state.option.esnext) {
+          if (!state.inES6(true)) {
             this.trigger("warning", {
               code: "W119",
               line: this.line,
               character: this.char,
-              data: [ "Binary integer literal" ]
+              data: [ "Binary integer literal", "6" ]
             });
           }
 
@@ -1032,7 +1056,7 @@ Lexer.prototype = {
     var startChar = this.char;
     var depth = this.templateStarts.length;
 
-    if (!state.option.esnext) {
+    if (!state.inES6(true)) {
       // Only lex template strings in ESNext mode.
       return null;
     } else if (this.peek() === "`") {
@@ -1506,7 +1530,7 @@ Lexer.prototype = {
 
     // If we are ignoring linter errors, replace the input with empty string
     // if it doesn't already at least start or end a multi-line comment
-    if (state.ignoreLinterErrors === true) {
+    if (this.ignoringLinterErrors === true) {
       if (!startsWith("/*", "//") && !(this.inComment && endsWith("*/"))) {
         this.input = "";
       }
@@ -1527,7 +1551,8 @@ Lexer.prototype = {
     // If there is a limit on line length, warn when lines get too
     // long.
 
-    if (state.option.maxlen && state.option.maxlen < this.input.length) {
+    if (!this.ignoringLinterErrors && state.option.maxlen &&
+      state.option.maxlen < this.input.length) {
       var inComment = this.inComment ||
         startsWith.call(inputTrimmed, "//") ||
         startsWith.call(inputTrimmed, "/*");

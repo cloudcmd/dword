@@ -4,7 +4,7 @@
 
 "use strict";
 
-var JSHINT  = require('../../src/jshint.js').JSHINT;
+var JSHINT  = require("../..").JSHINT;
 var fs    = require('fs');
 var TestRun = require("../helpers/testhelper").setup.testRun;
 var path    = require("path");
@@ -38,6 +38,12 @@ exports.other = function (test) {
     .addError(1, "Expected an identifier and instead saw ')'.")
     .addError(1, "Unrecoverable syntax error. (100% scanned).")
     .test("if (product < ) {}", {es3: true});
+
+  // GH-2506
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw ';'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test("typeof;");
 
   test.done();
 };
@@ -110,13 +116,17 @@ exports.plusplus = function (test) {
 exports.assignment = function (test) {
   var code = [
     "function test() {",
-    "arguments.length = 2;",
-    "arguments[0] = 3;",
+    "  arguments.length = 2;",
+    "  arguments[0] = 3;",
+    "  arguments.length &= 2;",
+    "  arguments[0] >>= 3;",
     "}",
     "function test2() {",
-    "\"use strict\";",
-    "arguments.length = 2;",
-    "arguments[0] = 3;",
+    "  \"use strict\";",
+    "  arguments.length = 2;",
+    "  arguments[0] = 3;",
+    "  arguments.length &= 2;",
+    "  arguments[0] >>= 3;",
     "}",
     "a() = 2;",
   ];
@@ -124,9 +134,11 @@ exports.assignment = function (test) {
   var run = TestRun(test)
     .addError(2, "Bad assignment.")
     .addError(3, "Bad assignment.")
-    .addError(10, "Bad assignment.")
-    .addError(10, "Expected an assignment or function call and instead saw an expression.")
-    .addError(10, "Missing semicolon.");
+    .addError(4, "Bad assignment.")
+    .addError(5, "Bad assignment.")
+    .addError(14, "Bad assignment.")
+    .addError(14, "Expected an assignment or function call and instead saw an expression.")
+    .addError(14, "Missing semicolon.");
 
   run.test(code, { plusplus: true, es3: true });
   run.test(code, { plusplus: true }); // es5
@@ -209,6 +221,47 @@ exports.options = function (test) {
   run.test(code, {moz: true});
 
   TestRun(test).test(fs.readFileSync(__dirname + "/fixtures/gh988.js", "utf8"));
+
+  test.done();
+};
+
+exports.emptyDirectives = function (test) {
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* global */');
+
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* global : */');
+
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* global -: */');
+
+  TestRun(test)
+    .test('/* global foo, bar, baz, */');
+
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* globals */');
+
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* globals : */');
+
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* globals -: */');
+
+  TestRun(test)
+    .test('/* globals foo, bar, baz, */');
+
+  TestRun(test)
+    .addError(1, "Bad option value.")
+    .test('/* exported */');
+
+  TestRun(test)
+    .test('/* exported foo, bar, baz, */');
 
   test.done();
 };
@@ -329,8 +382,8 @@ exports.numbers = function (test) {
     .addError(7, "Don't use extra leading zeros '0033'.")
     .addError(8, "A trailing decimal point can be confused with a dot: '3.'.")
     .addError(9, "A dot following a number can be confused with a decimal point.")
-    .addError(11, "'Octal integer literal' is only available in ES6 (use esnext option).")
-    .addError(12, "'Binary integer literal' is only available in ES6 (use esnext option).")
+    .addError(11, "'Octal integer literal' is only available in ES6 (use 'esversion: 6').")
+    .addError(12, "'Binary integer literal' is only available in ES6 (use 'esversion: 6').")
     .addError(13, "Bad number '0x'.")
     .addError(15, "Unexpected '1'.")
     .addError(16, "Expected an identifier and instead saw ';'.")
@@ -373,6 +426,12 @@ exports.numbers = function (test) {
       "var e = 0o12345678;",
       "var f = 0b1012;",
     ], {esnext: true});
+
+  TestRun(test)
+    .test([
+      "// jshint esnext: true",
+      "var a = 0b0 + 0o0;"
+    ]);
 
   test.done();
 };
@@ -602,7 +661,8 @@ exports.ownProperty = function (test) {
   test.done();
 };
 
-exports.jsonMode = function (test) {
+exports.json = {};
+exports.json.dflt = function (test) {
   var code = [
     '{',
     '  a: 2,',
@@ -634,7 +694,7 @@ exports.jsonMode = function (test) {
   test.done();
 };
 
-exports.deepJSON = function (test) {
+exports.json.deep = function (test) {
   var code = [
     '{',
     '  "key" : {',
@@ -658,7 +718,7 @@ exports.deepJSON = function (test) {
   test.done();
 }
 
-exports.badJSON = function (test) {
+exports.json.errors = function (test) {
   var objTrailingComma = [
     '{ "key" : "value", }',
   ];
@@ -835,6 +895,17 @@ exports.badJSON = function (test) {
   test.done();
 }
 
+// Regression test for gh-2488
+exports.json.semicolon = function (test) {
+  TestRun(test)
+    .test("{ \"attr\": \";\" }");
+
+  TestRun(test)
+    .test("[\";\"]");
+
+  test.done();
+};
+
 exports.comma = function (test) {
   var src = fs.readFileSync(__dirname + "/fixtures/comma.js", "utf8");
 
@@ -861,6 +932,121 @@ exports.comma = function (test) {
   TestRun(test)
     .addError(1, "Extra comma. (it breaks older versions of IE)")
     .test("var f = [1,];", {es3: true});
+
+  test.done();
+};
+
+exports["gh-2587"] = function (test) {
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .addError(1, "Expected '===' and instead saw '=='.")
+    .test([
+    "true == if"
+  ], {eqeqeq: true, eqnull: true});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .addError(1, "Expected '!==' and instead saw '!='.")
+    .test([
+    "true != if"
+  ], {eqeqeq: true, eqnull: true});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .addError(1, "Use '===' to compare with 'true'.")
+    .test([
+    "true == if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .addError(1, "Use '!==' to compare with 'true'.")
+    .test([
+    "true != if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test([
+    "true === if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test([
+    "true !== if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test([
+    "true > if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test([
+    "true < if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test([
+    "true >= if"
+  ], {});
+
+  TestRun(test)
+    .addError(1, "Expected an identifier and instead saw 'if'.")
+    .addError(1, "Unrecoverable syntax error. (100% scanned).")
+    .test([
+    "true <= if"
+  ], {});
+
+  test.done();
+};
+
+exports.badAssignments = function (test) {
+  TestRun(test)
+    .addError(1, "Missing semicolon.")
+    .addError(1, "Bad assignment.")
+    .addError(1, "Expected an assignment or function call and instead saw an expression.")
+    .test([
+      "a() = 1;"
+    ], { });
+
+  TestRun(test)
+    .addError(1, "Missing semicolon.")
+    .addError(1, "Bad assignment.")
+    .addError(1, "Expected an assignment or function call and instead saw an expression.")
+    .test([
+      "a.a() = 1;"
+    ], { });
+
+  TestRun(test)
+    .addError(1, "Missing semicolon.")
+    .addError(1, "Bad assignment.")
+    .addError(1, "Expected an assignment or function call and instead saw an expression.")
+    .test([
+      "(function(){}) = 1;"
+    ], { });
+
+  TestRun(test)
+    .addError(1, "Missing semicolon.")
+    .addError(1, "Bad assignment.")
+    .addError(1, "Expected an assignment or function call and instead saw an expression.")
+    .test([
+      "a.a() &= 1;"
+    ], { });
 
   test.done();
 };
@@ -1101,7 +1287,6 @@ exports["destructuring var in function scope"] = function (test) {
     .addError(12, "Expected an identifier and instead saw ']'.")
     .addError(12, "Expected an assignment or function call and instead saw an expression.")
     .addError(4,  "'z' is not defined.")
-    .addError(12, "'a' is defined but never used.")
     .addError(12, "'b' is defined but never used.")
     .addError(12, "'c' is defined but never used.")
     .addError(5,  "'h' is defined but never used.")
@@ -1181,17 +1366,17 @@ exports["destructuring var as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3,  "'z' is not defined.")
     .addError(8,  "'a' is defined but never used.")
     .addError(6,  "'b' is defined but never used.")
@@ -1219,17 +1404,17 @@ exports["destructuring var as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3,  "'z' is not defined.")
     .addError(8,  "'a' is defined but never used.")
     .addError(6,  "'b' is defined but never used.")
@@ -1269,7 +1454,6 @@ exports["destructuring var errors"] = function (test) {
     .addError(11, "Expected an identifier and instead saw ']'.")
     .addError(11, "Expected an assignment or function call and instead saw an expression.")
     .addError(3,  "'z' is not defined.")
-    .addError(11, "'a' is defined but never used.")
     .addError(11, "'b' is defined but never used.")
     .addError(11, "'c' is defined but never used.")
     .addError(4,  "'h' is defined but never used.")
@@ -1330,6 +1514,7 @@ exports["destructuring const as esnext"] = function (test) {
     "const [ f, [ [ [ g ], h ], i ] ] = [ 1, [ [ [ 2 ], 3], 4 ] ];",
     "const { foo : bar } = { foo : 1 };",
     "const [ j, { foo : foobar } ] = [ 2, { foo : 1 } ];",
+    "[j] = [1];"
   ];
 
   TestRun(test)
@@ -1346,8 +1531,8 @@ exports["destructuring const as esnext"] = function (test) {
     .addError(6, "'h' is defined but never used.")
     .addError(6, "'i' is defined but never used.")
     .addError(7, "'bar' is defined but never used.")
-    .addError(8, "'j' is defined but never used.")
     .addError(8, "'foobar' is defined but never used.")
+    .addError(9, "Attempting to override 'j' which is a constant.")
     .addError(3, "'z' is not defined.")
     .test(code, {esnext: true, unused: true, undef: true});
 
@@ -1367,24 +1552,24 @@ exports["destructuring const as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'a' is defined but never used.")
     .addError(1, "'b' is defined but never used.")
     .addError(1, "'c' is defined but never used.")
@@ -1419,24 +1604,24 @@ exports["destructuring const as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'a' is defined but never used.")
     .addError(1, "'b' is defined but never used.")
     .addError(1, "'c' is defined but never used.")
@@ -1476,9 +1661,9 @@ exports["destructuring const errors"] = function (test) {
     .addError(5, "'n' is defined but never used.")
     .addError(5, "'o' is defined but never used.")
     .addError(5, "'p' is defined but never used.")
-    .addError(2, "const 'a' has already been declared.")
-    .addError(2, "const 'b' has already been declared.")
-    .addError(2, "const 'c' has already been declared.")
+    .addError(2, "'a' has already been declared.")
+    .addError(2, "'b' has already been declared.")
+    .addError(2, "'c' has already been declared.")
     .addError(3, "Expected an identifier and instead saw '1'.")
     .addError(4, "Expected ',' and instead saw ';'.")
     .addError(5, "Expected ']' to match '[' from line 5 and instead saw ';'.")
@@ -1488,7 +1673,7 @@ exports["destructuring const errors"] = function (test) {
     .addError(5, "Expected an identifier and instead saw ']'.")
     .addError(5, "Expected an assignment or function call and instead saw an expression.")
     .addError(5, "Missing semicolon.")
-    .test(code, {es3: true, esnext: true, unused: true, undef: true});
+    .test(code, {esnext: true, unused: true, undef: true});
 
   test.done();
 };
@@ -1545,13 +1730,13 @@ exports["destructuring globals as es5"] = function (test) {
 
   TestRun(test)
     .addError(4,  "'z' is not defined.")
-    .addError(2, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true}); // es5
 
   test.done();
@@ -1571,13 +1756,13 @@ exports["destructuring globals as legacy JS"] = function (test) {
 
   TestRun(test)
     .addError(4,  "'z' is not defined.")
-    .addError(2, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true});
 
   test.done();
@@ -1589,31 +1774,20 @@ exports["destructuring globals with syntax error"] = function (test) {
     "[ a ] = [ z ];",
     "[ 1 ] = [ a ];",
     "[ a, b; c ] = [ 1, 2, 3 ];",
-    "[ a, b, c ] = [ 1, 2; 3 ];"
+    "[ a, b, c ] = [ 1, 2; 3 ];",
+    "[ a ] += [ 1 ];",
   ];
 
   TestRun(test)
-    .addError(4, "Expected ']' to match '[' from line 4 and instead saw ';'.")
-    .addError(4, "Expected an assignment or function call and instead saw an expression.")
-    .addError(4, "Missing semicolon.")
-    .addError(4, "Expected an assignment or function call and instead saw an expression.")
-    .addError(4, "Missing semicolon.")
-    .addError(4, "Expected an identifier and instead saw ']'.")
-    .addError(4, "Expected an operator and instead saw '='.")
-    .addError(4, "Expected an operator and instead saw '['.")
-    .addError(4, "Expected an assignment or function call and instead saw an expression.")
-    .addError(4, "Missing semicolon.")
-    .addError(4, "Expected an assignment or function call and instead saw an expression.")
-    .addError(4, "Expected an assignment or function call and instead saw an expression.")
-    .addError(4, "Missing semicolon.")
-    .addError(4, "Expected an identifier and instead saw ']'.")
-    .addError(4, "Expected an assignment or function call and instead saw an expression.")
+    .addError(3, "Expected an identifier and instead saw '1'.")
+    .addError(4, "Expected ',' and instead saw ';'.")
     .addError(5, "Expected ']' to match '[' from line 5 and instead saw ';'.")
     .addError(5, "Missing semicolon.")
     .addError(5, "Expected an assignment or function call and instead saw an expression.")
     .addError(5, "Missing semicolon.")
     .addError(5, "Expected an identifier and instead saw ']'.")
     .addError(5, "Expected an assignment or function call and instead saw an expression.")
+    .addError(6, "Bad assignment.")
     .addError(2,  "'z' is not defined.")
     .test(code, {esnext: true, unused: true, undef: true});
 
@@ -1664,12 +1838,12 @@ exports["destructuring assign of empty values as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'a' is defined but never used.")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(2, "'c' is defined but never used.")
     .addError(2, "'d' is defined but never used.")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "'e' is defined but never used.")
     .addError(3, "'f' is defined but never used.")
     .test(code, {unused: true, undef: true, elision: true}); // es5
@@ -1685,16 +1859,90 @@ exports["destructuring assign of empty values as JS legacy"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'a' is defined but never used.")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(2, "'c' is defined but never used.")
     .addError(2, "'d' is defined but never used.")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "'e' is defined but never used.")
     .addError(3, "'f' is defined but never used.")
     .addError(3, "Extra comma. (it breaks older versions of IE)")
     .test(code, {es3: true, unused: true, undef: true});
+
+  test.done();
+};
+
+exports["destructuring assignment default values"] = function (test) {
+  var code = [
+    "var [ a = 3, b ] = [];",
+    "var [ c, d = 3 ] = [];",
+    "var [ [ e ] = [ 3 ] ] = [];",
+    "var [ f = , g ] = [];",
+    "var { g, h = 3 } = {};",
+    "var { i = 3, j } = {};",
+    "var { k, l: m = 3 } = {};",
+    "var { n: o = 3, p } = {};",
+    "var { q: { r } = { r: 3 } } = {};",
+    "var { s = , t } = {};",
+    "var [ u = undefined ] = [];",
+    "var { v = undefined } = {};",
+    "var { w: x = undefined } = {};",
+    "var [ ...y = 3 ] = [];"
+  ];
+
+  TestRun(test)
+    .addError(4, "Expected an identifier and instead saw ','.")
+    .addError(4, "Expected ',' and instead saw 'g'.")
+    .addError(10, "Expected an identifier and instead saw ','.")
+    .addError(10, "Expected ',' and instead saw 't'.")
+    .addError(11, "It's not necessary to initialize 'u' to 'undefined'.")
+    .addError(12, "It's not necessary to initialize 'v' to 'undefined'.")
+    .addError(13, "It's not necessary to initialize 'x' to 'undefined'.")
+    .addError(14, "Expected ']' and instead saw '='.")
+    .test(code, { esnext: true });
+
+  test.done();
+};
+
+exports["non-identifier PropertyNames in object destructuring"] = function (test) {
+  var code = [
+    "var { ['x' + 2]: a = 3, 0: b } = { x2: 1, 0: 2 };",
+    "var { c, '': d, 'x': e } = {};",
+    "function fn({ 0: f, 'x': g, ['y']: h}) {}"
+  ];
+
+  TestRun(test)
+    .addError(1, "'a' is defined but never used.")
+    .addError(1, "'b' is defined but never used.")
+    .addError(2, "'c' is defined but never used.")
+    .addError(2, "'d' is defined but never used.")
+    .addError(2, "'e' is defined but never used.")
+    .addError(3, "'fn' is defined but never used.")
+    .addError(3, "'f' is defined but never used.")
+    .addError(3, "'g' is defined but never used.")
+    .addError(3, "'h' is defined but never used.")
+    .test(code, { esnext: true, unused: true });
+
+  test.done();
+};
+
+exports["empty destructuring"] = function (test) {
+  var code = [
+    "var {} = {};",
+    "var [] = [];",
+    "function a({}, []) {}",
+    "var b = ({}) => ([]) => ({});"
+  ];
+
+  TestRun(test)
+    .addError(1, "Empty destructuring.")
+    .addError(2, "Empty destructuring.")
+    .addError(3, "Empty destructuring.")
+    .addError(3, "Empty destructuring.")
+    .addError(4, "Empty destructuring.")
+    .addError(4, "Empty destructuring.")
+    .test(code, { esnext: true });
 
   test.done();
 };
@@ -1766,9 +2014,9 @@ exports["let statement as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -1789,9 +2037,9 @@ exports["let statement as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -1859,9 +2107,9 @@ exports["let statement out of scope as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'x' is defined but never used.")
     .addError(5, "'z' is defined but never used.")
     .addError(3, "'y' is defined but never used.")
@@ -1886,9 +2134,9 @@ exports["let statement out of scope as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'x' is defined but never used.")
     .addError(5, "'z' is defined but never used.")
     .addError(3, "'y' is defined but never used.")
@@ -1960,9 +2208,9 @@ exports["let statement in functions as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -1985,9 +2233,9 @@ exports["let statement in functions as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -2066,10 +2314,10 @@ exports["let statement not in scope as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "'z' is defined but never used.")
     .addError(3, "'y' is defined but never used.")
     .addError(4, "'bar' is defined but never used.")
@@ -2098,10 +2346,10 @@ exports["let statement not in scope as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "'z' is defined but never used.")
     .addError(3, "'y' is defined but never used.")
     .addError(4, "'bar' is defined but never used.")
@@ -2128,7 +2376,7 @@ exports["let statement in for loop as moz"] = function (test) {
     "for (let i = 0; i<15; ++i) {",
     "  print(i);",
     "}",
-    "for (let i=i ; i < 10 ; i++ ) {",
+    "for (let i=0 ; i < 10 ; i++ ) {",
     "print(i);",
     "}"
   ];
@@ -2154,7 +2402,7 @@ exports["let statement in for loop as esnext"] = function (test) {
     "for (let i = 0; i<15; ++i) {",
     "  print(i);",
     "}",
-    "for (let i=i ; i < 10 ; i++ ) {",
+    "for (let i=0 ; i < 10 ; i++ ) {",
     "print(i);",
     "}"
   ];
@@ -2180,18 +2428,18 @@ exports["let statement in for loop as es5"] = function (test) {
     "for (let i = 0; i<15; ++i) {",
     "  print(i);",
     "}",
-    "for (let i=i ; i < 10 ; i++ ) {",
+    "for (let i=0 ; i < 10 ; i++ ) {",
     "print(i);",
     "}"
   ];
 
   TestRun(test)
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(11, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(14, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(11, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(14, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print", "Iterator"]}); // es5
 
   test.done();
@@ -2212,18 +2460,18 @@ exports["let statement in for loop as legacy JS"] = function (test) {
     "for (let i = 0; i<15; ++i) {",
     "  print(i);",
     "}",
-    "for (let i=i ; i < 10 ; i++ ) {",
+    "for (let i=0 ; i < 10 ; i++ ) {",
     "print(i);",
     "}"
   ];
 
   TestRun(test)
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(11, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(14, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(11, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(14, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print", "Iterator"]});
 
   test.done();
@@ -2328,8 +2576,8 @@ exports["let statement in destructured for loop as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(21, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(21, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -2364,8 +2612,8 @@ exports["let statement in destructured for loop as legacy JS"] = function (test)
   ];
 
   TestRun(test)
-    .addError(21, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(21, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -2439,9 +2687,9 @@ exports["let statement (as seen in jetpack) as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "'let block' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {unused: true, undef: true,
            predef: ["require", "xferable", "options"]}); // es5
@@ -2467,9 +2715,9 @@ exports["let statement (as seen in jetpack) as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "'let block' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {es3: true, unused: true, undef: true,
            predef: ["require", "xferable", "options"]});
@@ -2521,13 +2769,13 @@ exports["let block and let expression as es5"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'let block' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "'let block' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(4, "'let expressions' is only available in Mozilla JavaScript extensions " +
       "(use moz option).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
   test.done();
 };
@@ -2543,13 +2791,13 @@ exports["let block and let expression as legacy JS"] = function (test) {
   ];
 
   TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "'let block' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "'let block' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(4, "'let expressions' is only available in Mozilla JavaScript extensions " +
       "(use moz option).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
   test.done();
 };
@@ -2600,7 +2848,8 @@ exports["make sure var variables can shadow let variables"] = function (test) {
     .addError(1, "'a' is defined but never used.")
     .addError(2, "'b' is defined but never used.")
     .addError(3, "'c' is defined but never used.")
-    .addError(7, "'d' is defined but never used.")
+    .addError(9, "'d' is defined but never used.")
+    .addError(9, "'d' has already been declared.")
     .test(code, { esnext: true, unused: true, undef: true, funcscope: true });
 
   test.done();
@@ -2631,6 +2880,33 @@ exports["make sure let variables in the closure of blocks shadow predefined glob
   ];
 
   TestRun(test).test(code, { esnext: true, predef: { foo: false } });
+  test.done();
+};
+
+exports["make sure variables may shadow globals in functions after they are referenced"] = function (test) {
+  var code = [
+    "var foo;",
+    "function x() {",
+    "  foo();",
+    "  var foo;",
+    "}"
+  ];
+
+  TestRun(test).test(code);
+  test.done();
+};
+
+exports["test block scope redefines globals only outside of blocks"] = function (test) {
+  var code = [
+    "{",
+    "  let Map = true;",
+    "}",
+    "let Map = false;"
+  ];
+
+  TestRun(test)
+    .addError(4, "Redefinition of 'Map'.")
+    .test(code, { esnext: true, browser: true });
   test.done();
 };
 
@@ -2686,9 +2962,9 @@ exports["test destructuring function as es5"] = function (test) {
     "whois(user);"
   ];
   TestRun(test)
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -2708,12 +2984,78 @@ exports["test destructuring function as legacy JS"] = function (test) {
     "whois(user);"
   ];
   TestRun(test)
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
+};
+
+exports["destructuring function default values"] = function (test) {
+  var code = [
+    "function a([ b = 2, c = 2 ] = []) {}",
+    "function d([ f = 2 ], g, [ e = 2 ] = []) {}",
+    "function h({ i = 2 }, { j = 2 } = {}) {}",
+    "function k({ l: m = 2, n = 2 }) {}",
+    "let o = (p, [ q = 2, r = 2 ]) => {};",
+    "let s = ({ t = 2 } = {}, [ u = 2 ] = []) => {};",
+    "let v = ({ w: x = 2, y = 2 }) => {};"
+  ];
+
+  TestRun(test).test(code, { esnext: true });
+
+  test.done();
+};
+
+exports["non var destructuring assignment statement"] = function (test) {
+  var codeValid = [
+    "let b;",
+    "[b] = b;",
+    "([b] = b);",
+    "({b} = b);",
+    "let c = {b} = b;",
+    "c = [b] = b;",
+    "c = ({b} = b);",
+    "c = ([b] = b);"
+  ];
+
+  var codeInvalid = [
+    "let b;",
+    "{b} = b;",
+    "({b}) = b;",
+    "([b]) = b;",
+    "[{constructor(){}}] = b;",
+    "([{constructor(){}}] = b);",
+    "let c = ({b}) = b;",
+    "c = ([b]) = b;"
+  ];
+
+  TestRun(test).test(codeValid, { esnext: true });
+
+  TestRun(test)
+    .addError(2, "Expected an assignment or function call and instead saw an expression.")
+    .addError(2, "Missing semicolon.")
+    .addError(2, "Expected an identifier and instead saw '='.")
+    .addError(2, "Expected an assignment or function call and instead saw an expression.")
+    .addError(2, "Missing semicolon.")
+    .addError(2, "Expected an assignment or function call and instead saw an expression.")
+    .addError(3, "Bad assignment.")
+    .addError(4, "Bad assignment.")
+    .addError(5, "Expected ',' and instead saw '('.")
+    .addError(5, "Expected an identifier and instead saw ')'.")
+    .addError(5, "Expected ',' and instead saw '{'.")
+    .addError(5, "Expected ',' and instead saw '}'.")
+    .addError(6, "Expected ',' and instead saw '('.")
+    .addError(6, "Expected an identifier and instead saw ')'.")
+    .addError(6, "Expected ',' and instead saw '{'.")
+    .addError(6, "Expected ',' and instead saw '}'.")
+    .addError(7, "Bad assignment.")
+    .addError(8, "Bad assignment.")
+    .test(codeInvalid, { esnext: true });
+
+  test.done();
+
 };
 
 exports["invalid for each"] = function (test) {
@@ -2758,7 +3100,7 @@ exports["invalid for each as ES5"] = function (test) {
   TestRun(test)
     .addError(1, "Invalid for each loop.")
     .addError(1, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -2774,7 +3116,7 @@ exports["invalid for each as legacy JS"] = function (test) {
   TestRun(test)
     .addError(1, "Invalid for each loop.")
     .addError(1, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -2817,7 +3159,7 @@ exports["esnext generator as moz extension"] = function (test) {
     "  print(g.next());"
   ];
   TestRun(test)
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
     .test(code, {moz: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -2839,9 +3181,9 @@ exports["esnext generator as es5"] = function (test) {
     "  print(g.next());"
   ];
   TestRun(test)
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
-    .addError(4, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -2863,9 +3205,9 @@ exports["esnext generator as legacy JS"] = function (test) {
     "  print(g.next());"
   ];
   TestRun(test)
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
-    .addError(4, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -2913,9 +3255,9 @@ exports["esnext generator with yield delegation, gh-1544"] = function(test) {
   ];
 
   TestRun(test)
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
-    .addError(2, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'function*' is only available in ES6 (use esnext option).")
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'function*' is only available in ES6 (use 'esversion: 6').")
     .addError(2, "A generator function shall contain a yield statement.")
     .test(code);
 
@@ -3002,9 +3344,9 @@ exports["mozilla generator as es5"] = function (test) {
     "  print(g.next());"
   ];
   TestRun(test)
-    .addError(4, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {unused: true, undef: true, predef: ["print", "Iterator"]}); // es5
 
   test.done();
@@ -3025,9 +3367,9 @@ exports["mozilla generator as legacy JS"] = function (test) {
     "  print(g.next());"
   ];
   TestRun(test)
-    .addError(4, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring assignment' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring assignment' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print", "Iterator"]});
 
   test.done();
@@ -3056,6 +3398,32 @@ exports["array comprehension"] = function (test) {
   test.done();
 };
 
+exports["array comprehension unused and undefined"] = function (test) {
+  var code = [
+    "var range = [1, 2];",
+    "var a = [for (i of range) if (i % 2 === 0) i];",
+    "var b = [for (j of range) doesnotexist];"
+  ];
+  TestRun(test)
+    .addError(2, "'a' is defined but never used.")
+    .addError(3, "'j' is defined but never used.")
+    .addError(3, "'doesnotexist' is not defined.")
+    .addError(3, "'b' is defined but never used.")
+    .test(code, { esnext: true, unused: true, undef: true });
+
+  var unused = JSHINT.data().unused;
+  test.deepEqual([
+    { name: 'a', line: 2, character: 5 },
+    { name: 'b', line: 3, character: 5 }
+    //{ name: 'j', line: 3, character: 15 } // see gh-2440
+  ], unused);
+
+  var implieds = JSHINT.data().implieds;
+  test.deepEqual([{ name: 'doesnotexist', line: [ 3 ] }], implieds);
+
+  test.done();
+};
+
 exports["gh-1856 mistakenly identified as array comprehension"] = function (test) {
   var code = [
     "function main(value) {",
@@ -3071,6 +3439,18 @@ exports["gh-1856 mistakenly identified as array comprehension"] = function (test
 
   TestRun(test)
     .test(code);
+
+  test.done();
+};
+
+exports["gh-1413 wrongly detected as array comprehension"] = function (test) {
+  var code = [
+    "var a = {};",
+    "var b = [ a.for ];"
+  ];
+
+  TestRun(test)
+    .test(code, { unused: false });
 
   test.done();
 };
@@ -3195,13 +3575,11 @@ exports["array comprehension as es5"] = function (test) {
     "print('evens:', evens);"
   ];
   TestRun(test)
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(7, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(7, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3221,14 +3599,12 @@ exports["moz-style array comprehension as es5"] = function (test) {
     "print('evens:', evens);"
   ];
   TestRun(test)
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(6, "Expected 'for' and instead saw 'i'.")
     .addError(6, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(7, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(7, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(7, "Expected 'for' and instead saw 'i'.")
     .addError(7, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {unused: true, undef: true, predef: ["print"]}); // es5
@@ -3250,12 +3626,10 @@ exports["array comprehension as legacy JS"] = function (test) {
     "print('evens:', evens);"
   ];
   TestRun(test)
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(7, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(7, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -3275,14 +3649,12 @@ exports["moz-style array comprehension as legacy JS"] = function (test) {
     "print('evens:', evens);"
   ];
   TestRun(test)
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(6, "Expected 'for' and instead saw 'i'.")
     .addError(6, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(7, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(7, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(7, "Expected 'for' and instead saw 'i'.")
     .addError(7, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {es3: true, unused: true, undef: true, predef: ["print"]});
@@ -3339,12 +3711,9 @@ exports['array comprehension with dest array at global scope as es5'] = function
     "var destarray_comparray_2 = [for ([i, j] of [[0,0], [1,1], [2,2]]) [i, {i: [i, j]} ] ];",
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(2, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(3, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(2, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(3, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3357,16 +3726,13 @@ exports['moz-style array comprehension with dest array at global scope as es5'] 
     "var destarray_comparray_2 = [ [i, {i: [i, j]} ] for each ([i, j] in [[0,0], [1,1], [2,2]])];",
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(1, "Expected 'for' and instead saw '['.")
     .addError(1, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(2, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(2, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(2, "Expected 'for' and instead saw '['.")
     .addError(2, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(3, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(3, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(3, "Expected 'for' and instead saw '['.")
     .addError(3, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {undef: true, predef: ["print"]}); // es5
@@ -3381,12 +3747,9 @@ exports['array comprehension with dest array at global scope as JS legacy'] = fu
     "var destarray_comparray_2 = [for ([i, j] of [[0,0], [1,1], [2,2]]) [i, {i: [i, j]} ] ];",
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(2, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(3, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(2, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(3, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {es3: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -3399,16 +3762,13 @@ exports['moz-style array comprehension with dest array at global scope as JS leg
     "var destarray_comparray_2 = [ [i, {i: [i, j]} ] for each ([i, j] in [[0,0], [1,1], [2,2]])];",
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(1, "Expected 'for' and instead saw '['.")
     .addError(1, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(2, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(2, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(2, "Expected 'for' and instead saw '['.")
     .addError(2, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
-    .addError(3, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(3, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(3, "Expected 'for' and instead saw '['.")
     .addError(3, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {es3: true, undef: true, predef: ["print"]});
@@ -3466,10 +3826,8 @@ exports["array comprehension imbrication with dest array as es5"] = function (te
     "[for ([i, j] of [for ([a, b] of [[2,2], [3,4]]) [a, b] ]) [i, j] ];"
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3480,10 +3838,8 @@ exports["moz-style array comprehension imbrication with dest array as es5"] = fu
     "[for ([i, j] of [for ([a, b] of [[2,2], [3,4]]) [a, b] ]) [i, j] ];"
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .test(code, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3495,10 +3851,8 @@ exports["array comprehension imbrication with dest array as legacy JS"] = functi
 
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(1, "Expected 'for' and instead saw '['.")
     .addError(1, "Expected 'for' and instead saw '['.")
     .addError(1, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
@@ -3513,10 +3867,8 @@ exports["moz-style array comprehension imbrication with dest array as legacy JS"
 
   ];
   TestRun(test)
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
-    .addError(1, "'array comprehension' is only available in ES6 " +
-      "(use esnext option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
+    .addError(1, "'array comprehension' is only available in Mozilla JavaScript extensions (use moz option).")
     .addError(1, "Expected 'for' and instead saw '['.")
     .addError(1, "Expected 'for' and instead saw '['.")
     .addError(1, "'for each' is only available in Mozilla JavaScript extensions (use moz option).")
@@ -3659,12 +4011,13 @@ exports["for of as esnext"] = function (test) {
     "}",
     "for (let x of [1,2,3,4]) print(x);",
     "for (const x of [1,2,3,4]) print(x);",
-    "for (x = 1 of [1,2,3,4]) print(x);",
-    "for (x, y of [1,2,3,4]) print(x + y);",
-    "for (x = 1, y = 2 of [1,2,3,4]) print(x + y);",
-    "for (var x = 1 of [1,2,3,4]) print(x);",
-    "for (var x, y of [1,2,3,4]) print(x + y);",
-    "for (var x = 1, y = 2 of [1,2,3,4]) print(x + y);",
+    "var xg, yg;",
+    "for (xg = 1 of [1,2,3,4]) print(xg);",
+    "for (xg, yg of [1,2,3,4]) print(xg + yg);",
+    "for (xg = 1, yg = 2 of [1,2,3,4]) print(xg + yg);",
+    "for (var xv = 1 of [1,2,3,4]) print(xv);",
+    "for (var xv, yv of [1,2,3,4]) print(xv + yv);",
+    "for (var xv = 1, yv = 2 of [1,2,3,4]) print(xv + yv);",
     "for (let x = 1 of [1,2,3,4]) print(x);",
     "for (let x, y of [1,2,3,4]) print(x + y);",
     "for (let x = 1, y = 2 of [1,2,3,4]) print(x + y);",
@@ -3673,22 +4026,22 @@ exports["for of as esnext"] = function (test) {
     "for (const x = 1, y = 2 of [1,2,3,4]) print(x + y);"
   ];
   TestRun(test)
-    .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "Invalid for-of loop left-hand-side: initializer is forbidden.")
+    .addError(7, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(10, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(11, "Invalid for-of loop left-hand-side: initializer is forbidden.")
+    .addError(9, "Invalid for-of loop left-hand-side: more than one ForBinding.")
+    .addError(10, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(11, "Invalid for-of loop left-hand-side: more than one ForBinding.")
     .addError(12, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(13, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(14, "Invalid for-of loop left-hand-side: initializer is forbidden.")
+    .addError(12, "Invalid for-of loop left-hand-side: more than one ForBinding.")
+    .addError(13, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(14, "Invalid for-of loop left-hand-side: more than one ForBinding.")
     .addError(15, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(16, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(17, "Invalid for-of loop left-hand-side: initializer is forbidden.")
+    .addError(15, "Invalid for-of loop left-hand-side: more than one ForBinding.")
+    .addError(16, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(17, "Invalid for-of loop left-hand-side: more than one ForBinding.")
+    .addError(18, "Invalid for-of loop left-hand-side: initializer is forbidden.")
+    .addError(18, "Invalid for-of loop left-hand-side: more than one ForBinding.")
     .test(code, {esnext: true, undef: true, predef: ["print"]});
 
   test.done();
@@ -3715,46 +4068,46 @@ exports["for of as es5"] = function (test) {
     "for (const x = 1, y = 2 of [1,2,3,4]) print(x + y);"
   ];
   TestRun(test)
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(7, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(8, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(8, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(9, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(9, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(10, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(10, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(10, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(11, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(11, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(11, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(11, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(12, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(12, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(12, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(12, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(13, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(12, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(13, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(13, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(13, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(14, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(13, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(14, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(14, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(14, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(14, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(14, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(15, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(15, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(15, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(15, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(15, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(16, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(16, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(17, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(16, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(17, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(17, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(17, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(17, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(17, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3781,46 +4134,46 @@ exports["for of as legacy JS"] = function (test) {
     "for (const x = 1, y = 2 of [1,2,3,4]) print(x + y);"
   ];
   TestRun(test)
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(7, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(8, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(8, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(9, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(9, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(10, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(10, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(10, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(11, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(11, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(11, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(11, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(12, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(12, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(12, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(12, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(13, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(12, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(13, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(13, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(13, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(14, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(13, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(14, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(14, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(14, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(14, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(14, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(15, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(15, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(15, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(15, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(15, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(16, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(16, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(17, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(16, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(17, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(17, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(17, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(17, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(17, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3890,18 +4243,18 @@ exports["array destructuring for of as es5"] = function (test) {
   ];
 
   TestRun(test, "basic")
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "Creating global 'for' variable. Should be 'for (var i ...'.")
     .addError(1, "Creating global 'for' variable. Should be 'for (var v ...'.")
-    .addError(2, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(basic, {undef: true, predef: ["print"]}); // es5
 
   var bad = [
@@ -3914,30 +4267,30 @@ exports["array destructuring for of as es5"] = function (test) {
   ];
 
   TestRun(test, "errors #1")
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(2, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(3, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad, {undef: true, predef: ["print"]}); // es5
 
   var bad2 = [
@@ -3949,36 +4302,36 @@ exports["array destructuring for of as es5"] = function (test) {
     "for (const [i, v], [a, b] = [1, 2] of [[0, 1],[1, 2],[2, 3],[3, 4]]) print(i + '=' + v);",
   ];
   TestRun(test, "errors #2")
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(2, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(3, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad2, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -3993,18 +4346,18 @@ exports["array destructuring for of as legacy JS"] = function (test) {
   ];
 
   TestRun(test, "basic")
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "Creating global 'for' variable. Should be 'for (var i ...'.")
     .addError(1, "Creating global 'for' variable. Should be 'for (var v ...'.")
-    .addError(2, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(basic, {es3: true, undef: true, predef: ["print"]}); // es3
 
   var bad = [
@@ -4017,30 +4370,30 @@ exports["array destructuring for of as legacy JS"] = function (test) {
   ];
 
   TestRun(test, "errors #1")
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(2, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(3, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad, {es3: true, undef: true, predef: ["print"]}); // es3
 
   var bad2 = [
@@ -4052,36 +4405,36 @@ exports["array destructuring for of as legacy JS"] = function (test) {
     "for (const [i, v], [a, b] = [1, 2] of [[0, 1],[1, 2],[2, 3],[3, 4]]) print(i + '=' + v);",
   ];
   TestRun(test, "errors #2")
-    .addError(1, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(1, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(2, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(3, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(3, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad2, {es3: true, undef: true, predef: ["print"]}); // es3
 
   test.done();
@@ -4164,22 +4517,22 @@ exports["object destructuring for of as es5"] = function (test) {
   ];
 
   TestRun(test, "basic")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Creating global 'for' variable. Should be 'for (var key ...'.")
     .addError(4, "Creating global 'for' variable. Should be 'for (var value ...'.")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(basic, {undef: true, predef: ["print"]}); // es5
 
   var bad = [
@@ -4195,36 +4548,36 @@ exports["object destructuring for of as es5"] = function (test) {
   ];
 
   TestRun(test, "errors #1")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(7, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(9, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad, {undef: true, predef: ["print"]}); // es5
 
   var bad2 = [
@@ -4240,42 +4593,42 @@ exports["object destructuring for of as es5"] = function (test) {
   ];
 
   TestRun(test, "errors #2")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(7, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(7, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(8, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(9, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(9, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(9, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad2, {undef: true, predef: ["print"]}); // es5
 
   test.done();
@@ -4293,22 +4646,22 @@ exports["object destructuring for of as legacy JS"] = function (test) {
   ];
 
   TestRun(test, "basic")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Creating global 'for' variable. Should be 'for (var key ...'.")
     .addError(4, "Creating global 'for' variable. Should be 'for (var value ...'.")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(basic, {es3: true, undef: true, predef: ["print"]}); // es3
 
   var bad = [
@@ -4324,36 +4677,36 @@ exports["object destructuring for of as legacy JS"] = function (test) {
   ];
 
   TestRun(test, "errors #1")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(7, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(9, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad, {es3: true, undef: true, predef: ["print"]}); // es3
 
   var bad2 = [
@@ -4369,42 +4722,42 @@ exports["object destructuring for of as legacy JS"] = function (test) {
   ];
 
   TestRun(test, "errors #2")
-    .addError(4, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(4, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(5, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(6, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(6, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(7, "Invalid for-of loop left-hand-side: initializer is forbidden.")
-    .addError(7, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(7, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(8, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(8, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'for of' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(8, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'for of' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .addError(9, "Invalid for-of loop left-hand-side: initializer is forbidden.")
     .addError(9, "Invalid for-of loop left-hand-side: more than one ForBinding.")
-    .addError(9, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(9, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(9, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(9, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(bad2, {es3: true, undef: true, predef: ["print"]}); // es3
 
   test.done();
@@ -4544,6 +4897,61 @@ exports["no const not directly within a block"] = function (test) {
   test.done();
 };
 
+exports["test: let declared directly within block"] = function (test) {
+  var code = [
+    "for (let i;;){",
+    "  console.log(i);",
+    "}"
+  ];
+
+  TestRun(test)
+    .test(code, {esnext: true});
+
+  code = [
+    "for (let i;;)",
+    "  console.log(i);"
+  ];
+
+  TestRun(test)
+    .test(code, {esnext: true});
+
+  test.done();
+};
+
+exports["test: let is directly within nested block"] = function (test) {
+  var code   = [
+    "if(true) {",
+    "  for (let i;;)",
+    "    console.log(i);",
+    "}"
+  ];
+
+  TestRun(test)
+    .test(code, {esnext: true});
+
+  code   = [
+    "if(true)",
+    "  for (let i;;)",
+    "    console.log(i);"
+  ];
+
+  TestRun(test)
+    .test(code, {esnext: true});
+
+  code   = [
+    "if(true) {",
+    "  for (let i;;){",
+    "    console.log(i);",
+    "  }",
+    "}"
+  ];
+
+  TestRun(test)
+    .test(code, {esnext: true});
+
+  test.done();
+};
+
 exports["regression test for crash from GH-964"] = function (test) {
   var code = [
     "function test(a, b) {",
@@ -4639,7 +5047,10 @@ exports["fat arrows support"] = function (test) {
     "  assgnRetnObj: (() => ({}))(),",
     "  retnObjLong: () => { return {}; },",
     "  assgnRetnObjLong: (() => { return {}; })()",
-    "};"
+    "};",
+
+    // GH-2351
+    "let immediatelyInvoked = (x => {})(0);"
   ];
 
   var run = TestRun(test)
@@ -4653,70 +5064,69 @@ exports["fat arrows support"] = function (test) {
   run.test(code, { undef: true, esnext: true });
 
   run = TestRun(test)
-    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(2, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(3, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(3, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .addError(5, "'evens' is not defined.")
-    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .addError(6, "'nats' is not defined.")
-    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .addError(8, "'print' is not defined.")
     .addError(8, "'z' is not defined.")
     .addError(9, "'print' is not defined.")
     .addError(9, "'j' is not defined.")
-    .addError(13, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(17, "Bad invocation.")
-    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(19, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(19, "Bad invocation.")
-    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(22, "Bad invocation.")
-    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(24, "Bad invocation.");
+    .addError(13, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(19, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(26, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').");
 
   run.test(code, { undef: true, moz: true });
 
   run = TestRun(test)
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(3, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(7, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(11, "'const' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(13, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(16, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(17, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(3, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(11, "'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(13, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(16, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(17, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .addError(17, "Bad invocation.")
-    .addError(18, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(19, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(19, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(18, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(19, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(19, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .addError(19, "Bad invocation.")
-    .addError(20, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(20, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .addError(22, "Bad invocation.")
-    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(24, "Bad invocation.");
+    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(24, "Bad invocation.")
+    .addError(26, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(26, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').");
 
   run.test(code); // es5
   run.test(code, {es3: true});
@@ -4790,10 +5200,10 @@ conciseMethods.basicSupport = function (test) {
   run.test(code, {moz: true});
 
   run = TestRun(test)
-    .addError(2, "'concise methods' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'generator functions' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'concise methods' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'yield' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).");
+    .addError(2, "'concise methods' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'generator functions' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'concise methods' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'yield' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).");
 
   run.test(code); // es5
   run.test(code, {es3: true});
@@ -4877,10 +5287,10 @@ exports["object short notation: basic"] = function (test) {
   TestRun(test, 1).test(code, {esnext: true});
 
   TestRun(test, 2)
-    .addError(2, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
     .test(code);
 
   test.done();
@@ -4896,10 +5306,10 @@ exports["object short notation: mixed"] = function (test) {
   TestRun(test).test(code, { esnext: true });
 
   TestRun(test)
-    .addError(2, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'object short notation' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(2, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'object short notation' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
   .test(code);
 
   test.done();
@@ -4929,16 +5339,16 @@ exports["object ComputedPropertyName"] = function (test) {
   TestRun(test).test(code, { esnext: true });
 
   TestRun(test)
-    .addError(6, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(7, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(8, "'concise methods' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(9, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(10, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(11, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(13, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(15, "'computed property names' is only available in ES6 (use esnext option).")
-    .addError(17, "'computed property names' is only available in ES6 (use esnext option).")
+    .addError(6, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(8, "'concise methods' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(9, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(11, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(13, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(15, "'computed property names' is only available in ES6 (use 'esversion: 6').")
+    .addError(17, "'computed property names' is only available in ES6 (use 'esversion: 6').")
   .test(code);
 
   test.done();
@@ -4988,38 +5398,38 @@ exports["spread & rest operator support"] = function (test) {
     .test(code, {esnext: true});
 
   TestRun(test)
-    .addError(1, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(2, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(3, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(4, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(5, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(7, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(8, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(9, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(10, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(11, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(12, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(1, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(3, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(8, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(9, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(11, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(12, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
     .test(code, {moz: true});
 
   TestRun(test)
-    .addError(1, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(2, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(3, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(4, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(5, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(6, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
+    .addError(1, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(3, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(6, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
 
-    .addError(7, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(8, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(9, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(10, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(10, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(11, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(12, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(7, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(8, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(9, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(10, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(11, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(12, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
     .test(code);
 
   test.done();
@@ -5068,61 +5478,61 @@ exports["parameter destructuring with rest"] = function (test) {
   run.test(code, {esnext: true});
 
   run = TestRun(test)
-    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(7, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(1, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(1, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(2, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(2, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(3, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(3, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(4, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(4, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(5, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(5, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(6, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(6, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(8, "'spread/rest operator' is only available in ES6 (use esnext option).")
-    .addError(9, "'spread/rest operator' is only available in ES6 (use esnext option).");
+    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(1, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(1, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(2, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(3, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(3, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(6, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(6, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(8, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
+    .addError(9, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').");
 
   run.test(code, {moz: true});
 
   run = TestRun(test)
-    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(1, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(1, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(1, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(1, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(1, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(2, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(2, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(2, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(2, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(3, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(3, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(3, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(7, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(8, "'let' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(8, "'spread/rest operator' is only available in ES6 (use esnext option).")
+    .addError(8, "'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(8, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').")
 
-    .addError(9, "'spread/rest operator' is only available in ES6 (use esnext option).");
+    .addError(9, "'spread/rest operator' is only available in ES6 (use 'esversion: 6').");
 
 
   run.test(code);
@@ -5246,7 +5656,13 @@ exports.classes = function (test) {
 
   var run = TestRun(test)
     .addError(cdecl + 4, "Expected an identifier and instead saw 'package' (a reserved word).")
-    .addError(cexpr + 4, "Expected an identifier and instead saw 'package' (a reserved word).");
+    .addError(cexpr + 4, "Expected an identifier and instead saw 'package' (a reserved word).")
+    .addError(cdeclAssn + 4, "Reassignment of 'Foo15', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cdeclAssn + 7, "Reassignment of 'Foo18', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cdeclAssn + 7, "Reassignment of 'Foo17', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cexprAssn + 4, "Reassignment of 'Foo15', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cexprAssn + 7, "Reassignment of 'Foo18', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cexprAssn + 7, "Reassignment of 'Foo17', which is is a class. Use 'var' or 'let' to declare bindings that may change.");
 
   run.test(code, {esnext: true});
   run.test(code, {moz: true});
@@ -5262,6 +5678,14 @@ exports.classes = function (test) {
     .addError(cexpr + 3, "'static' is defined but never used.")
     .addError(cexpr + 3, "Expected an identifier and instead saw 'protected' (a reserved word).")
     .addError(cexpr + 4, "'package' is defined but never used.");
+
+  run
+    .addError(cdeclAssn + 4, "Reassignment of 'Foo15', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cdeclAssn + 7, "Reassignment of 'Foo18', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cdeclAssn + 7, "Reassignment of 'Foo17', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cexprAssn + 4, "Reassignment of 'Foo15', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cexprAssn + 7, "Reassignment of 'Foo18', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(cexprAssn + 7, "Reassignment of 'Foo17', which is is a class. Use 'var' or 'let' to declare bindings that may change.");
 
   code[0] = "'use strict';" + code[0];
   run.test(code, {unused: true, globalstrict: true, esnext: true});
@@ -5394,18 +5818,61 @@ exports.classExpression = function (test) {
     "  static method() { MyClass = null; }",
     "  get accessor() { MyClass = null; }",
     "  set accessor() { MyClass = null; }",
+    "  method2() { MyClass &= null; }",
     "};",
     "void MyClass;"
   ];
 
   TestRun(test)
-    .addError(2, "'MyClass' is a function.")
-    .addError(3, "'MyClass' is a function.")
-    .addError(4, "'MyClass' is a function.")
-    .addError(5, "'MyClass' is a function.")
-    .addError(6, "'MyClass' is a function.")
-    .addError(8, "'MyClass' is not defined.")
+    .addError(2, "Reassignment of 'MyClass', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(3, "Reassignment of 'MyClass', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(4, "Reassignment of 'MyClass', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(5, "Reassignment of 'MyClass', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(6, "Reassignment of 'MyClass', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(7, "Reassignment of 'MyClass', which is is a class. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(9, "'MyClass' is not defined.")
     .test(code, { esnext: true, undef: true });
+
+  test.done();
+};
+
+exports.functionReassignment = function (test) {
+  var src = [
+    "function f() {}",
+    "f = null;",
+    "f ^= null;",
+    "function g() {",
+    "  g = null;",
+    "  g &= null;",
+    "}",
+    "(function h() {",
+    "  h = null;",
+    "  h |= null;",
+    "}());"
+  ];
+
+  TestRun(test)
+    .addError(2, "Reassignment of 'f', which is is a function. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(3, "Reassignment of 'f', which is is a function. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(5, "Reassignment of 'g', which is is a function. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(6, "Reassignment of 'g', which is is a function. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(9, "Reassignment of 'h', which is is a function. Use 'var' or 'let' to declare bindings that may change.")
+    .addError(10, "Reassignment of 'h', which is is a function. Use 'var' or 'let' to declare bindings that may change.")
+    .test(src);
+
+  test.done();
+};
+
+exports.functionNotOverwritten = function (test) {
+  var code = [
+    "function x() {",
+    "  x = 1;",
+    "  var x;",
+    "}"
+  ];
+
+  TestRun(test)
+    .test(code, { shadow: true });
 
   test.done();
 };
@@ -5603,13 +6070,15 @@ exports["test for crash with invalid condition"] = function (test) {
     .addError(4, "Expected an identifier and instead saw ','.")
     .addError(4, "Expected ')' to match '(' from line 4 and instead saw 'b'.")
     .addError(4, "Expected an identifier and instead saw ')'.")
+    .addError(4, "Missing semicolon.")
     .addError(6, "Expected an identifier and instead saw ','.")
     .addError(7, "Unexpected ')'.")
     .addError(7, "Expected an identifier and instead saw ')'.")
     .addError(7, "Expected ')' to match '(' from line 7 and instead saw ';'.")
     .addError(8, "Expected an identifier and instead saw ','.")
     .addError(8, "Expected ')' to match '(' from line 8 and instead saw 'b'.")
-    .addError(8, "Expected an identifier and instead saw ')'.");
+    .addError(8, "Expected an identifier and instead saw ')'.")
+    .addError(8, "Missing semicolon.");
 
   run.test(code, {asi: true, expr: true});
   test.done();
@@ -5647,8 +6116,8 @@ exports["test 'yield' in compound expressions."] = function (test) {
   });
 
   run
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
-    .addError(74, "'function*' is only available in ES6 (use esnext option).");
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
+    .addError(74, "'function*' is only available in ES6 (use 'esversion: 6').");
 
   run.test(code, {maxerr: 1000, expr: true, moz: true});
 
@@ -5708,7 +6177,7 @@ exports["test for line breaks with 'yield'"] = function (test) {
   // : b;
   // ```
   run = TestRun(test)
-    .addError(1, "'function*' is only available in ES6 (use esnext option).")
+    .addError(1, "'function*' is only available in ES6 (use 'esversion: 6').")
     .addError(3, "Expected ')' to match '(' from line 2 and instead saw 'c'.")
     .addError(4, "Expected an identifier and instead saw ')'.")
     .addError(4, "Expected an assignment or function call and instead saw an expression.")
@@ -5716,6 +6185,7 @@ exports["test for line breaks with 'yield'"] = function (test) {
     .addError(8, "Comma warnings can be turned off with 'laxcomma'.")
     .addError(7, "Bad line breaking before ','.")
     .addError(10, "Expected an identifier and instead saw '?'.")
+    .addError(10, "Missing semicolon.")
     .addError(10, "Expected an assignment or function call and instead saw an expression.")
     .addError(10, "Label 'i' on j statement.")
     .addError(10, "Expected an assignment or function call and instead saw an expression.")
@@ -5731,12 +6201,30 @@ exports["test for line breaks with 'yield'"] = function (test) {
     .addError(7, "Line breaking error 'yield'.")
     .addError(9, "Line breaking error 'yield'.")
     .addError(9, "Missing semicolon.")
-    .addError(10, "Missing semicolon.")
     .addError(11, "Line breaking error 'yield'.")
     .addError(13, "Line breaking error 'yield'.")
     .addError(13, "Missing semicolon.");
 
   run.test(code, {moz: true});
+
+  var code2 = [
+    "function* gen() {",
+    "  yield",
+    "  fn();",
+    "  yield*",
+    "  fn();",
+    "}"
+  ];
+
+  TestRun(test, "gh-2530")
+    .addError(5, "Bad line breaking before 'fn'.")
+    .test(code2, { esnext: true, undef: false, asi: true });
+
+  TestRun(test, "gh-2530")
+    .addError(3, "Bad line breaking before 'fn'.")
+    .addError(5, "Bad line breaking before 'fn'.")
+    .test(code2, { esnext: true, undef: false });
+
   test.done();
 };
 
@@ -5903,7 +6391,9 @@ exports["allow expression with a comma in switch case condition"] = function (te
   test.done();
 };
 
-exports["/*jshint ignore */ should be a good option and only accept start, end or line as values"] = function (test) {
+exports.ignoreDirective = {};
+
+exports.ignoreDirective["should be a good option and only accept start, end or line as values"] = function (test) {
   var code = [
     "/*jshint ignore:start*/",
     "/*jshint ignore:end*/",
@@ -5918,7 +6408,7 @@ exports["/*jshint ignore */ should be a good option and only accept start, end o
   test.done();
 };
 
-exports["/*jshint ignore */ should allow the linter to skip blocked-out lines to continue finding errors in the rest of the code"] = function (test) {
+exports.ignoreDirective["should allow the linter to skip blocked-out lines to continue finding errors in the rest of the code"] = function (test) {
   var code = fs.readFileSync(__dirname + "/fixtures/gh826.js", "utf8");
 
   TestRun(test)
@@ -5928,7 +6418,7 @@ exports["/*jshint ignore */ should allow the linter to skip blocked-out lines to
   test.done();
 };
 
-exports["/*jshint ignore */ should ignore lines that appear to end with multiline comment endings (GH-1691)"] = function(test) {
+exports.ignoreDirective["should ignore lines that appear to end with multiline comment endings (GH-1691)"] = function(test) {
   var code = [
     "/*jshint ignore: start*/",
     "var a = {",
@@ -5945,7 +6435,7 @@ exports["/*jshint ignore */ should ignore lines that appear to end with multilin
   test.done();
 };
 
-exports["/*jshint ignore */ should ignore lines that end with a multi-line comment (GH-1396)"] = function(test) {
+exports.ignoreDirective["should ignore lines that end with a multi-line comment (GH-1396)"] = function(test) {
   var code = [
     "/*jshint ignore:start */",
     "var a; /* following comment */",
@@ -5958,7 +6448,7 @@ exports["/*jshint ignore */ should ignore lines that end with a multi-line comme
   test.done();
 };
 
-exports["/*jshint ignore */ should ignore multi-line comments"] = function(test) {
+exports.ignoreDirective["should ignore multi-line comments"] = function(test) {
   var code = [
     "/*jshint ignore:start */",
     "/*",
@@ -5974,7 +6464,7 @@ exports["/*jshint ignore */ should ignore multi-line comments"] = function(test)
   test.done();
 };
 
-exports["/*jshint ignore */ should be detected even with leading and/or trailing whitespace"] = function (test) {
+exports.ignoreDirective["should be detected even with leading and/or trailing whitespace"] = function (test) {
   var code = [
     "  /*jshint ignore:start */",     // leading whitespace
     "   if (true) { alert('sup') }", // should be ignored
@@ -5987,6 +6477,33 @@ exports["/*jshint ignore */ should be detected even with leading and/or trailing
 
   TestRun(test)
     .addError(4, "Missing semicolon.")
+    .test(code);
+
+  test.done();
+};
+
+// gh-2411 /* jshint ignore:start */ stopped working.
+exports.ignoreDirective["should apply to lines lexed during lookahead operations"] = function (test) {
+  var code = [
+    "void [function () {",
+    "  /* jshint ignore:start */",
+    "  ?",
+    "  /* jshint ignore:end */",
+    "}];"
+  ];
+
+  TestRun(test)
+    .test(code);
+
+  code = [
+    "(function () {",
+    "  /* jshint ignore:start */",
+    "  ?",
+    "  /* jshint ignore:end */",
+    "}());"
+  ];
+
+  TestRun(test)
     .test(code);
 
   test.done();
@@ -6030,59 +6547,59 @@ exports["jshint ignore:start/end should be detected using single line comments"]
 exports["test destructuring function parameters as es5"] = function (test) {
   var src = fs.readFileSync(__dirname + "/fixtures/destparam.js", "utf8");
   TestRun(test)
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(10, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(11, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(11, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(14, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(14, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(15, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(15, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(16, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(17, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(18, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(21, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(22, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(22, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(23, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(23, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(24, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(24, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(27, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(27, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(27, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(28, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(28, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(28, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(29, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(29, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(29, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(30, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(30, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(30, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(31, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(31, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(31, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(11, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(11, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(14, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(14, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(15, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(15, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(16, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(17, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(18, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(21, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(22, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(22, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(23, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(23, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(24, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(24, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(27, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(27, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(27, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(28, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(28, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(28, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(29, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(29, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(29, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(30, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(30, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(30, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(31, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(31, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(31, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
   .test(src, {unused: true, undef: true, maxerr: 100});
 
   test.done();
@@ -6091,59 +6608,59 @@ exports["test destructuring function parameters as es5"] = function (test) {
 exports["test destructuring function parameters as legacy JS"] = function (test) {
   var src = fs.readFileSync(__dirname + "/fixtures/destparam.js", "utf8");
   TestRun(test)
-    .addError(4, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(5, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(10, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(11, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(11, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(14, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(14, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(15, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(15, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(16, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(17, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(18, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(21, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(22, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(22, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(23, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(23, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(24, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(24, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(27, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(27, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(27, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(28, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(28, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(28, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(29, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(29, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(29, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(30, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(30, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(30, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
-    .addError(31, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(31, "'destructuring expression' is available in ES6 (use esnext option) or Mozilla JS extensions (use moz).")
-    .addError(31, "'arrow function syntax (=>)' is only available in ES6 (use esnext option).")
+    .addError(4, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(4, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(5, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(5, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(6, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(7, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(10, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(10, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(11, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(11, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(14, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(14, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(15, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(15, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(16, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(16, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(17, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(17, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(18, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(18, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(21, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(21, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(22, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(22, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(22, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(23, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(23, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(23, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(24, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(24, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(24, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(27, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(27, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(27, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(28, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(28, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(28, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(29, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(29, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(29, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(30, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(30, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(30, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
+    .addError(31, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(31, "'destructuring binding' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(31, "'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').")
     .test(src, {es3: true, unused: true, undef: true, maxerr: 100});
 
   test.done();
@@ -6169,6 +6686,7 @@ exports["regression crash from GH-1573"] = function (test) {
     .addError(1, "Expected an identifier and instead saw ']'.")
     .addError(1, "Expected an assignment or function call and instead saw an expression.")
     .addError(1, "Missing semicolon.")
+    .addError(1, "Bad assignment.")
     .test("[var foo = 1;]");
   test.done();
 };
@@ -6251,6 +6769,8 @@ exports.testES6UnusedExports = function (test) {
   ];
 
   TestRun(test)
+    .addError(24, "'letDefinedLater' was used before it was declared, which is illegal for 'let' variables.")
+    .addError(25, "'constDefinedLater' was used before it was declared, which is illegal for 'const' variables.")
     .test(code, { esnext: true, unused: true });
 
   test.done();
@@ -6401,6 +6921,21 @@ exports.trailingCommaInArrayBindingPatternParameters = function (test) {
   test.done();
 };
 
+exports.testGH1879 = function (test) {
+  var code = [
+    "function Foo() {",
+    "  return;",
+    "  // jshint ignore:start",
+    "  return [];",
+    "  // jshint ignore:end",
+    "}"
+  ];
+
+  TestRun(test)
+    .test(code);
+
+  test.done();
+};
 
 exports.commaAfterRestElementInArrayBindingPattern = function (test) {
   var code = [
@@ -6601,6 +7136,83 @@ exports.nonGeneratorAfterGenerator = function (test) {
 
   run = TestRun(test);
   run.test(code, { esnext: true });
+
+  test.done();
+};
+
+exports["new.target"] = function (test) {
+  var code = [
+    "class A {",
+    "  constructor() {",
+    "    return new.target;",
+    "  }",
+    "}"
+  ];
+
+  TestRun(test, "only in ES6")
+    .addError(1, "'class' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).")
+    .addError(3, "'new.target' is only available in ES6 (use 'esversion: 6').")
+    .test(code);
+
+  TestRun(test, "only in ES6").test(code, { esnext: true });
+
+  var code2 = [
+    "var a = new.target;",
+    "var b = () => {",
+    "  var c = () => {",
+    "    return new.target;",
+    "  };",
+    "  return new.target;",
+    "};",
+    "var d = function() {",
+    "  return new.target;",
+    "};",
+    "function e() {",
+    "  var f = () => {",
+    "    return new.target;",
+    "  };",
+    "  return new.target;",
+    "}",
+    "class g {",
+    "  constructor() {",
+    "    return new.target;",
+    "  }",
+    "}"
+  ];
+
+  TestRun(test, "must be in function scope")
+    .addError(1, "'new.target' must be in function scope.")
+    .addError(4, "'new.target' must be in function scope.")
+    .addError(6, "'new.target' must be in function scope.")
+    .test(code2, { esnext: true });
+
+  var code3 = [
+    "var x = new.meta;"
+  ];
+
+  TestRun(test, "invalid meta property")
+    .addError(1, "Invalid meta property: 'new.meta'.")
+    .test(code3);
+
+  var code4 = [
+    "class A {",
+    "  constructor() {",
+    "    new.target = 2;",
+    "    new.target += 2;",
+    "    new.target &= 2;",
+    "    new.target++;",
+    "    ++new.target;",
+    "  }",
+    "}"
+  ];
+
+  TestRun(test, "can't assign to new.target")
+    .addError(3, "Bad assignment.")
+    .addError(4, "Bad assignment.")
+    .addError(5, "Bad assignment.")
+    .addError(6, "Bad assignment.")
+    .addError(7, "Bad assignment.")
+    .test(code4, { esnext: true });
 
   test.done();
 };

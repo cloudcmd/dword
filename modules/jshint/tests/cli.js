@@ -192,11 +192,75 @@ exports.group = {
       .withArgs("-e", sinon.match(/config.json$/)).returns(true);
 
     cli.exit.withArgs(0).returns(true)
-      .withArgs(1).throws("ProcessExit");
+      .withArgs(2).throws("ProcessExit");
 
     cli.interpret([
       "node", "jshint", "file.js", "--config", "config.json"
     ]);
+
+    shjs.cat.restore();
+    shjs.test.restore();
+
+    test.done();
+  },
+
+  // CLI prereqs
+  testPrereqCLIOption: function (test) {
+    this.sinon.stub(shjs, "cat")
+      .withArgs(sinon.match(/file\.js$/)).returns("a();")
+      .withArgs(sinon.match(/prereq.js$/)).returns("var a = 1;")
+      .withArgs(sinon.match(/config.json$/)).returns("{\"undef\":true}");
+
+    this.sinon.stub(shjs, "test")
+      .withArgs("-e", sinon.match(/file\.js$/)).returns(true)
+      .withArgs("-e", sinon.match(/prereq.js$/)).returns(true)
+      .withArgs("-e", sinon.match(/config.json$/)).returns(true);
+
+    cli.exit.restore();
+    this.sinon.stub(cli, "exit")
+      .withArgs(0).returns(true)
+      .withArgs(2).throws("ProcessExit");
+
+    cli.interpret([
+      "node", "jshint", "file.js",
+      "--config", "config.json",
+      "--prereq", "prereq.js  , prereq2.js"
+    ]);
+
+    shjs.cat.restore();
+    shjs.test.restore();
+
+    test.done();
+  },
+
+  // CLI prereqs should get merged with config prereqs
+  testPrereqBothConfigAndCLIOption: function (test) {
+    this.sinon.stub(shjs, "cat")
+      .withArgs(sinon.match(/file\.js$/)).returns("a(); b();")
+      .withArgs(sinon.match(/prereq.js$/)).returns("var a = 1;")
+      .withArgs(sinon.match(/prereq2.js$/)).returns("var b = 2;")
+      .withArgs(sinon.match(/config.json$/))
+        .returns("{\"undef\":true,\"prereq\":[\"prereq.js\"]}");
+
+    this.sinon.stub(shjs, "test")
+      .withArgs("-e", sinon.match(/file\.js$/)).returns(true)
+      .withArgs("-e", sinon.match(/prereq.js$/)).returns(true)
+      .withArgs("-e", sinon.match(/prereq2.js$/)).returns(true)
+      .withArgs("-e", sinon.match(/config.json$/)).returns(true);
+
+    cli.exit.restore();
+    this.sinon.stub(cli, "exit")
+      .withArgs(0).returns(true)
+      .withArgs(2).throws("ProcessExit");
+
+    cli.interpret([
+      "node", "jshint", "file.js",
+      "--config", "config.json",
+      "--prereq", "prereq2.js,prereq3.js"
+    ]);
+
+    shjs.cat.restore();
+    shjs.test.restore();
 
     test.done();
   },
@@ -460,6 +524,41 @@ exports.group = {
     test.done();
   },
 
+  testNoHomeDir: function (test) {
+    var prevEnv = {};
+
+    // Remove all home dirs from env.
+    [ 'USERPROFILE', 'HOME', 'HOMEPATH' ].forEach(function (key) {
+      prevEnv[key] = process.env[key];
+      delete process.env[key];
+    });
+
+    this.sinon.stub(process, "cwd").returns(__dirname);
+    var localRc = path.normalize(__dirname + "/.jshintrc");
+    var testStub = this.sinon.stub(shjs, "test");
+    var catStub = this.sinon.stub(shjs, "cat");
+
+    // stub rc file
+    testStub.withArgs("-e", localRc).returns(true);
+    catStub.withArgs(localRc).returns('{"evil": true}');
+
+    // stub src file
+    testStub.withArgs("-e", sinon.match(/file\.js$/)).returns(true);
+    catStub.withArgs(sinon.match(/file\.js$/)).returns("eval('a=2');");
+
+    cli.interpret([
+      "node", "jshint", "file.js"
+    ]);
+    test.equal(cli.exit.args[0][0], 0); // eval allowed = rc file found
+
+    test.done();
+
+    // Restore environemnt
+    Object.keys(prevEnv).forEach(function (key) {
+      process.env[key] = prevEnv[key];
+    });
+  },
+
   testOneLevelRcLookup: function (test) {
     var srcDir = __dirname + "../src/";
     var parentRc = path.join(srcDir, ".jshintrc");
@@ -532,6 +631,21 @@ exports.group = {
 
     test.equal(shjs.cat.args.length, 0);
 
+    test.done();
+  },
+  
+  testMultipleIgnores: function (test) {
+    var run = this.sinon.stub(cli, "run");
+    var dir = __dirname + "/../examples/";
+    this.sinon.stub(process, "cwd").returns(dir);
+
+    cli.interpret([
+      "node", "jshint", "file.js", "--exclude=foo.js,bar.js"
+    ]);
+    
+    test.equal(run.args[0][0].ignores[0], path.resolve(dir, "foo.js"));
+    test.equal(run.args[0][0].ignores[1], path.resolve(dir, "bar.js"));
+    
     test.done();
   },
 
