@@ -23,7 +23,7 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Syntax highlighting based on extension of file for over 90 languages.
 - Built-in `emmet` (for html files)
 - Drag n drop (drag file from desktop to editor).
-- Built-in `jshint` (with options in `.jshintrc` file)
+- Built-in `jshint` (with options in `.jshintrc` file, could be overriden by `~/.jshintrc`)
 - Built-in [beautifier][beautifile] (with options in [json/beautify.json][beautify.json], could be overriden by `~/.beautify.json`)
 - Configurable options ([json/edit.json][edit.json] could be overriden by `~/.dword.json`)
 
