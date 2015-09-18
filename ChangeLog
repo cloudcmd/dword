@@ -1,3 +1,9 @@
+2015.09.18, v2.1.0
+
+feature:
+- (client) go to line: ctrl + l -> ctrl + g
+
+
 2015.09.09, v2.0.4
 
 feature:
