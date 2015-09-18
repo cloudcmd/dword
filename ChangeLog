@@ -1,3 +1,9 @@
+2015.09.18, v2.2.1
+
+fix:
+- (server) rm try-catch
+
+
 2015.09.18, v2.2.0
 
 feature:
