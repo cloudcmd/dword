@@ -1,3 +1,9 @@
+2015.09.18, v2.2.2
+
+fix:
+- (server) .jshintrc path
+
+
 2015.09.18, v2.2.1
 
 fix:
