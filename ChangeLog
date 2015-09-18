@@ -1,3 +1,9 @@
+2015.09.18, v2.2.0
+
+feature:
+- (dword) add ability to override jshint config
+
+
 2015.09.18, v2.1.0
 
 feature:
