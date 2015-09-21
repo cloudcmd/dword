@@ -1,3 +1,9 @@
+2015.09.21, v2.2.3
+
+feature:
+- (package) socket.io v1.3.7
+
+
 2015.09.18, v2.2.2
 
 fix:
