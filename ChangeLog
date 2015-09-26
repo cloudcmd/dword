@@ -1,3 +1,9 @@
+2015.09.26, v2.2.5
+
+fix:
+- (server) minify on restafary request
+
+
 2015.09.22, v2.2.4
 
 fix:
