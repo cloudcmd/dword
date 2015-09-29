@@ -30,6 +30,6 @@
     "load": "~1.1.4",
     "loadremote": "~1.0.1",
     "zipio": "~1.0.1",
-    "smalltalk": "~1.5.0"
+    "smalltalk": "~1.5.1"
   }
 }

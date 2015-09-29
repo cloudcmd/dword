@@ -22,7 +22,8 @@
     "dword": "bin/dword.js"
   },
   "scripts": {
-    "bower": "bower"
+    "bower": "bower",
+    "bupdate": "bupdate"
   },
   "dependencies": {
     "ashify": "~1.0.1",
@@ -39,6 +40,7 @@
     "try-catch": "~1.0.0"
   },
   "devDependencies": {
-    "bower": "^1.5.1"
+    "bower": "^1.5.1",
+    "bupdate": "~1.0.4"
   }
 }
