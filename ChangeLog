@@ -1,3 +1,10 @@
+2015.09.30, v2.3.4
+
+feature:
+- (modules) codemirror: .js, .css -> min.js, .min.css
+- (bower) codemirror v5.7.0
+
+
 2015.09.30, v2.3.3
 
 feature:
