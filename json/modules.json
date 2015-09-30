@@ -11,8 +11,8 @@
         "/modules/codemirror/lib/codemirror.css"
     ],
     "remote": [
-        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.css"
+        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.min.css"
     ]
 }, {
     "name": "pako",
