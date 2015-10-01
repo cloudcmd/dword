@@ -23,7 +23,7 @@
     "codemirror": "~5.7.0",
     "codemirror-emmet": "~1.1.0",
     "daffy": "~1.0.3",
-    "execon": "~1.2.6",
+    "execon": "~1.2.7",
     "jshint": "~2.9.0",
     "jsSHA": "~2.0.1",
     "load": "~1.1.4",

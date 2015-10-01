@@ -30,10 +30,14 @@
          * return function that calls callback with arguments
          */
         exec.with           =  function(callback) {
-            var args = [].slice.call(arguments, 1);
+            var slice   = Array.prototype.slice,
+                args    = slice.call(arguments, 1);
             
             return function() {
-                callback.apply(null, args.concat(arguments));
+                var array   = slice.call(arguments), 
+                    all     = args.concat(array);
+                
+                callback.apply(null, all);
             };
         };
          
