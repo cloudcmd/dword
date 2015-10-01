@@ -1,0 +1,8 @@
+2015.10.01, v1.1.0
+
+feature:
+- (loadremote) add memo, amemo, once
+- (package) private
+- (package) load-remote -> loadremote
+- (bower) load-remote -> loadremote
+
