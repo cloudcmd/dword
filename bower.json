@@ -30,6 +30,6 @@
     "zipio": "~1.0.1",
     "smalltalk": "~1.5.2",
     "emitify": "~1.3.0",
-    "loadremote": "~1.1.0"
+    "loadremote": "~1.1.1"
   }
 }

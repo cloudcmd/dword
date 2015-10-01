@@ -9,19 +9,19 @@ var exec, load;
         global.loadRemote   = new LoadRemote();
         
     function LoadRemote() {
-        var once        = memo(amemo),
+        var onceModules = amemo(loadModules),
+            onceOptions = amemo(loadOptions),
+            
             loadRemote  = function(name, options, callback) {
                 var o       = options,
                     prefix  = o.prefix || '/',
                     funcs   = [
-                        loadModules,
-                        loadOptions
+                        onceModules,
+                        onceOptions
                     ].map(function(fn) {
                         return setPrefix(prefix, fn);
-                    }).map(function(fn) {
-                        return once(fn);
                     });
-                
+                                    
                 if (!callback) {
                     callback    = options;
                     o           = {};
@@ -33,8 +33,8 @@ var exec, load;
                 exec.parallel(funcs, function(error, modules, config) {
                     var remoteTmpls, local, remote,
                         online, module, isArray, version,
-                        name,
-                        
+                        moduleName,
+                         
                         funcON      = function() {
                             load.parallel(remote, function(error) {
                                 if (error)
@@ -50,12 +50,12 @@ var exec, load;
                     
                     if (error) {
                         if (!module)
-                            name = 'module';
+                            moduleName = 'module';
                         
                         if (!config)
-                            name = 'config';
+                            moduleName = 'config';
                         
-                        alert('Error: could not load !');
+                        alert('Error: could not load ' + moduleName);
                         
                         return;
                     }
@@ -95,27 +95,16 @@ var exec, load;
         function amemo(fn) {
             var result;
             
-            return function(callback) {
+            return function(prefix, callback) {
                 if (result)
                     callback(null, result);
                 else
-                    fn(function(error, data) {
+                    fn(prefix, function(error, data) {
                         if (data)
                             result = data;
                         
                         callback(error, result);
                     });
-            };
-        }
-        
-        function memo(fn) {
-            var result;
-            
-            return function() {
-                if (!result)
-                    result = fn.apply(null, arguments);
-                
-                return result;
             };
         }
         
