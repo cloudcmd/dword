@@ -21,14 +21,14 @@
     "test",
     "tests"
   ],
-  "version": "1.2.5",
-  "_release": "1.2.5",
+  "version": "1.2.6",
+  "_release": "1.2.6",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.5",
-    "commit": "ea4e9ed95a445e84298ed670be59e42ce6fbe678"
+    "tag": "v1.2.6",
+    "commit": "7f9e019fb62a9ab076fce0777321db6bb5767174"
   },
   "_source": "git://github.com/coderaiser/execon.git",
-  "_target": "~1.2.0",
+  "_target": "~1.2.2",
   "_originalSource": "execon"
 }

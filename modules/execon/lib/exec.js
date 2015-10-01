@@ -29,14 +29,12 @@
         /*
          * return function that calls callback with arguments
          */
-        
         exec.with           =  function(callback) {
-            var args    = [].slice.call(arguments),
-                bind    = Function.prototype.bind;
+            var args = [].slice.call(arguments, 1);
             
-            args[0]     = null;
-            
-            return  bind.apply(callback, args);
+            return function() {
+                callback.apply(null, args.concat(arguments));
+            };
         };
          
          /**
