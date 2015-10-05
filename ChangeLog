@@ -1,3 +1,10 @@
+2015.10.05, v2.4.0
+
+feature:
+- (client) rm scrollToLine
+- (dword) getCursor():  line -> row, ch -> column
+
+
 2015.10.01, v2.3.8
 
 feature:
