@@ -1,5 +1,6 @@
 {
   "name": "execon",
+  "version": "1.2.8",
   "homepage": "https://github.com/coderaiser/execon",
   "authors": [
     "coderaiser <mnemonic.enemy@gmail.com>"
@@ -21,12 +22,11 @@
     "test",
     "tests"
   ],
-  "version": "1.2.7",
-  "_release": "1.2.7",
+  "_release": "1.2.8",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.7",
-    "commit": "2e9bfe125e7602f627ced5862c2a37118babdac0"
+    "tag": "v1.2.8",
+    "commit": "7e8900c48fd9262a3a3acaa1c8b6c34ff17aa745"
   },
   "_source": "git://github.com/coderaiser/execon.git",
   "_target": "~1.2.7",

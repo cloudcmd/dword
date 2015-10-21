@@ -37,7 +37,7 @@
                 var array   = slice.call(arguments), 
                     all     = args.concat(array);
                 
-                callback.apply(null, all);
+                return callback.apply(null, all);
             };
         };
          
@@ -100,10 +100,10 @@
                 type        = getType(funcs);
             
             if (!funcs)
-                throw(Error('funcs' + ERROR));
+                throw Error('funcs' + ERROR);
             
             if (!callback)
-                throw(Error('callback' + ERROR));
+                throw Error('callback' + ERROR);
             
             switch(type) {
             case 'array':
@@ -111,7 +111,7 @@
                 
                 funcs.forEach(function(func, num) {
                     exec(func, function() {
-                        checkFunc(num, arguments, arr);
+                        checkFunc(num, arguments);
                     });
                 });
                 break;
@@ -130,7 +130,7 @@
                 break;
             }
             
-            function checkFunc(num, data, all) {
+            function checkFunc(num, data) {
                 var args    = slice.call(data, 1),
                     isLast  = false,
                     error   = data[0],
@@ -142,17 +142,17 @@
                 
                 if (!error)
                     if (length >= 2)
-                        all[num] = args;
+                        arr[num] = args;
                     else
-                        all[num] = args[0];
+                        arr[num] = args[0];
                 
                 if (!callbackWas && (error || isLast)) {
                     callbackWas = true;
                     
                     if (type === 'array')
-                        callback.apply(null, [error].concat(all));
+                        callback.apply(null, [error].concat(arr));
                     else
-                        callback(error, all);
+                        callback(error, arr);
                 }
             }
         };
@@ -178,7 +178,7 @@
                 };
             
             if (!Array.isArray(funcs))
-                throw(Error('funcs should be array!'));
+                throw Error('funcs should be array!');
             
             fn = funcs.shift();
             
