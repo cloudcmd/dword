@@ -81,13 +81,13 @@
             
             document.body.appendChild(dialog);
             
-            find(dialog, ['ok']).forEach(el =>
+            find(dialog, ['ok', 'input']).forEach(el =>
                 el.focus()
             );
             
-            find(dialog, ['input']).forEach(el =>
-                el.setSelectionRange(0, value.length)
-            );
+            find(dialog, ['input']).forEach(el => {
+                el.setSelectionRange(0, value.length);
+            });
             
             addListeterAll('click', dialog, closeButtons, event =>
                 closeDialog(event.target, dialog, ok, cancel)
@@ -235,9 +235,7 @@
         
         function addListeterAll(event, parent, elements, fn) {
             find(parent, elements).forEach(el =>
-                el.addEventListener(event, event =>
-                    fn(event)
-                )
+                el.addEventListener(event, fn)
             );
         }
         

@@ -57,12 +57,12 @@
 
             document.body.appendChild(dialog);
 
-            find(dialog, ['ok']).forEach(function (el) {
+            find(dialog, ['ok', 'input']).forEach(function (el) {
                 return el.focus();
             });
 
             find(dialog, ['input']).forEach(function (el) {
-                return el.setSelectionRange(0, value.length);
+                el.setSelectionRange(0, value.length);
             });
 
             addListeterAll('click', dialog, closeButtons, function (event) {
@@ -198,9 +198,7 @@
 
         function addListeterAll(event, parent, elements, fn) {
             find(parent, elements).forEach(function (el) {
-                return el.addEventListener(event, function (event) {
-                    return fn(event);
-                });
+                return el.addEventListener(event, fn);
             });
         }
 
