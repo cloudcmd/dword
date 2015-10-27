@@ -1,3 +1,9 @@
+2015.10.27, v2.4.6
+
+feature:
+- (server) copy: desctructive -> clean
+
+
 2015.10.27, v2.4.5
 
 fix:
