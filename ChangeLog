@@ -1,3 +1,9 @@
+2015.10.27, v2.4.4
+
+fix:
+- (client) setModeForPath: name -> path
+
+
 2015.10.26, v2.4.3
 
 feature:
