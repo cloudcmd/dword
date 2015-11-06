@@ -53,6 +53,7 @@ Usage: `dword [filename]`
 | `Ctrl + g`            | go to line
 | `Ctrl + b`            | beautify js, css or html
 | `Ctrl + m`            | minify js, css or html
+| `Ctrl + e`            | evaluate (JavaScript only supported)
 
 ## API
 dword could be used as middleware for [express](http://expressjs.com "Express").
