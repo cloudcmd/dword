@@ -1,3 +1,9 @@
+2015.11.06, v2.5.1
+
+fix:
+- (server) readEdit: data = replace() => replace()
+
+
 2015.11.06, v2.5.0
 
 feature:
