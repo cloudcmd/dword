@@ -1,3 +1,10 @@
+2015.11.23, v2.5.2
+
+feature:
+- (modules) pako v0.2.8
+- (bower) codemirror v5.9.0
+
+
 2015.11.06, v2.5.1
 
 fix:
