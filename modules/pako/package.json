@@ -1,7 +1,7 @@
 {
   "name"            : "pako",
   "description"     : "zlib port to javascript - fast, modularized, with browser support",
-  "version"         : "0.2.7",
+  "version"         : "0.2.8",
   "keywords"        : [ "zlib", "deflate", "inflate", "gzip" ],
   "homepage"        : "https://github.com/nodeca/pako",
 
@@ -15,7 +15,7 @@
   "main"            : "./index.js",
 
   "devDependencies" : {
-                        "mocha":     "*",
+                        "mocha":     "1.21.5",
                         "benchmark": "*",
                         "ansi":      "*",
                         "browserify":"*",
