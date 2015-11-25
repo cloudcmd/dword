@@ -1,7 +1,6 @@
 {
     "options": {
         "theme": "pastel-on-dark",
-        "_theme": "3024-day",
         "wrap": 80,
         "tabSize": 4,
         "fontSize": 16,
