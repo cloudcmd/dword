@@ -29,7 +29,7 @@
     "zipio": "~1.0.1",
     "emitify": "~1.3.0",
     "loadremote": "~1.1.1",
-    "smalltalk": "~1.6.1",
-    "codemirror": "~5.9.0"
+    "codemirror": "~5.9.0",
+    "smalltalk": "~1.6.2"
   }
 }
