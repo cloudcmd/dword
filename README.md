@@ -65,7 +65,8 @@ For this purpuse API could be used.
 Middleware of `dword`. Options could be omitted.
 
 ```js
-var express = require('express'),
+var dword   = require('dword'),
+    express = require('express'),
     app     = express();
 
 app.use(dword({
