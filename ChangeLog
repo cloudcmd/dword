@@ -1,3 +1,9 @@
+2016.01.25, v2.8.1
+
+fix:
+- (dword) set value before dword load
+
+
 2016.01.14, v2.8.0
 
 feature:
