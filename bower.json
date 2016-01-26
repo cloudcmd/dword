@@ -28,8 +28,8 @@
     "load": "~1.1.4",
     "zipio": "~1.0.1",
     "loadremote": "~1.1.1",
-    "codemirror": "~5.10.0",
     "emitify": "~2.0.0",
-    "smalltalk": "~1.6.5"
+    "smalltalk": "~1.6.5",
+    "codemirror": "~5.11.0"
   }
 }
