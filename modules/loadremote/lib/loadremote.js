@@ -14,7 +14,7 @@ var exec, load;
             
             loadRemote  = function(name, options, callback) {
                 var o       = options,
-                    prefix  = o.prefix || '/',
+                    prefix  = o.prefix || '',
                     funcs   = [
                         onceModules,
                         onceOptions
@@ -75,7 +75,7 @@ var exec, load;
                     }
                     
                     local   = local.map(function(url) {
-                        return o.noPrefix ? url :prefix + url;
+                        return prefix + url;
                     });
                     
                     remote  = remoteTmpls.map(function(tmpl) {
