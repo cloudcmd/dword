@@ -1,13 +1,14 @@
 # CodeMirror Show Invisibles
 
-Addon for [CodeMirror](http://codemirror.net) that helps to show invisibles.
+Addon for [CodeMirror](http://codemirror.net "CodeMirror") that helps to show invisibles.
 
 ![show-invisibles](https://raw.githubusercontent.com/coderaiser/cm-show-invisibles/master/img/show-invisibles.png "CodeMirror Show Invisibles")
 
 ## Install
 
 ```
-bower i cm-show-invisibles --save
+bower i cm-show-invisibles --save # or
+npm i cm-show-invisibles --save
 ```
 
 ## How to use?

@@ -22,6 +22,7 @@
         
         if (prev && !val) {
             cm.removeOverlay('invisibles');
+            rm();
         } else if (!prev && val) {
             add(Maximum);
             
@@ -89,6 +90,12 @@
         style.textContent = getStyle() + '\n' + getEOL() + '\n' + rules;
         
         document.head.appendChild(style);
+    }
+    
+    function rm() {
+        var style = document.querySelector('[data-name="js-show-invisibles]');
+        
+        document.head.removeChild(style);
     }
     
     function getStyle() {
