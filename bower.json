@@ -27,9 +27,9 @@
     "load": "~1.1.4",
     "zipio": "~1.0.1",
     "emitify": "~2.0.0",
-    "smalltalk": "~1.6.5",
     "loadremote": "~1.2.0",
     "cm-show-invisibles": "~1.2.0",
-    "codemirror": "~5.12.0"
+    "codemirror": "~5.12.0",
+    "smalltalk": "~1.6.6"
   }
 }
