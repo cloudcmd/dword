@@ -111,7 +111,8 @@ html, body, .edit {
 
 Minimal js:
 ```js
-dword('[data-name="js-edit"]', function(el) {
+dword('[data-name="js-edit"]', function(editor) {
+    editor.setValue('hello dword');
     console.log('dword is ready');
 });
 ```
