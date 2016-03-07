@@ -1,3 +1,10 @@
+2016.03.07, v3.0.1
+
+fix:
+- (client) _showMessageOnce
+- (dword) onDrop, onDragOver
+
+
 2016.03.05, v3.0.0
 
 feature:
