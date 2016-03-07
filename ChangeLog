@@ -1,3 +1,9 @@
+2016.03.07, v3.0.2
+
+fix:
+- (client) _patch, _write: mv to constructor, replace prototype when overwriting
+
+
 2016.03.07, v3.0.1
 
 fix:
