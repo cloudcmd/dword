@@ -1,3 +1,9 @@
+2016.03.24, v3.0.7
+
+fix:
+- (client) content on lineNumbers: autoRefresh
+
+
 2016.03.21, v3.0.6
 
 feature:
