@@ -29,7 +29,7 @@
     "emitify": "~2.0.0",
     "loadremote": "~1.2.0",
     "cm-show-invisibles": "~1.2.0",
-    "smalltalk": "~1.6.7",
-    "codemirror": "^5.14.2"
+    "codemirror": "^5.14.2",
+    "smalltalk": "^1.6.8"
   }
 }
