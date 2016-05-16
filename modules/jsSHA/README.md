@@ -72,10 +72,10 @@ in your header (sha.js used below):
 #### Hashing
 Instantiate a new jsSHA object with the desired hash type, input type, and
 options as parameters.  The hash type can be one of SHA-1, SHA-224, SHA-256,
-SHA-384, or SHA-512.  The input type can be one of HEX, TEXT, B64, or BYTES.
-You can then stream in input using the "update" object function.  Finally,
-simply call "getHash" with the output type as a parameter (B64, HEX, or BYTES).
-Example to calculate the SHA-512 of "This is a test":
+SHA-384, or SHA-512.  The input type can be one of HEX, TEXT, B64, BYTES, or
+ARRAYBUFFER.  You can then stream in input using the "update" object function.
+Finally, simply call "getHash" with the output type as a parameter (B64, HEX,
+BYTES, or ARRAYBUFFER).  Example to calculate the SHA-512 of "This is a test":
 
 	var shaObj = new jsSHA("SHA-512", "TEXT");
 	shaObj.update("This is a test");
@@ -83,7 +83,7 @@ Example to calculate the SHA-512 of "This is a test":
 
 The constructor takes a hashmap as a optional third argument with possible
 properties of "numRounds" and "encoding".  numRounds controls the number of
-hashing iterations/rounds performed and defaults to a value of "1" if not
+hashing iterations/rounds performed and defaults to a value of 1 if not
 specified. encoding specifies the encoding used to encode TEXT-type inputs.
 Valid options are "UTF8", "UTF16BE", and "UTF16LE", it defaults to "UTF8".
 
@@ -138,3 +138,6 @@ where FLAG is a bitwise OR of the following values:
 
 ## Contact Info
 The project's website is located at [http://caligatio.github.com/jsSHA/](http://caligatio.github.com/jsSHA/)
+
+## Donations
+Feel like donating?  We're now accepting donations [through Pledgie!](https://pledgie.com/campaigns/31646).

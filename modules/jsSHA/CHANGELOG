@@ -1,6 +1,19 @@
 -------------------------
     jsSHA - ChangeLog
 -------------------------
+2.1.0 (2016-05-13)
+=========================
+- Added ability to call `update` on hashes between `getHash` and `getHMAC` calls
+- Added new input and output type, "ARRAYBUFFER" which is a JavaScript
+  ArrayBuffer
+- Now keeping smaller build files in NPM (thanks vogievetsky!)
+- Fixed problem with hashing strings over 4 billion bits (thanks Eicar!)
+
+2.0.2 (2015-10-31)
+=========================
+- Fixed inability to have a blank "b64Pad" (thanks xlc!)
+- Added file hashing test (thanks kofalt!)
+
 2.0.1 (2015-06-25)
 =========================
 - Fixed major issue with all hashes failing if raw input was a particular size

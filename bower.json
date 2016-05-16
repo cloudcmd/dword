@@ -23,13 +23,13 @@
     "daffy": "~1.0.3",
     "execon": "~1.2.7",
     "jshint": "~2.9.0",
-    "jsSHA": "~2.0.1",
     "load": "~1.1.4",
     "zipio": "~1.0.1",
     "emitify": "~2.0.0",
     "loadremote": "~1.2.0",
     "cm-show-invisibles": "~1.2.0",
     "codemirror": "^5.14.2",
-    "smalltalk": "^1.6.8"
+    "smalltalk": "^1.6.8",
+    "jsSHA": "^2.1.0"
   }
 }
