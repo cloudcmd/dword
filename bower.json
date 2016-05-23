@@ -28,8 +28,8 @@
     "emitify": "~2.0.0",
     "loadremote": "~1.2.0",
     "cm-show-invisibles": "~1.2.0",
-    "codemirror": "^5.14.2",
     "smalltalk": "^1.6.8",
-    "jsSHA": "^2.1.0"
+    "jsSHA": "^2.1.0",
+    "codemirror": "~5.15.2"
   }
 }
