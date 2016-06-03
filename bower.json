@@ -25,11 +25,11 @@
     "jshint": "~2.9.0",
     "load": "~1.1.4",
     "zipio": "~1.0.1",
-    "emitify": "~2.0.0",
     "loadremote": "~1.2.0",
     "cm-show-invisibles": "~1.2.0",
     "smalltalk": "^1.6.8",
     "jsSHA": "^2.1.0",
-    "codemirror": "~5.15.2"
+    "codemirror": "~5.15.2",
+    "emitify": "^2.1.0"
   }
 }
