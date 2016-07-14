@@ -1,3 +1,11 @@
+2016.07.14, v3.1.0
+
+feature:
+- (client) auth
+- (bower) emitify v2.1.1
+- (dword) add authCheck
+
+
 2016.06.21, v3.0.16
 
 feature:
