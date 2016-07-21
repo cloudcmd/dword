@@ -26,7 +26,6 @@
     "commit": "5aba714536ec42d5be81849d0abac7b3ff0021ac"
   },
   "_source": "https://github.com/marijnh/CodeMirror.git",
-  "_target": "^5.17.0",
-  "_originalSource": "codemirror",
-  "_direct": true
+  "_target": "5.17.0",
+  "_originalSource": "codemirror"
 }
