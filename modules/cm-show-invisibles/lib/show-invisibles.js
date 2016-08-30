@@ -93,7 +93,7 @@
     }
     
     function rm() {
-        var style = document.querySelector('[data-name="js-show-invisibles]');
+        var style = document.querySelector('[data-name="js-show-invisibles"]');
         
         document.head.removeChild(style);
     }

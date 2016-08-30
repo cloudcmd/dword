@@ -1,6 +1,5 @@
 {
   "name": "cm-show-invisibles",
-  "version": "1.2.0",
   "homepage": "https://github.com/coderaiser/cm-show-invisibles",
   "authors": [
     "coderaiser <mnemonic.enemy@gmail.com>"
@@ -23,14 +22,15 @@
     "img",
     ".travis.yml"
   ],
-  "_release": "1.2.0",
+  "version": "1.2.1",
+  "_release": "1.2.1",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.0",
-    "commit": "74452bb8d72a65049a9adfff1b7ffb38e9a518d1"
+    "tag": "v1.2.1",
+    "commit": "b4e37c3b624e0bb44293a52dacaa1ac80c4789d6"
   },
-  "_source": "git://github.com/coderaiser/cm-show-invisibles.git",
-  "_target": "~1.2.0",
+  "_source": "https://github.com/coderaiser/cm-show-invisibles.git",
+  "_target": "^1.2.1",
   "_originalSource": "cm-show-invisibles",
   "_direct": true
 }

@@ -1,3 +1,12 @@
+2016.08.30, v1.2.1
+
+fix:
+- (show-invisibles) rm: do not remove new line symbol because of missing quote
+
+feature:
+- (package) add lint
+
+
 2016.02.19, v1.2.0
 
 fix:

@@ -25,10 +25,10 @@
     "load": "~1.1.4",
     "zipio": "~1.0.1",
     "loadremote": "~1.2.0",
-    "cm-show-invisibles": "~1.2.0",
     "jsSHA": "^2.1.0",
     "emitify": "^2.1.1",
     "smalltalk": "2.1.2",
-    "codemirror": "5.18.2"
+    "codemirror": "5.18.2",
+    "cm-show-invisibles": "1.2.1"
   }
 }

@@ -1,10 +1,11 @@
 {
   "name": "cm-show-invisibles",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Addon for CodeMirror that helps to show invisibles.",
   "main": "lib/show-invisibles.js",
   "scripts": {
-    "test": "jshint lib && jscs lib"
+    "lint": "jshint lib && jscs lib",
+    "test": "npm run lint"
   },
   "repository": {
     "type": "git",
