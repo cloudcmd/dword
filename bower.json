@@ -28,7 +28,7 @@
     "jsSHA": "^2.1.0",
     "emitify": "^2.1.1",
     "smalltalk": "2.1.2",
-    "codemirror": "5.18.2",
-    "cm-show-invisibles": "1.2.1"
+    "cm-show-invisibles": "1.2.1",
+    "codemirror": "5.19.0"
   }
 }
