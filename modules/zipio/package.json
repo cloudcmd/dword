@@ -1,10 +1,10 @@
 {
   "name": "zipio",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "zip data",
   "main": "lib/zipio.js",
   "dependencies": {
-    "pako": "~0.2.5"
+    "pako": "^1.0.3"
   },
   "devDependencies": {},
   "scripts": {

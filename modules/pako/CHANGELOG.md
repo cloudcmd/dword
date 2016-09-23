@@ -1,3 +1,31 @@
+1.0.3 / 2016-07-25
+------------------
+
+- Maintenance: re-release to properly display latest version in npm registry
+  and badges. Because `npm publish` timestamp used instead of versions.
+
+
+1.0.2 / 2016-07-21
+------------------
+
+- Fixed nasty bug in deflate (wrong `d_buf` offset), which could cause
+  broken data in some rare cases.
+- Also released as 0.2.9 to give chance to old dependents, not updated to 1.x
+  version.
+
+
+1.0.1 / 2016-04-01
+------------------
+
+- Added dictionary support. Thanks to @dignifiedquire.
+
+
+1.0.0 / 2016-02-17
+------------------
+
+- Maintenance release (semver, coding style).
+
+
 0.2.8 / 2015-09-14
 ------------------
 

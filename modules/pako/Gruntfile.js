@@ -1,8 +1,8 @@
 'use strict';
 
 
-module.exports = function(grunt) {
-  var browsers = [{
+module.exports = function (grunt) {
+  var browsers = [ {
     browserName: 'iphone',
     platform: 'OS X 10.8',
     version: '8.1'
@@ -34,19 +34,19 @@ module.exports = function(grunt) {
     browserName: 'internet explorer',
     platform: 'WIN7',
     version: '8'
-  }, {
+  /*}, {
     browserName: 'internet explorer',
     platform: 'XP',
     version: '7'
   }, {
     browserName: 'internet explorer',
     platform: 'XP',
-    version: '6'
+    version: '6'*/
   }, {
     browserName: 'safari',
     platform: 'OS X 10.8',
     version: '6'
-  }];
+  } ];
 
 
   grunt.initConfig({
@@ -61,8 +61,8 @@ module.exports = function(grunt) {
     'saucelabs-mocha': {
       all: {
         options: {
-          urls: ['http://127.0.0.1:9999/test/browser/test.html'],
-          build: process.env.TRAVIS_JOB_NUMBER || ('local' + ~~(Math.random()*1000)),
+          urls: [ 'http://127.0.0.1:9999/test/browser/test.html' ],
+          build: process.env.TRAVIS_JOB_NUMBER || ('local' + ~~(Math.random() * 1000)),
           browsers: browsers,
           throttled: 3,
           testname: process.env.SAUCE_PROJ || 'mocha tests'
@@ -78,5 +78,5 @@ module.exports = function(grunt) {
   }
 
   //grunt.registerTask('dev', ['connect', 'watch']);
-  grunt.registerTask('test', ['connect', 'saucelabs-mocha']);
+  grunt.registerTask('test', [ 'connect', 'saucelabs-mocha' ]);
 };

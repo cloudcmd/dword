@@ -23,12 +23,12 @@
     "execon": "~1.2.7",
     "jshint": "~2.9.0",
     "load": "~1.1.4",
-    "zipio": "~1.0.1",
     "loadremote": "~1.2.0",
     "jsSHA": "^2.1.0",
     "emitify": "^2.1.1",
     "smalltalk": "2.1.2",
     "cm-show-invisibles": "1.2.1",
-    "codemirror": "5.19.0"
+    "codemirror": "5.19.0",
+    "zipio": "1.0.2"
   }
 }

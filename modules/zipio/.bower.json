@@ -20,17 +20,17 @@
     "modules"
   ],
   "dependencies": {
-    "pako": "~0.2.5"
+    "pako": "1.0.3"
   },
-  "version": "1.0.1",
-  "_release": "1.0.1",
+  "version": "1.0.2",
+  "_release": "1.0.2",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.1",
-    "commit": "605053168a5e774e0f771f2bbea30fa6ef9f23df"
+    "tag": "v1.0.2",
+    "commit": "f0a66cd33fb5627035537c1e3292d36eb9ddddba"
   },
-  "_source": "git://github.com/coderaiser/zipio.git",
-  "_target": "~1.0.1",
+  "_source": "https://github.com/coderaiser/zipio.git",
+  "_target": "^1.0.2",
   "_originalSource": "zipio",
   "_direct": true
 }
