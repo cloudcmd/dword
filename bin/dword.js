@@ -35,7 +35,7 @@ function main(name) {
         edSocket,
         filename    = getPath(name),
         DIR         = __dirname + '/../assets/',
-        dword      = require('../'),
+        dword       = require('../'),
         http        = require('http'),
         express     = require('express'),
         io          = require('socket.io'),
