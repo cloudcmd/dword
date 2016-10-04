@@ -30,7 +30,6 @@
     "commit": "f0a66cd33fb5627035537c1e3292d36eb9ddddba"
   },
   "_source": "https://github.com/coderaiser/zipio.git",
-  "_target": "^1.0.2",
-  "_originalSource": "zipio",
-  "_direct": true
+  "_target": "1.0.2",
+  "_originalSource": "zipio"
 }
