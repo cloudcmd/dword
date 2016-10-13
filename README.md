@@ -120,6 +120,11 @@ dword('[data-name="js-edit"]', function(editor) {
 ```
 For more information you could always look around into `assets` and `bin` directory.
 
+## Related
+
+[Edward](https://github.com/cloudcmd/edward "Edwdard") - web editor based on [Ace](https://ace.c9.io "Ace").
+[Deepword](https://github.com/cloudcmd/deepword "Deepword") - web editor based on [Monaco](https://microsoft.github.io/monaco-editor/ "Monaco").
+
 ## License
 
 MIT
