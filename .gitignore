@@ -1,5 +1,7 @@
+dist
 node_modules
 npm-debug.log
 
 modules/pako/dist
 !modules/pako/dist/paco.min.js
+

@@ -3,25 +3,23 @@
   "version": "3.2.13",
   "description": "Web editor based on CodeMirror",
   "main": "lib/server.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cloudcmd/dword"
+  "config": {
+    "plugins": "-p [ minifyify --map readify.min.js.map --output dist/readify.min.js.map ]",
+    "compile": {
+      "client": "--gv false -s CodeMirror ./src/index.js -o dist/codemirror.js"
+    }
   },
-  "keywords": [
-    "editor",
-    "express",
-    "middleware"
-  ],
-  "author": "coderaiser",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cloudcmd/dword/issues"
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   },
-  "homepage": "https://github.com/cloudcmd/dword",
   "bin": {
     "dword": "bin/dword.js"
   },
   "scripts": {
+    "build": "rollup -u CodeMirror -c .rollup.js -m -f umd -o dist/codemirror.js",
+    "wisdom": "npm run build",
     "bower": "bower",
     "bupdate": "bupdate"
   },
@@ -40,7 +38,31 @@
     "try-catch": "~1.0.0"
   },
   "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.2.0",
     "bower": "^1.5.1",
-    "bupdate": "^1.1.0"
-  }
+    "bupdate": "^1.1.0",
+    "codemirror": "^5.20.0",
+    "rollup": "^0.36.3",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-filesize": "^1.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-uglify": "^1.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudcmd/dword"
+  },
+  "keywords": [
+    "editor",
+    "express",
+    "middleware"
+  ],
+  "author": "coderaiser",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cloudcmd/dword/issues"
+  },
+  "homepage": "https://github.com/cloudcmd/dword"
 }
+
