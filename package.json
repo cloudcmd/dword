@@ -19,7 +19,8 @@
   },
   "scripts": {
     "build": "rollup -u CodeMirror -c .rollup.js -m -f umd -o dist/codemirror.js",
-    "wisdom": "npm run build",
+    "build:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
+    "wisdom": "npm run build:buble",
     "bower": "bower",
     "bupdate": "bupdate"
   },
@@ -44,6 +45,7 @@
     "codemirror": "^5.20.0",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-buble": "^0.14.0",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-filesize": "^1.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
