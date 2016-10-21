@@ -1,4 +1,5 @@
 .*
+!.jshintrc
 src
 bower.json
 
