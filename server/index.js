@@ -11,7 +11,6 @@ const mollify = require('mollify');
 const join = require('join-io');
 
 const storage = require('./storage');
-const resolvePath = require('./resolve-path');
 const editFn = require('./edit');
 
 const Router = express.Router;
@@ -53,7 +52,6 @@ module.exports = (options = {}) => {
         .get(jshintFn)
         .get(restafaryFn(''))
         .get(joinFn(options))
-        .get(monaco)
         .get(minifyFn)
         .get(staticFn)
         .put(restafaryFn(prefix));
@@ -173,26 +171,6 @@ function _restafaryFn(prefix, req, res, next) {
     });
     
     restafaryFunc(req, res, next);
-}
-
-function monaco(req, res, next) {
-    if (req.url.indexOf('/monaco'))
-        return next();
-    
-    const sendFile = res.sendFile.bind(res);
-    
-    const replace = (path) => {
-        return req.url.replace('/monaco', path);
-    };
-    
-    const sendError = (error) => {
-        res.status(404).send(error);
-    };
-    
-    resolvePath('monaco-editor')
-        .then(replace)
-        .then(sendFile)
-        .catch(sendError);
 }
 
 function minifyFn(o, req, res, next) {
