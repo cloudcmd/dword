@@ -1052,7 +1052,7 @@
                 var js      = PREFIX + '/restafary.js',
                     
                     dir     = DIR + 'codemirror/',
-                    lib     = 'lib/client/',
+                    client  = 'client/',
                     addon   = dir + 'addon/',
                     lint    = addon + 'lint/',
                     
@@ -1063,8 +1063,8 @@
                         lint    + 'javascript-lint',
                         lint    + 'json-lint',
                         
-                        lib     + 'show-trailing',
-                        lib     + 'use-soft-tabs',
+                        client  + 'show-trailing',
+                        client  + 'use-soft-tabs',
                         
                         DIR     + 'jshint/dist/jshint',
                         DIR     + 'cm-searchbox/lib/searchbox',

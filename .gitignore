@@ -1,6 +1,8 @@
 dist
 node_modules
 npm-debug.log
+legacy
+server_
 
 modules/pako/dist
 !modules/pako/dist/paco.min.js

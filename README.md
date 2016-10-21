@@ -65,9 +65,9 @@ For this purpuse API could be used.
 Middleware of `dword`. Options could be omitted.
 
 ```js
-var dword   = require('dword'),
-    express = require('express'),
-    app     = express();
+const dword = require('dword');
+const express = require('express');
+const app = express();
 
 app.use(dword({
     minify  : true,  /* default */
@@ -85,8 +85,8 @@ app.listen(31337);
 Could be used with [socket.io](http://socket.io "Socket.io") to handle editor events with.
 
 ```js
-var io      = require('socket.io'),
-    socket  = io.listen(server);
+const io = require('socket.io'),
+const socket = io.listen(server);
 
 dword.listen(socket);
 ```
@@ -119,6 +119,14 @@ dword('[data-name="js-edit"]', function(editor) {
 });
 ```
 For more information you could always look around into `assets` and `bin` directory.
+
+## Environments
+
+In old `node.js` environments that supports `es5` only, `dword` could be used with:
+
+```js
+var dword = require('dword/legacy');
+```
 
 ## Related
 

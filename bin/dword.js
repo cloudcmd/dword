@@ -2,11 +2,10 @@
 
 'use strict';
 
-var fs = require('fs');
-var rendy = require('rendy');
-var args = process.argv.slice(2);
-var arg = args[0];
-    
+const fs = require('fs');
+const args = process.argv.slice(2);
+const arg = args[0];
+
 if (!arg)
     usage();
 else if (/^(-v|--v)$/.test(arg))
@@ -14,7 +13,7 @@ else if (/^(-v|--v)$/.test(arg))
 else if (/^(-h|--help)$/.test(arg))
     help();
 else
-    checkFile(arg, function(error) {
+    checkFile(arg, (error) => {
        if (!error)
             main(arg);
         else
@@ -22,7 +21,7 @@ else
    });
 
 function getPath(name) {
-    var reg = /^(~|\/)/;
+    const reg = /^(~|\/)/;
     
     if (!reg.test(name))
         name = process.cwd() + '/' + name;
@@ -31,70 +30,58 @@ function getPath(name) {
 }
 
 function main(name) {
-    var socket,
-        edSocket,
-        filename    = getPath(name),
-        DIR         = __dirname + '/../assets/',
-        dword       = require('../'),
-        http        = require('http'),
-        express     = require('express'),
-        io          = require('socket.io'),
-        
-        app         = express(),
-        server      = http.createServer(app),
-        
-        env         = process.env,
-        
-        port        =   env.PORT            ||  /* c9           */
-                        env.app_port        ||  /* nodester     */
-                        env.VCAP_APP_PORT   ||  /* cloudfoundry */
-                        1337,
-        ip          =   env.IP              ||  /* c9           */
-                        '0.0.0.0';
+    const filename = getPath(name);
+    const DIR = __dirname + '/../assets/';
+    const dword = require('..');
+    const http = require('http');
+    const express = require('express');
+    const io = require('socket.io');
+    
+    const app = express();
+    const server = http.createServer(app);
+    
+    const env = process.env;
+    
+    const port =    env.PORT            ||  /* c9           */
+                    env.VCAP_APP_PORT   ||  /* cloudfoundry */
+                    1337;
+    
+    const ip =  env.IP                  ||  /* c9           */
+                '0.0.0.0';
     
     app .use(express.static(DIR))
         .use(dword({
-            minify: false,
-            online: false
+            diff: true,
+            zip: true
         }));
     
     server.listen(port, ip);
     
-    socket      = io.listen(server),
-    edSocket    = dword.listen(socket);
+    const socket = io.listen(server);
+    const edSocket = dword.listen(socket);
     
-    edSocket.on('connection', function() {
-        fs.readFile(name, 'utf8', function(error, data) {
+    edSocket.on('connection', () => {
+        fs.readFile(name, 'utf8', (error, data) => {
             if (error)
                 console.error(error.message);
             else
                 edSocket.emit('file', filename, data);
-            });
+        });
     });
     
     console.log('url: http://' + ip + ':' + port);
 }
 
 function checkFile(name, callback) {
-    var ERROR_ENOENT    = 'Error: no such file or directory: \'{{ name }}\'',
-        ERROR_ISDIR     = 'Error: \'{{ name }}\' is directory';
-    
-    fs.stat(name, function(error, stat) {
-        var msg;
+    fs.stat(name, (error, stat) => {
+        let msg;
         
         if (error && error.code === 'ENOENT')
-            msg = ERROR_ENOENT;
+            msg = Error(`no such file or directory: '${name}'`);
         else if (stat.isDirectory())
-            msg = ERROR_ISDIR;
-            
-        if (msg)
-            error = {
-                message: rendy(msg, {
-                    name: arg
-                })
-            };
+            msg = Error(`'${name}' is directory`);
         
-        callback(error);
+        callback(msg);
     });
 }
 
@@ -107,18 +94,18 @@ function info() {
 }
 
 function usage() {
-    var msg = 'Usage: ' + info().name + ' [filename]';
+    const msg = 'Usage: ' + info().name + ' [filename]';
     console.log(msg);
 }
 
 function help() {
-    var bin         = require('../json/bin');
+    const bin         = require('../json/bin');
         
     usage();
     console.log('Options:');
     
     Object.keys(bin).forEach(function(name) {
-        var line = '  ' + name + ' ' + bin[name];
+        const line = '  ' + name + ' ' + bin[name];
         console.log(line);
     });
 }
