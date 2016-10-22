@@ -1,3 +1,13 @@
+2016.10.22, v4.0.1
+
+feature:
+- (server) rm monaco
+- (npmignore) exclude jshintrc
+- (dword) es2015-ify
+- (package) rm try-catch
+- (package) add buble support
+
+
 2016.10.21, v4.0.0
 
 feature:
