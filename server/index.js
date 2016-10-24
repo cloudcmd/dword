@@ -95,9 +95,7 @@ function serve(options, req, res, next) {
     
     req.url = req.url.replace(prefix, '');
     
-    const regExp = /^\/dword\.(js(\.map)?|css)$/;
-    
-    if (regExp.test(req.url))
+    if (req.url === '/dword.js')
         req.url = '/client' + req.url;
     
     next();
