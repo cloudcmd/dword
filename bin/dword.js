@@ -86,7 +86,7 @@ function checkFile(name, callback) {
 }
 
 function version() {
-    console.log('v' + info().version);
+    console.log(`v${info().version}`);
 }
 
 function info() {
@@ -94,18 +94,17 @@ function info() {
 }
 
 function usage() {
-    const msg = 'Usage: ' + info().name + ' [filename]';
-    console.log(msg);
+    console.log(`Usage: ${info().name} [filename]`);
 }
 
 function help() {
-    const bin         = require('../json/bin');
+    const bin = require('../json/bin');
         
     usage();
     console.log('Options:');
     
-    Object.keys(bin).forEach(function(name) {
-        const line = '  ' + name + ' ' + bin[name];
-        console.log(line);
+    Object.keys(bin).forEach((name) => {
+        console.log(`  ${name} ${bin[name]}`);
     });
 }
+
