@@ -26,7 +26,6 @@ export default {
             browser: true,
         }),
         babel({
-            //exclude: 'node_modules/**',
             runtimeHelpers: true,
             externalHelpers: true
         }),
