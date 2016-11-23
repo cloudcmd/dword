@@ -6,7 +6,7 @@ const path = require('path');
 const restafary = require('restafary');
 const socketFile = require('socket-file');
 const express = require('express');
-const currify = require('currify');
+const currify = require('currify/legacy');
 const mollify = require('mollify');
 const join = require('join-io');
 
