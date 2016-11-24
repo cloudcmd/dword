@@ -7,3 +7,7 @@ server_
 modules/pako/dist
 !modules/pako/dist/paco.min.js
 
+modules/codemirror/bin
+modules/codemirror/lib/codemirror.js
+modules/codemirror/package.json
+

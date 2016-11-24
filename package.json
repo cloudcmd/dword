@@ -20,11 +20,10 @@
     "watch:server": "nodemon -w server -x bin/dword.js package.json",
     "6to5:lib": "babel server -d server_",
     "6to5:bin": "babel bin -d legacy/bin",
-    "build": "redrun build:client:buble build:server legacy:*",
+    "build": "redrun build:client:buble build:server build:codemirror legacy:*",
     "legacy:index": "echo \"module.exports = require('../server_');\" > legacy/index.js",
     "wisdom": "npm run build",
-    "bower": "bower",
-    "bupdate": "bupdate"
+    "build:codemirror": "cp -r node_modules/codemirror modules/"
   },
   "dependencies": {
     "ashify": "~1.0.1",
@@ -43,7 +42,7 @@
     "babel-preset-es2015-rollup": "^1.2.0",
     "bower": "^1.5.1",
     "bupdate": "^1.1.0",
-    "codemirror": "^5.20.2",
+    "codemirror": "5.21.0",
     "cssnano": "^3.7.7",
     "nodemon": "^1.11.0",
     "rollup": "^0.36.3",
