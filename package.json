@@ -39,7 +39,7 @@
     "socket.io": "^1.5.0"
   },
   "devDependencies": {
-    "babel-preset-es2015-rollup": "^1.2.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "bower": "^1.5.1",
     "bupdate": "^1.1.0",
     "codemirror": "5.21.0",
