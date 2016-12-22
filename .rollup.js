@@ -26,8 +26,8 @@ export default {
             browser: true,
         }),
         babel({
-            runtimeHelpers: true,
-            externalHelpers: true
+            runtimeHelpers: false,
+            externalHelpers: false
         }),
         uglify(),
         filesize()

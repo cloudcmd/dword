@@ -20,7 +20,7 @@
     "watch:server": "nodemon -w server -x bin/dword.js package.json",
     "6to5:lib": "babel server -d server_",
     "6to5:bin": "babel bin -d legacy/bin",
-    "build": "redrun build:client:buble build:server build:codemirror legacy:*",
+    "build": "redrun build:client build:server build:codemirror legacy:*",
     "legacy:index": "echo \"module.exports = require('../server_');\" > legacy/index.js",
     "wisdom": "npm run build",
     "build:codemirror": "cp -r node_modules/codemirror modules/"
