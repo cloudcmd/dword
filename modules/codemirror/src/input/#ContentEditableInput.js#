@@ -1,4 +1,5 @@
 import { operation, runInOp } from "../display/operations"
+
 import { prepareSelection } from "../display/selection"
 import { regChange } from "../display/view_tracking"
 import { applyTextInput, copyableRanges, disableBrowserMagic, handlePaste, hiddenTextarea, lastCopied, setLastCopied } from "./input"

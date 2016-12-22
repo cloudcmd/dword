@@ -1,3 +1,13 @@
+2016.12.22, v4.0.8
+
+feature:
+- (package) codemirror v5.22.0
+- (package) rollup-plugin-commonjs v6.0.0
+- (package) rollup-plugin-buble v0.15.0
+- (package) rollup v0.37.0
+- (package) babel-preset-es2015-rollup v3.0.0
+
+
 2016.12.09, v4.0.7
 
 feature:
