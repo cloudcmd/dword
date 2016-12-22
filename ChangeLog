@@ -1,3 +1,10 @@
+2016.12.22, v4.0.9
+
+fix:
+- (package) build: buble -> babel
+- (package) babel-cli v6.18.0
+
+
 2016.12.22, v4.0.8
 
 feature:
