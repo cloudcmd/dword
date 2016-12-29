@@ -33,6 +33,7 @@
         this._story             = Story();
         this._Emitter;
         this._Separator         = '\n';
+        this._isKey = true;
         
         if (!callback)
             callback = options;
@@ -66,6 +67,20 @@
             this._writeHttp(path, result);
         };
     }
+    
+    Dword.prototype.isKey = function() {
+        return this._isKey;
+    };
+    
+    Dword.prototype.enableKey = function() {
+        this._isKey = true;
+        return this;
+    };
+    
+    Dword.prototype.disableKey = function() {
+        this._isKey = false;
+        return this;
+    };
     
     Dword.prototype._showMessageOnce = function(msg) {
         if (!this._showedOnce) {
@@ -172,25 +187,32 @@
     };
     
     function addCommands(dword) {
+        var self = this;
+        var run = function(fn) {
+            return function() {
+                dword.isKey() && fn();
+            }
+        };
+        
         var commands = {
             'Ctrl-G': function () {
                 dword.goToLine();
             },
-            'Ctrl-S': function() {
+            'Ctrl-S': run(function() {
                 dword.save();
-            },
-            'F2': function() {
+            }),
+            'F2': run(function() {
                 dword.save();
-            },
-            'Ctrl-B' : function() {
+            }),
+            'Ctrl-B' : run(function() {
                 dword.beautify();
-            },
-            'Ctrl-M' : function() {
+            }),
+            'Ctrl-M' : run(function() {
                 dword.minify();
-            },
-            'Ctrl-E' : function() {
+            }),
+            'Ctrl-E' : run(function() {
                 dword.evaluate();
-            },
+            }),
             'Ctrl-/' : 'toggleComment'
         };
         
