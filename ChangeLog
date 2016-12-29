@@ -1,3 +1,10 @@
+2016.12.29, v4.1.0
+
+feature:
+- (dword) add isKey, enableKey, disableKey
+- (package) rollup v0.38.0
+
+
 2016.12.22, v4.0.9
 
 fix:
