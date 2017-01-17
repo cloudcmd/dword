@@ -1,3 +1,11 @@
+2017.01.17, v4.1.1
+
+feature:
+- (package) restafary v2.0.0
+- (package) rollup v0.40.2
+- (package) rollup-plugin-commonjs v7.0.0
+
+
 2016.12.29, v4.1.0
 
 feature:
