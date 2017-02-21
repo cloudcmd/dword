@@ -1,5 +1,5 @@
 .*
 !.jshintrc
-src
+./src/index.js
 bower.json
 
