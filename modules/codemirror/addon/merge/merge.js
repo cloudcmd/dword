@@ -47,6 +47,7 @@
       this.diff = getDiff(asString(orig), asString(options.value));
       this.chunks = getChunks(this.diff);
       this.diffOutOfDate = this.dealigned = false;
+      this.needsScrollSync = null
 
       this.showDifferences = options.showDifferences !== false;
     },
@@ -97,6 +98,7 @@
       if (dv.mv.options.connect == "align")
         alignChunks(dv);
       makeConnections(dv);
+      if (dv.needsScrollSync != null) syncScroll(dv, dv.needsScrollSync)
 
       updating = false;
     }
@@ -127,10 +129,11 @@
     dv.orig.on("change", change);
     dv.edit.on("swapDoc", swapDoc);
     dv.orig.on("swapDoc", swapDoc);
-    dv.edit.on("markerAdded", setDealign);
-    dv.edit.on("markerCleared", setDealign);
-    dv.orig.on("markerAdded", setDealign);
-    dv.orig.on("markerCleared", setDealign);
+    var events = ["markerAdded", "markerCleared", "lineWidgetAdded", "lineWidgetCleared"]
+    for (var i = 0; i < events.length; i++) {
+      dv.edit.on(events[i], setDealign);
+      dv.orig.on(events[i], setDealign);
+    }
     dv.edit.on("viewportChange", function() { set(false); });
     dv.orig.on("viewportChange", function() { set(false); });
     update();
@@ -139,23 +142,27 @@
 
   function registerScroll(dv) {
     dv.edit.on("scroll", function() {
-      syncScroll(dv, DIFF_INSERT) && makeConnections(dv);
+      syncScroll(dv, true) && makeConnections(dv);
     });
     dv.orig.on("scroll", function() {
-      syncScroll(dv, DIFF_DELETE) && makeConnections(dv);
+      syncScroll(dv, false) && makeConnections(dv);
     });
   }
 
-  function syncScroll(dv, type) {
+  function syncScroll(dv, toOrig) {
     // Change handler will do a refresh after a timeout when diff is out of date
-    if (dv.diffOutOfDate) return false;
+    if (dv.diffOutOfDate) {
+      if (dv.lockScroll && dv.needsScrollSync == null) dv.needsScrollSync = toOrig
+      return false
+    }
+    dv.needsScrollSync = null
     if (!dv.lockScroll) return true;
     var editor, other, now = +new Date;
-    if (type == DIFF_INSERT) { editor = dv.edit; other = dv.orig; }
+    if (toOrig) { editor = dv.edit; other = dv.orig; }
     else { editor = dv.orig; other = dv.edit; }
     // Don't take action if the position of this editor was recently set
     // (to prevent feedback loops)
-    if (editor.state.scrollSetBy == dv && (editor.state.scrollSetAt || 0) + 50 > now) return false;
+    if (editor.state.scrollSetBy == dv && (editor.state.scrollSetAt || 0) + 250 > now) return false;
 
     var sInfo = editor.getScrollInfo();
     if (dv.mv.options.connect == "align") {
@@ -163,9 +170,9 @@
     } else {
       var halfScreen = .5 * sInfo.clientHeight, midY = sInfo.top + halfScreen;
       var mid = editor.lineAtHeight(midY, "local");
-      var around = chunkBoundariesAround(dv.chunks, mid, type == DIFF_INSERT);
-      var off = getOffsets(editor, type == DIFF_INSERT ? around.edit : around.orig);
-      var offOther = getOffsets(other, type == DIFF_INSERT ? around.orig : around.edit);
+      var around = chunkBoundariesAround(dv.chunks, mid, toOrig);
+      var off = getOffsets(editor, toOrig ? around.edit : around.orig);
+      var offOther = getOffsets(other, toOrig ? around.orig : around.edit);
       var ratio = (midY - off.top) / (off.bot - off.top);
       var targetPos = (offOther.top - halfScreen) + ratio * (offOther.bot - offOther.top);
 
@@ -271,7 +278,7 @@
       }
     }
 
-    var chunkStart = 0;
+    var chunkStart = 0, pending = false;
     for (var i = 0; i < diff.length; ++i) {
       var part = diff[i], tp = part[0], str = part[1];
       if (tp == DIFF_EQUAL) {
@@ -279,10 +286,11 @@
         moveOver(pos, str);
         var cleanTo = pos.line + (endOfLineClean(diff, i) ? 1 : 0);
         if (cleanTo > cleanFrom) {
-          if (i) markChunk(chunkStart, cleanFrom);
+          if (pending) { markChunk(chunkStart, cleanFrom); pending = false }
           chunkStart = cleanTo;
         }
       } else {
+        pending = true
         if (tp == type) {
           var end = moveOver(pos, str, true);
           var a = posMax(top, pos), b = posMin(bot, end);
@@ -292,7 +300,7 @@
         }
       }
     }
-    if (chunkStart <= pos.line) markChunk(chunkStart, pos.line + 1);
+    if (pending) markChunk(chunkStart, pos.line + 1);
   }
 
   // Updating the gap between editor and original
@@ -448,9 +456,15 @@
 
   function copyChunk(dv, to, from, chunk) {
     if (dv.diffOutOfDate) return;
-    var editStart = chunk.editTo > to.lastLine() ? Pos(chunk.editFrom - 1) : Pos(chunk.editFrom, 0)
     var origStart = chunk.origTo > from.lastLine() ? Pos(chunk.origFrom - 1) : Pos(chunk.origFrom, 0)
-    to.replaceRange(from.getRange(origStart, Pos(chunk.origTo, 0)), editStart, Pos(chunk.editTo, 0))
+    var origEnd = Pos(chunk.origTo, 0)
+    var editStart = chunk.editTo > to.lastLine() ? Pos(chunk.editFrom - 1) : Pos(chunk.editFrom, 0)
+    var editEnd = Pos(chunk.editTo, 0)
+    var handler = dv.mv.options.revertChunk
+    if (handler)
+      handler(dv.mv, from, origStart, origEnd, to, editStart, editEnd)
+    else
+      to.replaceRange(from.getRange(origStart, origEnd), editStart, editEnd)
   }
 
   // Merge view, containing 0, 1, or 2 diff views.
@@ -614,10 +628,10 @@
   function endOfLineClean(diff, i) {
     if (i == diff.length - 1) return true;
     var next = diff[i + 1][1];
-    if (next.length == 1 || next.charCodeAt(0) != 10) return false;
+    if ((next.length == 1 && i < diff.length - 2) || next.charCodeAt(0) != 10) return false;
     if (i == diff.length - 2) return true;
     next = diff[i + 2][1];
-    return next.length > 1 && next.charCodeAt(0) == 10;
+    return (next.length > 1 || i == diff.length - 3) && next.charCodeAt(0) == 10;
   }
 
   function startOfLineClean(diff, i) {
