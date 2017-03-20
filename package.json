@@ -43,7 +43,7 @@
     "babel-preset-es2015-rollup": "^3.0.0",
     "bower": "^1.5.1",
     "bupdate": "^1.1.0",
-    "codemirror": "^5.24.2",
+    "codemirror": "^5.25.0",
     "cssnano": "^3.7.7",
     "nodemon": "^1.11.0",
     "rollup": "^0.41.4",
