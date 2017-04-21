@@ -1,3 +1,12 @@
+2017.04.21, v4.1.8
+
+feature:
+- (package) codemirror v5.25.2
+- (package) rollup-plugin-postcss v0.4.1
+- (package) rollup-plugin-node-resolve v3.0.0
+- (package) rollup-plugin-commonjs v8.0.2
+
+
 2017.03.20, v4.1.7
 
 feature:
