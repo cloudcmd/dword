@@ -1020,21 +1020,21 @@
     };
     
     Dword.prototype._loadFiles = function(callback) {
-        var self    = this,
-            obj     = {
-                loadRemote  : getModulePath('loadremote', 'lib'),
-                load        : getModulePath('load'),
-                Emitify     : getModulePath('emitify', 'dist'),
-                join        : '/join/join.js'
-            },
+        var self = this;
+        var obj = {
+            loadRemote  : getModulePath('loadremote', 'lib'),
+            load        : getModulePath('load'),
+            Emitify     : getModulePath('emitify.min', 'dist'),
+            join        : '/join/join.js'
+        };
             
-            scripts = Object.keys(obj)
-                .filter(function(name) {
-                    return !window[name];
-                })
-                .map(function(name) {
-                    return self._PREFIX + obj[name];
-                });
+        var scripts = Object.keys(obj)
+            .filter(function(name) {
+                return !window[name];
+            })
+            .map(function(name) {
+                return self._PREFIX + obj[name];
+            });
         
         exec.if(!scripts.length, callback, function() {
             loadScript(scripts, callback);

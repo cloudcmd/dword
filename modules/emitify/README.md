@@ -14,7 +14,7 @@ bower i emitify --save
 What you should do first is create new instance of `emitify` with 
 
 ```js
-var emitify = Emitify();
+const emitify = Emitify();
 ```
 
 Than you could just use API as it is.
@@ -46,18 +46,25 @@ Removes all listeners related to `event`.
 ## How to use?
 
 ```js
-var Emitify = require('emitify'),
-    emitter = new Emitify(),
-    log     = function(data) {
-        console.log(data);
-    });
+const Emitify = require('emitify');
+const emitter = new Emitify();
+const log = (data) => {
+    console.log(data);
+});
 
 emitter.on('data', log);
 
 emitter.emit('data', 'hello');
 
 emitter.off('data', log);
+```
 
+## Environments
+
+In old `node.js` environments that not fully supports `es2015`, `emitify` could be used with:
+
+```js
+var typos = require('emitify/legacy');
 ```
 
 ## License

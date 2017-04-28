@@ -1,19 +1,31 @@
 {
   "name": "emitify",
-  "version": "2.1.1",
+  "version": "3.0.1",
   "description": "dead simple event emitter",
   "main": "lib/emitify.js",
+  "babel": {
+    "presets": [
+      "es2015-rollup"
+    ]
+  },
   "scripts": {
     "test": "tape test/*.js",
-    "jscs": "jscs --esnext lib test",
-    "jshint": "jshint lib test",
-    "codestyle": "redrun jshint jscs",
+    "lint": "eslint lib test",
     "coverage": "nyc npm test",
     "report": "nyc report --reporter=text-lcov | coveralls",
-    "bundle:base": "browserify -s Emitify --dg false",
-    "bundle": "npm run bundle:base -- -r ./lib/emitify.js:emitify ./lib/emitify.js -o dist/emitify.js",
-    "minify": "minify dist/emitify.js > dist/emitify.min.js",
-    "build": "redrun bundle minify",
+    "watcher": "nodemon -w test -w lib --exec",
+    "watch:test": "npm run watcher -- npm test",
+    "watch:lint": "npm run watcher -- npm run lint",
+    "watch:coverage": "npm run watcher -- npm run coverage",
+    "6to5:server": "babel lib -d legacy/lib",
+    "build:server": "redrun 6to5:server legacy:*",
+    "legacy:index": "echo \"module.exports = require('./lib/emitify');\" > legacy/index.js",
+    "_build": "rollup -c .rollup.js -m -f umd",
+    "build": "redrun build:*",
+    "build:client:dev": "rollup -c .rollup.js -f umd -o dist/emitify.min.js",
+    "build:client": "NODE_ENV=production rollup -c .rollup.js -m -f umd -o dist/emitify.js",
+    "watch:build": "npm run build -- -w",
+    "watch:client": "npm run build -- -w",
     "wisdom": "npm run build"
   },
   "repository": {
@@ -31,13 +43,22 @@
   },
   "homepage": "https://github.com/coderaiser/emitify",
   "devDependencies": {
-    "browserify": "^13.0.0",
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "coveralls": "^2.11.6",
+    "eslint": "^3.19.0",
     "jscs": "^3.0.3",
     "jshint": "^2.8.0",
-    "minify": "^2.0.2",
-    "nyc": "^7.0.0",
+    "nodemon": "^1.11.0",
+    "nyc": "^10.0.0",
     "redrun": "^5.0.1",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-filesize": "^1.0.0",
+    "rollup-plugin-json": "^2.0.2",
+    "rollup-plugin-uglify": "^1.0.1",
+    "rollup-watch": "^3.2.2",
     "tape": "^4.4.0"
   },
   "dependencies": {}

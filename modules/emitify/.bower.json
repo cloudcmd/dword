@@ -19,17 +19,18 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "lib",
+    "test"
   ],
-  "version": "2.1.1",
-  "_release": "2.1.1",
+  "version": "3.0.1",
+  "_release": "3.0.1",
   "_resolution": {
     "type": "version",
-    "tag": "v2.1.1",
-    "commit": "7a68d0c95c1568cc84c21b76398960ea40ec29ba"
+    "tag": "v3.0.1",
+    "commit": "17f4c075b00a924bed077e1e55fa4b746e1653dc"
   },
   "_source": "https://github.com/coderaiser/emitify.git",
-  "_target": "^2.1.1",
-  "_originalSource": "emitify"
+  "_target": "^3.0.1",
+  "_originalSource": "emitify",
+  "_direct": true
 }

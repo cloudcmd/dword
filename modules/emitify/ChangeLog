@@ -1,3 +1,19 @@
+2017.04.28, v3.0.1
+
+feature:
+- (bower) rm lib
+
+
+2017.04.28, v3.0.0
+
+feature:
+- (emitify) es2015-ify
+- (package) browserify v14.0.0
+- (package) nyc v10.0.0
+- (package) nyc v9.0.1; git push origin master
+- (package) nyc v8.1.0
+
+
 2016.07.14, v2.1.1
 
 fix:
