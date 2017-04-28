@@ -1,3 +1,9 @@
+2017.04.28, v3.0.2
+
+fix:
+- (emitify) emit: no listeners
+
+
 2017.04.28, v3.0.1
 
 feature:
