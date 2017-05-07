@@ -1,6 +1,6 @@
 [{
     "name": "socket",
-    "version": "1.4.8",
+    "version": "1.7.4",
     "local": "/socket.io/socket.io.js",
     "remote": "//cdn.socket.io/socket.io-{{ version }}.js"
 }, {
