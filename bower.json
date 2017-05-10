@@ -27,7 +27,7 @@
     "jsSHA": "^2.1.0",
     "cm-show-invisibles": "1.2.1",
     "zipio": "1.0.2",
-    "smalltalk": "2.2.0",
-    "emitify": "3.0.2"
+    "emitify": "3.0.2",
+    "smalltalk": "2.2.1"
   }
 }
