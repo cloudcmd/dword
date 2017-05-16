@@ -1,3 +1,13 @@
+2017.05.16, v4.1.14
+
+fix:
+- (modules) socket.io remote url
+
+feature:
+- (gitignore) add *.swp
+- (dword) preload vim keybinding
+
+
 2017.05.10, v4.1.13
 
 feature:
