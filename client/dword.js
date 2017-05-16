@@ -1078,6 +1078,7 @@
                 var lint = addon + 'lint/';
                 
                 var urlJS = PREFIX + join([
+                    dir     + 'keymap/vim',
                     dir     + 'mode/meta',
                     
                     lint    + 'lint',
