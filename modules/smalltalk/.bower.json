@@ -24,15 +24,15 @@
     "test"
   ],
   "dependencies": {},
-  "version": "2.2.1",
-  "_release": "2.2.1",
+  "version": "2.2.2",
+  "_release": "2.2.2",
   "_resolution": {
     "type": "version",
-    "tag": "v2.2.1",
-    "commit": "6f932632431f39e2646d9a9c3551c12f45d56971"
+    "tag": "v2.2.2",
+    "commit": "f40f4bf810170e516eeff0b01a07697dd8fe1899"
   },
   "_source": "https://github.com/coderaiser/smalltalk.git",
-  "_target": "^2.2.1",
+  "_target": "^2.2.2",
   "_originalSource": "smalltalk",
   "_direct": true
 }

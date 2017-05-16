@@ -30,7 +30,6 @@
     "commit": "1bcfb6a4b80daa907a2179004af832306c4e6605"
   },
   "_source": "https://github.com/coderaiser/emitify.git",
-  "_target": "^3.0.2",
-  "_originalSource": "emitify",
-  "_direct": true
+  "_target": "3.0.2",
+  "_originalSource": "emitify"
 }
