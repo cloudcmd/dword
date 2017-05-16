@@ -92,10 +92,10 @@
     function empty() {}
     
     Dword.prototype._init = function(fn) {
-        var self            = this,
-            loadFiles       = self._loadFiles.bind(self),
-            loadFilesAll    = self._loadFilesAll.bind(self),
-            loadStyles      = self._loadStyles.bind(self);
+        var self = this;
+        var loadFiles = self._loadFiles.bind(self);
+        var loadFilesAll = self._loadFilesAll.bind(self);
+        var loadStyles = self._loadStyles.bind(self);
         
         exec.series([
             loadFiles,
@@ -408,7 +408,7 @@
         return ret;
     }
     
-    Dword.prototype.setOption        = function(name, value) {
+    Dword.prototype.setOption = function(name, value) {
         var Ace = this._Ace;
         switch(name) {
         default:
@@ -418,11 +418,11 @@
             Ace.display.wrapper.style.fontSize = value + 'px';
             break;
         }
-          
+        
         return this;
     };
     
-    Dword.prototype.setOptions       = function(options) {
+    Dword.prototype.setOptions = function(options) {
         var dword = this;
         
         Object.keys(options).forEach(function(name) {
@@ -1132,8 +1132,8 @@
     };
      
     function getKeyMapPath(dir, config) {
-        var path    = '',
-            keyMap  = config && config.options && config.options.keyMap;
+        var path = '';
+        var keyMap  = config && config.options && config.options.keyMap;
         
         if (keyMap && keyMap !== 'default')
             path = dir + 'keymap/' + keyMap;
