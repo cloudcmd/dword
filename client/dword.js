@@ -1071,55 +1071,54 @@
             },
              
             function(callback) {
-                var js      = PREFIX + '/restafary.js',
+                var js = PREFIX + '/restafary.js';
+                var dir = DIR + 'codemirror/';
+                var client = 'client/';
+                var addon = dir + 'addon/';
+                var lint = addon + 'lint/';
+                
+                var urlJS = PREFIX + join([
+                    dir     + 'mode/meta',
                     
-                    dir     = DIR + 'codemirror/',
-                    client  = 'client/',
-                    addon   = dir + 'addon/',
-                    lint    = addon + 'lint/',
+                    lint    + 'lint',
+                    lint    + 'javascript-lint',
+                    lint    + 'json-lint',
                     
-                    urlJS   = PREFIX + join([
-                        dir     + 'mode/meta',
-                        
-                        lint    + 'lint',
-                        lint    + 'javascript-lint',
-                        lint    + 'json-lint',
-                        
-                        client  + 'show-trailing',
-                        client  + 'use-soft-tabs',
-                        
-                        DIR     + 'jshint/dist/jshint',
-                        DIR     + 'cm-searchbox/lib/searchbox',
-                        DIR     + 'cm-show-invisibles/lib/show-invisibles',
-                        getKeyMapPath(dir, self._Config)
-                    ].filter(function(name) {
-                        return name;
-                    }).concat([
-                        'display/autorefresh',
-                        
-                        'comment/comment',
-                        'comment/continuecomment',
-                        
-                        'mode/loadmode',
-                        'mode/overlay',
-                        
-                        'search/searchcursor',
-                        'search/match-highlighter',
-                        'search/matchesonscrollbar',
-                        
-                        'dialog/dialog',
-                        'scroll/annotatescrollbar',
-                        'fold/xml-fold',
-                        
-                        'edit/closebrackets',
-                        'edit/matchbrackets',
-                        'edit/matchtags'
-                    ].map(function(name) {
-                        return addon + name;
-                    })
-                    ).map(function(name) {
-                        return name + '.js';
-                    }));
+                    client  + 'show-trailing',
+                    client  + 'use-soft-tabs',
+                    
+                    DIR     + 'jshint/dist/jshint',
+                    DIR     + 'cm-searchbox/lib/searchbox',
+                    DIR     + 'cm-show-invisibles/lib/show-invisibles',
+                    getKeyMapPath(dir, self._Config)
+                ].filter(function(name) {
+                    return name;
+                }).concat([
+                    'display/autorefresh',
+                    
+                    'comment/comment',
+                    'comment/continuecomment',
+                    
+                    'mode/loadmode',
+                    'mode/overlay',
+                    
+                    'search/searchcursor',
+                    'search/match-highlighter',
+                    'search/matchesonscrollbar',
+                    
+                    'dialog/dialog',
+                    'scroll/annotatescrollbar',
+                    'fold/xml-fold',
+                    
+                    'edit/closebrackets',
+                    'edit/matchbrackets',
+                    'edit/matchtags'
+                ].map(function(name) {
+                    return addon + name;
+                })
+                ).map(function(name) {
+                    return name + '.js';
+                }));
                  
                 load.parallel([urlJS, js], callback);
             },
