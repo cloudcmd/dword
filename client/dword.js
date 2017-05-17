@@ -229,12 +229,12 @@
     }
     
     Dword.prototype.evaluate = function() {
-        var dword       = this,
-            focus       = dword.focus.bind(this),
-            FileName    = this._FileName,
-            value,
-            msg,
-            isJS    = /\.js$/.test(FileName);
+        var dword = this;
+        var focus = dword.focus.bind(this);
+        var FileName = this._FileName;
+        var value;
+        var msg;
+        var isJS = /\.js$/.test(FileName);
         
         if (!isJS) {
             msg = 'Evaluation supported for JavaScript only';
