@@ -15,9 +15,9 @@ else if (/^(-h|--help)$/.test(arg))
 else
     checkFile(arg, (error) => {
        if (!error)
-            main(arg);
-        else
-            console.error(error.message);
+            return main(arg);
+        
+        console.error(error.message);
    });
 
 function getPath(name) {
@@ -51,6 +51,7 @@ function main(name) {
     
     app .use(express.static(DIR))
         .use(dword({
+            minify: false,
             diff: true,
             zip: true
         }));
@@ -63,9 +64,9 @@ function main(name) {
     edSocket.on('connection', () => {
         fs.readFile(name, 'utf8', (error, data) => {
             if (error)
-                console.error(error.message);
-            else
-                edSocket.emit('file', filename, data);
+                return console.error(error.message);
+            
+            edSocket.emit('file', filename, data);
         });
     });
     

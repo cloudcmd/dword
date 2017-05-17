@@ -264,12 +264,12 @@
     };
     
     Dword.prototype.goToLine         = function() {
-        var myHeight, coords,
-            dword   = this,
-            Ace     = this._Ace,
-            msg     = 'Enter line number:',
-            cursor  = dword.getCursor(),
-            number  = cursor.row + 1;
+        var myHeight coords;
+        var dword = this;
+        var Ace = this._Ace;
+        var msg = 'Enter line number:';
+        var cursor = dword.getCursor();
+        var number = cursor.row + 1;
         
         smalltalk.prompt(this._TITLE, msg, number).then(function(line) {
             cursor      = Ace.setCursor({
