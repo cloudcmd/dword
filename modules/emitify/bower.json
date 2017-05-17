@@ -17,8 +17,7 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
+    "webpack.config.js",
     "lib",
     "test"
   ]
