@@ -28,11 +28,11 @@
         this._ElementMsg;
         this._JSHintConfig;
         this._Ext;
-        this._DIR               = '/modules/';
-        this._TITLE             = 'Dword';
-        this._story             = Story();
+        this._DIR = '/modules/';
+        this._TITLE = 'Dword';
+        this._story = Story();
         this._Emitter;
-        this._Separator         = '\n';
+        this._Separator = '\n';
         this._isKey = true;
         
         if (!callback)
@@ -47,8 +47,8 @@
         
         this._Element = el || document.body;
         
-        onDrop      = this._onDrop.bind(this);
-        onDragOver  = this._onDragOver.bind(this);
+        onDrop = this._onDrop.bind(this);
+        onDragOver = this._onDragOver.bind(this);
         
         this._Element.addEventListener('drop', onDrop);
         this._Element.addEventListener('dragover', onDragOver);
@@ -101,30 +101,28 @@
             loadFiles,
             function(callback) {
                 load.json(self._PREFIX + '/edit.json', function(error, config) {
-                    if (error) {
-                        smalltalk.alert(self._TITLE, 'Could not load edit.json!');
-                    } else {
-                        self._Config  = config;
-                        callback();
-                    }
+                    if (error)
+                        return smalltalk.alert(self._TITLE, 'Could not load edit.json!');
+                    
+                    self._Config  = config;
+                    callback();
                 });
             },
             
             function(callback) {
-                var names,
-                    name        = 'smalltalk',
-                    is          = window.Promise,
-                    js          = '.min.js',
-                    jsName      = is ? js : '.poly' + js,
-                    dir         = '/modules/' + name + '/dist/',
-                    isFlex      = function() {
-                        return document.body.style.flex !== 'undefined';
-                    };
+                var name = 'smalltalk';
+                var is = window.Promise;
+                var js = '.min.js';
+                var jsName = is ? js : '.poly' + js;
+                var dir = '/modules/' + name + '/dist/';
+                var isFlex = function() {
+                    return document.body.style.flex !== 'undefined';
+                };
                 
                 if (!isFlex())
                     jsName = '.native' + jsName;
                 
-                names = [jsName, '.min.css'].map(function(ext) {
+                var names = [jsName, '.min.css'].map(function(ext) {
                     return self._PREFIX + dir + name + ext;
                 });
                 
@@ -135,23 +133,23 @@
             loadStyles,
             
             function() {
-                var options = self._Config.options,
-                    Value   = self._Value,
-                    all     = {
-                        autofocus           : true,
-                        autoRefresh         : true,
-                        lineNumbers         : true,
-                        showTrailing        : true,
-                        autoCloseBrackets   : true,
-                        matchBrackets       : true,
-                        matchTags           : false,
-                        gutters             : ['CodeMirror-lint-markers'],
-                        maxInvisibles       : 32,
-                        searchbox           : true,
-                        continueComments    : true,
-                        
-                        highlightSelectionMatches: true
-                    };
+                var options = self._Config.options;
+                var Value = self._Value;
+                var all = {
+                    autofocus           : true,
+                    autoRefresh         : true,
+                    lineNumbers         : true,
+                    showTrailing        : true,
+                    autoCloseBrackets   : true,
+                    matchBrackets       : true,
+                    matchTags           : false,
+                    gutters             : ['CodeMirror-lint-markers'],
+                    maxInvisibles       : 32,
+                    searchbox           : true,
+                    continueComments    : true,
+                    
+                    highlightSelectionMatches: true
+                };
                 
                 self._Emitter = Emitify();
                  
