@@ -781,9 +781,9 @@
     };
     
     Dword.prototype._setEmmet = function() {
-        var dir         = this._DIR + 'codemirror-emmet/dist/',
-            extensions  = this._Config.extensions,
-            isEmmet     = extensions.emmet;
+        var dir = this._DIR + 'codemirror-emmet/dist/';
+        var extensions = this._Config.extensions;
+        var isEmmet = extensions.emmet;
         
         if (isEmmet)
             load.js(this._PREFIX + join([
