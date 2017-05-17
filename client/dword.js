@@ -104,7 +104,7 @@
                     if (error)
                         return smalltalk.alert(self._TITLE, 'Could not load edit.json!');
                     
-                    self._Config  = config;
+                    self._Config = config;
                     callback();
                 });
             },
@@ -1131,7 +1131,7 @@
      
     function getKeyMapPath(dir, config) {
         var path = '';
-        var keyMap  = config && config.options && config.options.keyMap;
+        var keyMap = config && config.options && config.options.keyMap;
         
         if (keyMap && keyMap !== 'default')
             path = dir + 'keymap/' + keyMap;
