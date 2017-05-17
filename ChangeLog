@@ -1,3 +1,12 @@
+2017.05.17, v4.1.17
+
+fix:
+- (dword) getModulePath: emitify
+
+feature:
+- (bower) emitify v3.1.0
+
+
 2017.05.17, v4.1.16
 
 feature:
