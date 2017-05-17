@@ -433,48 +433,45 @@
     };
     
     Dword.prototype.setMode = function(mode, callback) {
-        var is,
-            self   = this,
-            isJSON  = mode === 'json',
+        var self = this;
+        var isJSON = mode === 'json';
+        
+        var fn = function(mode) {
+            self._Ace.setOption('mode', mode);
             
-            fn  = function(mode) {
-                self._Ace.setOption('mode', mode);
-                
-                exec(callback);
-            };
+            exec(callback);
+        };
         
         if (isJSON)
             mode = 'javascript';
         else if (!mode)
             mode = null;
         
-        is = CodeMirror.modes[mode];
+        var is = CodeMirror.modes[mode];
         
         if (is || !mode) {
             fn(mode);
-        } else {
-            CodeMirror.requireMode(mode, function() {
-                fn(mode);
-            });
+            return this;
         }
+        
+        CodeMirror.requireMode(mode, function() {
+            fn(mode);
+        });
         
         return this;
     };
     
     Dword.prototype.setModeForPath   = function(path) {
-        var dword       = this,
-            self        = this,
-            modesByName = CodeMirror.findModeByFileName,
-            name        = path.split('/').pop();
-            
+        var dword = this;
+        var self = this;
+        var modesByName = CodeMirror.findModeByFileName;
+        var name = path.split('/').pop();
+        
         self._addExt(name, function(name) {
-            var htmlMode, isHTML,
-                info    = modesByName(name) || {},
-                mode    = info.mode;
-            
-            htmlMode    = modesByName('.html').mode;
-            
-            isHTML      = mode === htmlMode;
+            var info = modesByName(name) || {};
+            var mode = info.mode;
+            var htmlMode = modesByName('.html').mode;
+            var isHTML = mode === htmlMode;
             
             dword.setOption('matchTags', isHTML);
             
@@ -487,20 +484,21 @@
                     isJS    = /.js$/.test(name);
                 
                 if (!isLint)
-                    dword.setOption('lint', false);
-                else if (!isJS)
-                    dword.setOption('lint', true);
-                else
-                    self._setJsHintConfig(function(jshint) {
-                        dword.setOption('lint', jshint);
-                    });
+                    return dword.setOption('lint', false);
+                
+                if (!isJS)
+                    return dword.setOption('lint', true);
+                
+                self._setJsHintConfig(function(jshint) {
+                    dword.setOption('lint', jshint);
+                });
             });
         });
         
         return this;
     };
     
-    Dword.prototype.selectAll    = function() {
+    Dword.prototype.selectAll = function() {
         this._Ace.execCommand('selectAll');
         return this;
     };
@@ -516,9 +514,9 @@
         var msg = 'Could not cut, use &ltCtrl&gt + &ltX&gt insted!';
         
         if (!this._clipboard('cut'))
-            smalltalk.alert(this._TITLE, msg);
-        else
-            this.remove('right');
+            return smalltalk.alert(this._TITLE, msg);
+        
+        this.remove('right');
     };
     
     Dword.prototype.pasteFromClipboard = function() {
@@ -529,13 +527,13 @@
     };
     
     Dword.prototype._clipboard = function(cmd) {
-        var result,
-            Ace         = this._Ace,
-            story       = this._story,
-            value,
-            NAME        = 'editor-clipboard',
-            body        = document.body,
-            textarea    = document.createElement('textarea');
+        var result;
+        var value;
+        var Ace = this._Ace;
+        var story = this._story;
+        var NAME = 'editor-clipboard';
+        var body = document.body;
+        var textarea = document.createElement('textarea');
         
         if (!/^cut|copy|paste$/.test(cmd))
             throw Error('cmd could be "cut" or "copy" only!');
@@ -1078,7 +1076,6 @@
                 var lint = addon + 'lint/';
                 
                 var urlJS = PREFIX + join([
-                    dir     + 'keymap/vim',
                     dir     + 'mode/meta',
                     
                     lint    + 'lint',
@@ -1091,7 +1088,8 @@
                     DIR     + 'jshint/dist/jshint',
                     DIR     + 'cm-searchbox/lib/searchbox',
                     DIR     + 'cm-show-invisibles/lib/show-invisibles',
-                    getKeyMapPath(dir, self._Config)
+                    getKeyMapPath(dir, self._Config),
+                    dir     + 'keymap/vim',
                 ].filter(function(name) {
                     return name;
                 }).concat([
