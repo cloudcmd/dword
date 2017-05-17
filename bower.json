@@ -17,7 +17,6 @@
     "modules"
   ],
   "dependencies": {
-    "cm-searchbox": "~1.0.0",
     "codemirror-emmet": "~1.1.0",
     "daffy": "~1.0.3",
     "execon": "~1.2.7",
@@ -28,6 +27,7 @@
     "cm-show-invisibles": "1.2.1",
     "zipio": "1.0.2",
     "smalltalk": "2.3.1",
-    "emitify": "3.1.0"
+    "emitify": "3.1.0",
+    "cm-searchbox": "1.0.8"
   }
 }

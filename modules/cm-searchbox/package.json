@@ -1,10 +1,11 @@
 {
   "name": "cm-searchbox",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "CodeMirror searchbox",
   "main": "lib/searchbox.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jshint lib",
+    "jshint": "jshint"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/coderaiser/cm-searchbox/issues"
   },
-  "homepage": "https://github.com/coderaiser/cm-searchbox"
+  "homepage": "https://github.com/coderaiser/cm-searchbox",
+  "devDependencies": {
+    "jshint": "~2.8.0"
+  }
 }

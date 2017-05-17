@@ -1,6 +1,5 @@
 {
   "name": "cm-searchbox",
-  "version": "1.0.7",
   "homepage": "https://github.com/coderaiser/cm-searchbox",
   "authors": [
     "coderaiser <mnemonic.enemy@gmail.com>"
@@ -24,13 +23,15 @@
     "test",
     "tests"
   ],
-  "_release": "1.0.7",
+  "version": "1.0.8",
+  "_release": "1.0.8",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.7",
-    "commit": "4e1a0476407193f8fa54667d85edb20645f6fba6"
+    "tag": "v1.0.8",
+    "commit": "bf264b3063cdc14a7b9581aab0345d36032c8706"
   },
-  "_source": "git://github.com/coderaiser/cm-searchbox.git",
-  "_target": "~1.0.0",
-  "_originalSource": "cm-searchbox"
+  "_source": "https://github.com/coderaiser/cm-searchbox.git",
+  "_target": "^1.0.8",
+  "_originalSource": "cm-searchbox",
+  "_direct": true
 }

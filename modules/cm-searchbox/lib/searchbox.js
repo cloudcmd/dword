@@ -25,14 +25,13 @@
             },
             
             'Esc': function() {
-                if (Search && Search.isVisible()) {
-                    Search.hide();
+                if (!Search || !Search.isVisible())
+                    return CodeMirror.Pass;
                     
-                    if (typeof event !== 'undefined')
-                        event.stopPropagation();
-                }
+                Search.hide();
                 
-                return false;
+                if (typeof event !== 'undefined')
+                    event.stopPropagation();
             },
             
             'Cmd-F': function() {
