@@ -52,6 +52,7 @@ function main(name) {
     app .use(express.static(DIR))
         .use(dword({
             minify: false,
+            online: false,
             diff: true,
             zip: true
         }));
