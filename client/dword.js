@@ -263,8 +263,7 @@
         return this;
     };
     
-    Dword.prototype.goToLine         = function() {
-        var myHeight coords;
+    Dword.prototype.goToLine = function() {
         var dword = this;
         var Ace = this._Ace;
         var msg = 'Enter line number:';
@@ -272,12 +271,13 @@
         var number = cursor.row + 1;
         
         smalltalk.prompt(this._TITLE, msg, number).then(function(line) {
-            cursor      = Ace.setCursor({
-                line : line - 1,
-                ch   : 0
-            }),
-            myHeight    = Ace.getScrollInfo().clientHeight,
-            coords      = Ace.charCoords({line: line, ch: 0}, 'local');
+            Ace.setCursor({
+                line: line - 1,
+                ch: 0
+            });
+            
+            var myHeight = Ace.getScrollInfo().clientHeight;
+            var coords = Ace.charCoords({line: line, ch: 0}, 'local');
             
             Ace.scrollTo(null, (coords.top + coords.bottom - myHeight) / 2);
         }).catch(empty).then(function() {
@@ -287,17 +287,17 @@
         return this;
     };
     
-    Dword.prototype.moveCursorTo     = function(row, column) {
+    Dword.prototype.moveCursorTo = function(row, column) {
         this._Ace.setCursor(row, column);
         return this;
     };
     
-    Dword.prototype.refresh           = function() {
+    Dword.prototype.refresh = function() {
         this._Ace.refresh();
         return this;
     };
     
-    Dword.prototype.focus            = function() {
+    Dword.prototype.focus = function() {
         this._Ace.focus();
         return this;
     };
