@@ -982,15 +982,17 @@
         });
     };
     
-     function getModulePath(name, lib) {
-        var path    = '',
-            libdir  = '/',
-            dir     = '/modules/';
-            
+    function getModulePath(name, lib, ext) {
+        ext = ext || '.js';
+        
+        var path = '';
+        var libdir = '/';
+        var dir = '/modules/';
+        
         if (lib)
             libdir  = '/' + lib + '/';
         
-        path    = dir + name + libdir + name + '.js';
+        path    = dir + name + libdir + name + ext;
         
         return path;
     }
@@ -1024,7 +1026,7 @@
         var obj = {
             loadRemote  : getModulePath('loadremote', 'lib'),
             load        : getModulePath('load'),
-            Emitify     : getModulePath('emitify.min', 'dist'),
+            Emitify     : getModulePath('emitify', 'dist', '.min.js'),
             join        : '/join/join.js'
         };
             
