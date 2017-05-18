@@ -1,3 +1,9 @@
+2017.05.18, v4.2.0
+
+feature:
+- (dword) setOption: preventOwerwrite options when set before load
+
+
 2017.05.17, v4.1.18
 
 feature:
