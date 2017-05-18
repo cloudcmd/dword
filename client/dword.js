@@ -407,7 +407,14 @@
     }
     
     Dword.prototype.setOption = function(name, value) {
+        var self = this;
         var Ace = this._Ace;
+        var preventOverwrite = function() {
+            self._Config.options[name] = value;
+        };
+        
+        preventOverwrite();
+        
         switch(name) {
         default:
             Ace.setOption(name, value);
