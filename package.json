@@ -53,7 +53,7 @@
     "rollup-plugin-filesize": "^1.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.0",
-    "rollup-plugin-uglify": "^1.0.1"
+    "rollup-plugin-uglify": "^2.0.1"
   },
   "repository": {
     "type": "git",
