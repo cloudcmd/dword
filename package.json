@@ -3,12 +3,6 @@
   "version": "4.2.0",
   "description": "Web editor based on CodeMirror",
   "main": "server/index.js",
-  "config": {
-    "plugins": "-p [ minifyify --map readify.min.js.map --output dist/readify.min.js.map ]",
-    "compile": {
-      "client": "--gv false -s CodeMirror ./src/index.js -o dist/codemirror.js"
-    }
-  },
   "bin": {
     "dword": "bin/dword.js",
     "dword_": "legacy/bin/dword.js"
