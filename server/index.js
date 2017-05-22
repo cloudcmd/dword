@@ -7,10 +7,10 @@ const restafary = require('restafary/legacy');
 const socketFile = require('socket-file');
 const express = require('express');
 const currify = require('currify/legacy');
+const storage = require('fullstore/legacy');
 const mollify = require('mollify');
 const join = require('join-io');
 
-const storage = require('./storage');
 const editFn = require('./edit');
 
 const Router = express.Router;

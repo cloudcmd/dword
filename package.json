@@ -23,6 +23,7 @@
     "ashify": "^1.0.1",
     "currify": "^2.0.0",
     "express": "^4.14.0",
+    "fullstore": "^1.0.0",
     "join-io": "^1.4.0",
     "mollify": "^1.0.4",
     "os-homedir": "^1.0.0",
