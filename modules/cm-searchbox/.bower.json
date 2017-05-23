@@ -31,7 +31,6 @@
     "commit": "bf264b3063cdc14a7b9581aab0345d36032c8706"
   },
   "_source": "https://github.com/coderaiser/cm-searchbox.git",
-  "_target": "^1.0.8",
-  "_originalSource": "cm-searchbox",
-  "_direct": true
+  "_target": "1.0.8",
+  "_originalSource": "cm-searchbox"
 }
