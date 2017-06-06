@@ -46,7 +46,7 @@
     "cssnano": "^3.7.7",
     "eslint": "^3.19.0",
     "nodemon": "^1.11.0",
-    "rollup": "^0.41.4",
+    "rollup": "^0.42.0",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^8.0.2",
