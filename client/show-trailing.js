@@ -47,7 +47,7 @@
             '.cm-trailing-whitespace {',
             'color: #f80;',
             'text-decoration: underline;',
-        '}'].join('');
+            '}'].join('');
         
         document.head.appendChild(style);
     }

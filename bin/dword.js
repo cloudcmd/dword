@@ -14,11 +14,11 @@ else if (/^(-h|--help)$/.test(arg))
     help();
 else
     checkFile(arg, (error) => {
-       if (!error)
+        if (!error)
             return main(arg);
         
         console.error(error.message);
-   });
+    });
 
 function getPath(name) {
     const reg = /^(~|\/)/;

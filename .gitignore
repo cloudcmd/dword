@@ -12,3 +12,5 @@ modules/codemirror/bin
 modules/codemirror/lib/codemirror.js
 modules/codemirror/package.json
 
+package-lock.json
+

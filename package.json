@@ -8,6 +8,10 @@
     "dword_": "legacy/bin/dword.js"
   },
   "scripts": {
+    "lint": "redrun lint:*",
+    "lint:bin": "eslint --rule 'no-console:0' bin",
+    "lint:client": "eslint --env browser --rule 'no-console:0' client",
+    "lint:server": "eslint server",
     "build:client": "rollup -u CodeMirror -c .rollup.js -m -f umd -o dist/codemirror.js",
     "build:client:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
     "build:server": "redrun 6to5:*",
@@ -40,6 +44,7 @@
     "bupdate": "^1.1.0",
     "codemirror": "^5.26.0",
     "cssnano": "^3.7.7",
+    "eslint": "^3.19.0",
     "nodemon": "^1.11.0",
     "rollup": "^0.41.4",
     "rollup-plugin-babel": "^2.6.1",

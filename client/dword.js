@@ -185,7 +185,6 @@
     };
     
     function addCommands(dword) {
-        var self = this;
         var run = function(fn) {
             return function() {
                 dword.isKey() && fn();
@@ -339,7 +338,7 @@
         return this;
     };
     
-    Dword.prototype.emit             = function(event) {
+    Dword.prototype.emit             = function() {
         this._Emitter.emit.apply(this._Emitter, arguments);
         return this;
     };
@@ -612,8 +611,8 @@
     };
     
     Dword.prototype.beautify = function() {
-       this._readWithFlag('beautify');
-       return this;
+        this._readWithFlag('beautify');
+        return this;
     };
     
     Dword.prototype.minify = function() {
