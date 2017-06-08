@@ -1,5 +1,6 @@
 *.swp
 dist
+dist-dev
 node_modules
 npm-debug.log
 legacy

@@ -2,4 +2,7 @@
 !.jshintrc
 ./src/index.js
 bower.json
+webpack.config.js
+
+client/dword.js
 

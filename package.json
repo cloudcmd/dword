@@ -8,17 +8,22 @@
     "dword_": "legacy/bin/dword.js"
   },
   "scripts": {
+    "start": "bin/dword.js package.json",
     "lint": "redrun lint:*",
     "lint:bin": "eslint --rule 'no-console:0' bin",
     "lint:client": "eslint --env browser --rule 'no-console:0' client",
     "lint:server": "eslint server",
-    "build:client": "rollup -u CodeMirror -c .rollup.js -m -f umd -o dist/codemirror.js",
-    "build:client:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
+    "build:client": "webpack --progress",
+    "build:client:dev": "NODE_ENV=development npm run build:client",
+    "build:codemirror": "rollup -u CodeMirror -c .rollup.js -m -f umd -o dist/codemirror.js",
+    "build:codemirror:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
     "build:server": "redrun 6to5:*",
-    "watch:server": "nodemon -w server -x bin/dword.js package.json",
+    "watch:server": "npm run watch \"npm start\"",
+    "watch:client": "npm run watch \"npm run build:client:dev\"",
+    "watch": "nodemon -w server -w client -x",
     "6to5:lib": "babel server -d server_",
     "6to5:bin": "babel bin -d legacy/bin",
-    "build": "redrun build:client build:server build:codemirror legacy:*",
+    "build": "redrun build:codemirror build:client* build:server build:codemirror legacy:*",
     "legacy:index": "echo \"module.exports = require('../server_');\" > legacy/index.js",
     "wisdom": "npm run build",
     "build:codemirror": "cp -r node_modules/codemirror modules/"
@@ -39,6 +44,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-loader": "^7.0.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "bower": "^1.5.1",
     "bupdate": "^1.1.0",
@@ -53,7 +59,8 @@
     "rollup-plugin-filesize": "^1.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.0",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "webpack": "^2.6.1"
   },
   "repository": {
     "type": "git",

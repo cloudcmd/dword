@@ -25,6 +25,8 @@ const joinFn = currify(_joinFn);
 const readjson = require('readjson');
 const HOME = require('os-homedir')();
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const readJSHINT = () => {
     const home = path.join(HOME, '.jshintrc');
     const root = path.join(DIR_ROOT,'.jshintrc')
@@ -95,8 +97,14 @@ function serve(options, req, res, next) {
     
     req.url = req.url.replace(prefix, '');
     
-    if (req.url === '/dword.js')
-        req.url = '/client' + req.url;
+    if (/^\/dword\.js(\.map)?$/.test(req.url))
+        req.url = `/dist${req.url}`;
+    
+    if (/^\/dist\/codemirror.js(\.map)?$/.test(req.url))
+        return next();
+    
+    if (isDev)
+        req.url = req.url.replace(/^\/dist\//, '/dist-dev/');
     
     next();
 }
