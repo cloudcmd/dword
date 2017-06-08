@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "bin/dword.js package.json",
+    "start:dev": "NODE_ENV=development npm start",
     "lint": "redrun lint:*",
     "lint:bin": "eslint --rule 'no-console:0' bin",
     "lint:client": "eslint --env browser --rule 'no-console:0' client",
