@@ -1,6 +1,6 @@
 {
   "name": "dword",
-  "version": "4.2.3",
+  "version": "4.3.0",
   "description": "Web editor based on CodeMirror",
   "main": "server/index.js",
   "bin": {
@@ -16,7 +16,7 @@
     "lint:server": "eslint server",
     "build:client": "webpack --progress",
     "build:client:dev": "NODE_ENV=development npm run build:client",
-    "build:codemirror": "rollup -u CodeMirror -c .rollup.js -m -f umd -o dist/codemirror.js",
+    "build:codemirror": "cp -r node_modules/codemirror modules/",
     "build:codemirror:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
     "build:server": "redrun 6to5:*",
     "watch:server": "npm run watch \"npm start\"",
@@ -26,8 +26,7 @@
     "6to5:bin": "babel bin -d legacy/bin",
     "build": "redrun build:codemirror build:client* build:server build:codemirror legacy:*",
     "legacy:index": "echo \"module.exports = require('../server_');\" > legacy/index.js",
-    "wisdom": "npm run build",
-    "build:codemirror": "cp -r node_modules/codemirror modules/"
+    "wisdom": "npm run build"
   },
   "dependencies": {
     "ashify": "^1.0.1",
