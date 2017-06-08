@@ -1073,7 +1073,7 @@ Dword.prototype._loadFilesAll = function(callback) {
         function(callback) {
             var js = PREFIX + '/restafary.js';
             var dir = DIR + 'codemirror/';
-            var client = 'client/';
+            var client = 'client/codemirror/';
             var addon = dir + 'addon/';
             var lint = addon + 'lint/';
             
