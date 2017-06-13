@@ -710,7 +710,7 @@ Dword.prototype._onSave = function(error, text) {
                 console.error(error);
             
             self._story.setData(FileName, Value)
-                 .setHash(FileName, hash);
+                .setHash(FileName, hash);
         });
         
         self._Emitter.emit('save', Value.length);
@@ -907,7 +907,7 @@ Dword.prototype._initSocket = function(error) {
             
             dword.sha(function(error, hash) {
                 self._story.setData(name, value)
-                     .setHash(name, hash);
+                    .setHash(name, hash);
                 
                 dword.moveCursorTo(cursor.row, cursor.column);
             });
