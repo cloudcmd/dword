@@ -1,3 +1,12 @@
+2017.06.14, v4.3.1
+
+feature:
+- (modules) socket.io v2.0.3
+- (package) rollup v0.43.0
+- (package) eslint v4.0.0
+- (modules) socket.io v2.0.2
+
+
 2017.06.08, v4.3.0
 
 feature:
