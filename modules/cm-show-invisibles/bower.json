@@ -20,6 +20,7 @@
   "ignore": [
     "**/.*",
     "img",
-    ".travis.yml"
+    ".*",
+    "webpack.config.js"
   ]
 }

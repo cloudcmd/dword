@@ -1,3 +1,18 @@
+2017.06.15, v2.0.1
+
+feature:
+- (bower) ignore: add webpack.config.js
+
+
+2017.06.15, v2.0.0
+
+feature:
+- (npmignore) add
+- (travis) node_js: 6, 8
+- (show-invisibles) add eslint
+- (show-invisibles) avoid relative path in loading codemirror: ../lib/codemirror -> codemirror/lib/codemirror (#3)
+
+
 2016.08.30, v1.2.1
 
 fix:

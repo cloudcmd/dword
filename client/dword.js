@@ -1089,7 +1089,7 @@ Dword.prototype._loadFilesAll = function(callback) {
                 
                 DIR     + 'jshint/dist/jshint',
                 DIR     + 'cm-searchbox/lib/searchbox',
-                DIR     + 'cm-show-invisibles/lib/show-invisibles',
+                DIR     + 'cm-show-invisibles/dist/show-invisibles',
                 getKeyMapPath(dir, self._Config),
                 dir     + 'keymap/vim',
             ].filter(function(name) {

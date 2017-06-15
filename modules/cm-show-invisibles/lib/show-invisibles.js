@@ -1,37 +1,39 @@
 /* global CodeMirror */
 /* global define */
 
-(function(mod) {
+((mod) => {
     'use strict';
     
     if (typeof exports === 'object' && typeof module === 'object') // CommonJS
-        mod(require('../../lib/codemirror'));
-    else if (typeof define === 'function' && define.amd) // AMD
-        define(['../../lib/codemirror'], mod);
-    else
-        mod(CodeMirror);
-})(function(CodeMirror) {
+        return mod(require('codemirror/lib/codemirror'));
+    
+    if (typeof define === 'function' && define.amd) // AMD
+        return define(['codemirror/lib/codemirror'], mod);
+    
+    mod(CodeMirror);
+})((CodeMirror) => {
     'use strict';
     
-    CodeMirror.defineOption('showInvisibles', false, function(cm, val, prev) {
-        var Count   = 0,
-            Maximum = cm.getOption('maxInvisibles') || 16;
+    CodeMirror.defineOption('showInvisibles', false, (cm, val, prev) => {
+        let Count = 0;
+        const Maximum = cm.getOption('maxInvisibles') || 16;
         
         if (prev === CodeMirror.Init)
             prev = false;
         
         if (prev && !val) {
             cm.removeOverlay('invisibles');
-            rm();
-        } else if (!prev && val) {
+            return rm();
+        }
+        
+        if (!prev && val) {
             add(Maximum);
             
             cm.addOverlay({
                 name: 'invisibles',
-                token:  function nextToken(stream) {
-                    var ret,
-                        spaces  = 0,
-                        peek    = stream.peek() === ' ';
+                token: function nextToken(stream) {
+                    let spaces = 0;
+                    let peek = stream.peek() === ' ';
                     
                     if (peek) {
                         while (peek && spaces < Maximum) {
@@ -41,7 +43,7 @@
                             peek = stream.peek() === ' ';
                         }
                         
-                        ret = 'whitespace whitespace-' + spaces;
+                        let ret = 'whitespace whitespace-' + spaces;
                         
                         /*
                          * styles should be different
@@ -54,37 +56,36 @@
                         if (spaces === Maximum)
                             ret += ' whitespace-rand-' + Count++;
                         
-                    } else {
-                        while (!stream.eol() && !peek) {
-                            stream.next();
-                            
-                            peek = stream.peek() === ' ';
-                        }
-                        
-                        ret = 'cm-eol';
+                        return ret;
                     }
                     
-                    return ret;
+                    while (!stream.eol() && !peek) {
+                        stream.next();
+                        
+                        peek = stream.peek() === ' ';
+                    }
+                    
+                    return 'cm-eol';
                 }
             });
         }
     });
     
     function add(max) {
-        var i, rule,
-            classBase   = '.CodeMirror .cm-whitespace-',
-            spaceChars  = '',
-            rules       = '',
-            spaceChar   = '·',
-            style       = document.createElement('style');
+        const classBase = '.CodeMirror .cm-whitespace-';
+        const spaceChar = '·';
+        const style = document.createElement('style');
         
         style.setAttribute('data-name', 'js-show-invisibles');
         
-        for (i = 1; i <= max; ++i) {
+        let rules = '';
+        let spaceChars = '';
+        
+        for (let i = 1; i <= max; ++i) {
             spaceChars += spaceChar;
             
-            rule    = classBase + i + '::before { content: "' + spaceChars + '";}\n';
-            rules   += rule;
+            const rule = classBase + i + '::before { content: "' + spaceChars + '";}\n';
+            rules += rule;
         }
         
         style.textContent = getStyle() + '\n' + getEOL() + '\n' + rules;
@@ -93,17 +94,17 @@
     }
     
     function rm() {
-        var style = document.querySelector('[data-name="js-show-invisibles"]');
+        const style = document.querySelector('[data-name="js-show-invisibles"]');
         
         document.head.removeChild(style);
     }
     
     function getStyle() {
-        var style = [
+        const style = [
             '.cm-whitespace::before {',
-                'position: absolute;',
-                'pointer-events: none;',
-                'color: #404F7D;',
+            'position: absolute;',
+            'pointer-events: none;',
+            'color: #404F7D;',
             '}'
         ].join('');
         
@@ -111,15 +112,15 @@
     }
     
     function getEOL() {
-         var style = [
+        const style = [
             '.CodeMirror-code > div > pre > span::after {',
-                'pointer-events: none;',
-                'color: #404F7D;',
-                'content: "¬"',
+            'pointer-events: none;',
+            'color: #404F7D;',
+            'content: "¬"',
             '}',
-             
         ].join('');
         
         return style;
     }
 });
+
