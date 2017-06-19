@@ -10,9 +10,6 @@ module.exports = (el, options, callback) => {
 };
 
 function Dword(el, options, callback) {
-    var onDrop, onDragOver;
-    var self = this;
-    
     if (!(this instanceof Dword))
         return new Dword(el, options, callback);
     
@@ -43,15 +40,15 @@ function Dword(el, options, callback) {
     
     this._Element = el || document.body;
     
-    onDrop = this._onDrop.bind(this);
-    onDragOver = this._onDragOver.bind(this);
+    const onDrop = this._onDrop.bind(this);
+    const onDragOver = this._onDragOver.bind(this);
     
     this._Element.addEventListener('drop', onDrop);
     this._Element.addEventListener('dragover', onDragOver);
     
-    loadScript(this._PREFIX + '/modules/execon/lib/exec.js', function() {
-        self._init(function() {
-            callback(self);
+    loadScript(this._PREFIX + '/modules/execon/lib/exec.js', () => {
+        this._init(() => {
+            callback(this);
         });
     });
     
@@ -88,38 +85,43 @@ Dword.prototype._showMessageOnce = function(msg) {
 function empty() {}
 
 Dword.prototype._init = function(fn) {
-    var self = this;
-    var loadFiles = self._loadFiles.bind(self);
-    var loadFilesAll = self._loadFilesAll.bind(self);
-    var loadStyles = self._loadStyles.bind(self);
+    const loadFiles = this._loadFiles.bind(this);
+    const loadFilesAll = this._loadFilesAll.bind(this);
+    const loadStyles = this._loadStyles.bind(this);
     
     exec.series([
         loadFiles,
-        function(callback) {
-            load.json(self._PREFIX + '/edit.json', function(error, config) {
+        (callback) => {
+            load.json(this._PREFIX + '/edit.json', (error, config) => {
                 if (error)
-                    return smalltalk.alert(self._TITLE, 'Could not load edit.json!');
+                    return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
                 
-                self._Config = config;
+                this._Config = config;
                 callback();
             });
         },
         
-        function(callback) {
-            var name = 'smalltalk';
-            var is = window.Promise;
-            var js = '.min.js';
-            var jsName = is ? js : '.poly' + js;
-            var dir = '/modules/' + name + '/dist/';
-            var isFlex = function() {
+        (callback) => {
+            const name = 'smalltalk';
+            const js = '.min.js';
+            const dir = '/modules/' + name + '/dist/';
+            const isFlex = () => {
                 return document.body.style.flex !== 'undefined';
             };
             
-            if (!isFlex())
-                jsName = '.native' + jsName;
+            const getJsName = () => {
+                const is = window.Promise;
+                const jsName = is ? js : '.poly' + js;
+                
+                if (isFlex())
+                    return jsName;
+                    
+                return '.native' + jsName;
+            }
             
-            var names = [jsName, '.min.css'].map(function(ext) {
-                return self._PREFIX + dir + name + ext;
+            const jsName = getJsName();
+            const names = [jsName, '.min.css'].map((ext) => {
+                return this._PREFIX + dir + name + ext;
             });
             
             load.parallel(names, callback);
@@ -128,10 +130,10 @@ Dword.prototype._init = function(fn) {
         loadFilesAll,
         loadStyles,
         
-        function() {
-            var options = self._Config.options;
-            var Value = self._Value;
-            var all = {
+        () => {
+            const options = this._Config.options;
+            const Value = this._Value;
+            const all = {
                 autofocus           : true,
                 autoRefresh         : true,
                 lineNumbers         : true,
@@ -147,42 +149,42 @@ Dword.prototype._init = function(fn) {
                 highlightSelectionMatches: true
             };
             
-            self._Emitter = Emitify();
-             
-            self._Emitter.on('auth', function(username, password) {
-                self._socket.emit('auth', username, password);
+            this._Emitter = Emitify();
+            this._Emitter.on('auth', (username, password) => {
+                this._socket.emit('auth', username, password);
             });
             
-            Object.keys(options).forEach(function(name) {
+            Object.keys(options).forEach((name) => {
                 if (name === 'tabSize')
-                    all.indentUnit = options.tabSize;
-                else if (name === 'wrap')
-                    all.lineWrapping = options.wrap;
-                else
-                    all[name] = options[name];
+                    return all.indentUnit = options.tabSize;
+                
+                if (name === 'wrap')
+                    return all.lineWrapping = options.wrap;
+                
+                all[name] = options[name];
             });
             
-            self._Ace = CodeMirror(self._Element, all);
+            this._Ace = CodeMirror(this._Element, all);
             
             if (Value)
-                self._initValue(self._FileName, Value);
+                this._initValue(this._FileName, Value);
             
-            self._Ace.on('change', function() {
-                self._Emitter.emit('change');
+            this._Ace.on('change', () => {
+                this._Emitter.emit('change');
             });
             
-            addCommands(self);
+            addCommands(this);
             
             fn();
             
-            self.setOptions(options);
+            this.setOptions(options);
         },
     ]);
 };
 
 function addCommands(dword) {
-    var run = function(fn) {
-        return function() {
+    var run = (fn) => {
+        return () => {
             dword.isKey() && fn();
         }
     };
@@ -191,29 +193,27 @@ function addCommands(dword) {
         'Ctrl-G': function () {
             dword.goToLine();
         },
-        'Ctrl-S': run(function() {
+        'Ctrl-S': run(() => {
             dword.save();
         }),
-        'F2': run(function() {
+        'F2': run(() => {
             dword.save();
         }),
-        'Ctrl-B' : run(function() {
+        'Ctrl-B' : run(() => {
             dword.beautify();
         }),
-        'Ctrl-M' : run(function() {
+        'Ctrl-M' : run(() => {
             dword.minify();
         }),
-        'Ctrl-E' : run(function() {
+        'Ctrl-E' : run(() => {
             dword.evaluate();
         }),
         'Ctrl-/' : 'toggleComment'
     };
     
-    Object.keys(commands).forEach(function(name) {
-        var nameCmd = '';
-        
+    Object.keys(commands).forEach((name) => {
         if (/^Ctrl/.test(name)) {
-            nameCmd = name.replace('Ctrl', 'Cmd');
+            const nameCmd = name.replace('Ctrl', 'Cmd');
             commands[nameCmd] = commands[name];
         }
     });
@@ -259,23 +259,24 @@ Dword.prototype.addKeyMap = function(keyMap) {
 };
 
 Dword.prototype.goToLine = function() {
-    var dword = this;
-    var Ace = this._Ace;
-    var msg = 'Enter line number:';
-    var cursor = dword.getCursor();
-    var number = cursor.row + 1;
+    const dword = this;
+    const Ace = this._Ace;
+    const msg = 'Enter line number:';
+    const cursor = dword.getCursor();
+    const number = cursor.row + 1;
     
-    smalltalk.prompt(this._TITLE, msg, number).then(function(line) {
+    smalltalk.prompt(this._TITLE, msg, number).then((line) => {
+        const ch = 0;
         Ace.setCursor({
             line: line - 1,
-            ch: 0
+            ch,
         });
         
-        var myHeight = Ace.getScrollInfo().clientHeight;
-        var coords = Ace.charCoords({line: line, ch: 0}, 'local');
+        const myHeight = Ace.getScrollInfo().clientHeight;
+        const coords = Ace.charCoords({line, ch}, 'local');
         
         Ace.scrollTo(null, (coords.top + coords.bottom - myHeight) / 2);
-    }).catch(empty).then(function() {
+    }).catch(empty).then(() => {
         dword.focus();
     });
     
@@ -297,64 +298,63 @@ Dword.prototype.focus = function() {
     return this;
 };
 
-Dword.prototype.remove           = function(direction) {
+Dword.prototype.remove = function(direction) {
     var cmd;
     
     if (direction === 'right')
         cmd = 'delCharAfter';
     else
         cmd = 'delCharBefore';
-        
+    
     this._Ace.execCommand(cmd);
     
     return this;
 };
 
-Dword.prototype.getCursor        = function() {
-    var plain   = this._Ace.getCursor(),
-        cursor  = {
-            row     : plain.line,
-            column  : plain.ch
-        };
+Dword.prototype.getCursor = function() {
+    const {line, ch} = this._Ace.getCursor();
+    const cursor = {
+        row: line,
+        column: ch
+    };
     
     return cursor;
 };
 
-Dword.prototype.getValue         = function() {
+Dword.prototype.getValue = function() {
     return this._Ace.getValue();
 };
 
-Dword.prototype.on               = function(event, fn) {
+Dword.prototype.on = function(event, fn) {
     this._Emitter.on(event, fn);
     return this;
 };
 
-Dword.prototype.once             = function(event, fn) {
+Dword.prototype.once = function(event, fn) {
     this._Emitter.once(event, fn);
     return this;
 };
 
-Dword.prototype.emit             = function() {
+Dword.prototype.emit = function() {
     this._Emitter.emit.apply(this._Emitter, arguments);
     return this;
 };
 
-Dword.prototype.isChanged        = function() {
-    var value   = this._Ace.getValue(this._Separator),
-        isEqual = value === this._Value;
+Dword.prototype.isChanged = function() {
+    const value = this._Ace.getValue(this._Separator);
+    const isEqual = value === this._Value;
     
     return !isEqual;
 };
 
-Dword.prototype.setValue         = function(value) {
+Dword.prototype.setValue = function(value) {
     this._Ace.setValue(value);
     return this;
 };
 
-Dword.prototype.setValueFirst    = function(name, value) {
-    var Ace     = this._Ace,
-        dword   = this,
-        self    = this;
+Dword.prototype.setValueFirst = function(name, value) {
+    const Ace = this._Ace;
+    const dword = this;
     
     dword.setValue(value)
     
@@ -372,8 +372,8 @@ Dword.prototype.setValueFirst    = function(name, value) {
     this._FileName    = name;
     this._Value       = value;
     
-    setTimeout(function() {
-        self._Separator = getLineSeparator(value);
+    setTimeout(() => {
+        this._Separator = getLineSeparator(value);
     }, 0);
     
     return this;
