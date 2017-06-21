@@ -60,7 +60,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.0",
     "rollup-plugin-uglify": "^2.0.1",
-    "webpack": "^2.6.1"
+    "webpack": "^3.0.0"
   },
   "repository": {
     "type": "git",
