@@ -222,35 +222,36 @@ function addCommands(dword) {
 }
 
 Dword.prototype.evaluate = function() {
-    var dword = this;
-    var focus = dword.focus.bind(this);
-    var FileName = this._FileName;
-    var value;
-    var msg;
-    var isJS = /\.js$/.test(FileName);
+    const focus = this.focus.bind(this);
+    const {
+        _FileName,
+        _TITLE,
+    } = this;
+    
+    const isJS = /\.js$/.test(_FileName);
+    
+    let msg;
     
     if (!isJS) {
         msg = 'Evaluation supported for JavaScript only';
     } else {
-        value = dword.getValue();
+        const value = this.getValue();
         msg = exec.try(Function(value));
     }
     
-    msg && smalltalk.alert(this._TITLE, msg)
+    msg && smalltalk.alert(_TITLE, msg)
         .then(focus);
     
     return this;
 };
 
 function createMsg() {
-    var msg,
-        wrapper = document.createElement('div'),
-        html    = '<div class="dword-msg">/div>';
+    const wrapper = document.createElement('div');
+    const html = '<div class="dword-msg">/div>';
     
     wrapper.innerHTML = html;
-    msg = wrapper.firstChild;
     
-    return msg;
+    return wrapper.firstChild;
 }
 
 Dword.prototype.addKeyMap = function(keyMap) {
@@ -267,6 +268,7 @@ Dword.prototype.goToLine = function() {
     
     smalltalk.prompt(this._TITLE, msg, number).then((line) => {
         const ch = 0;
+        
         Ace.setCursor({
             line: line - 1,
             ch,
@@ -388,34 +390,29 @@ Dword.prototype.setValueFirst = function(name, value) {
  * receive some changes insteed.
  */
 function getLineSeparator(value) {
-    var ret;
-    
     if (typeof value !== 'string')
         throw Error('value should be string!');
     
     if (~value.indexOf('\r\n'))
-        ret = '\r\n';
-    else
-        ret = '\n';
+        return '\r\n';
     
-    return ret;
+    return '\n';
 }
 
 Dword.prototype.setOption = function(name, value) {
-    var self = this;
-    var Ace = this._Ace;
-    var preventOverwrite = function() {
-        self._Config.options[name] = value;
+    const {_Ace} = this;
+    const preventOverwrite = () => {
+        this._Config.options[name] = value;
     };
     
     preventOverwrite();
     
     switch(name) {
     default:
-        Ace.setOption(name, value);
+        _Ace.setOption(name, value);
         break;
     case 'fontSize':
-        Ace.display.wrapper.style.fontSize = value + 'px';
+        _Ace.display.wrapper.style.fontSize = value + 'px';
         break;
     }
     
@@ -423,23 +420,20 @@ Dword.prototype.setOption = function(name, value) {
 };
 
 Dword.prototype.setOptions = function(options) {
-    var dword = this;
-    
-    Object.keys(options).forEach(function(name) {
-        var value = options[name];
+    Object.keys(options).forEach((name) => {
+        const value = options[name];
         
-        dword.setOption(name, value);
+        this.setOption(name, value);
     });
     
     return this;
 };
 
 Dword.prototype.setMode = function(mode, callback) {
-    var self = this;
-    var isJSON = mode === 'json';
+    const isJSON = mode === 'json';
     
-    var fn = function(mode) {
-        self._Ace.setOption('mode', mode);
+    var fn = (mode) => {
+        this._Ace.setOption('mode', mode);
         
         exec(callback);
     };
@@ -449,14 +443,14 @@ Dword.prototype.setMode = function(mode, callback) {
     else if (!mode)
         mode = null;
     
-    var is = CodeMirror.modes[mode];
+    const is = CodeMirror.modes[mode];
     
     if (is || !mode) {
         fn(mode);
         return this;
     }
     
-    CodeMirror.requireMode(mode, function() {
+    CodeMirror.requireMode(mode, () => {
         fn(mode);
     });
     
