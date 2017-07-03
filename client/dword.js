@@ -302,14 +302,14 @@ Dword.prototype.focus = function() {
 };
 
 Dword.prototype.remove = function(direction) {
-    var cmd;
+    const cmd = (direction) => {
+        if (direction === 'right')
+            return 'delCharAfter';
+        
+        return 'delCharBefore';
+    };
     
-    if (direction === 'right')
-        cmd = 'delCharAfter';
-    else
-        cmd = 'delCharBefore';
-    
-    this._Ace.execCommand(cmd);
+    this._Ace.execCommand(cmd(direction));
     
     return this;
 };
