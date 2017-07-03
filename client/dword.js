@@ -4,6 +4,7 @@
 'use strict';
 
 const Story = require('./story');
+const wraptile = require('wraptile/legacy');
 
 module.exports = (el, options, callback) => {
     Dword(el, options, callback);
@@ -182,14 +183,14 @@ Dword.prototype._init = function(fn) {
     ]);
 };
 
+function _run(dword, fn) {
+    dword.isKey() && fn();
+}
+
 function addCommands(dword) {
-    var run = (fn) => {
-        return () => {
-            dword.isKey() && fn();
-        }
-    };
+    const run = wraptile(_run, dword);
     
-    var commands = {
+    const commands = {
         'Ctrl-G': function () {
             dword.goToLine();
         },
