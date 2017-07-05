@@ -1,12 +1,14 @@
-/* global CodeMirror, exec, load, io, join, daffy, restafary, Emitify, loadRemote */
+/* global CodeMirror, exec, load, io, join, restafary, Emitify, loadRemote */
 /* global smalltalk */
 
 'use strict';
 
 require('../css/dword.css');
 
-const Story = require('./story');
 const wraptile = require('wraptile/legacy');
+const daffy = require('daffy');
+
+const Story = require('./story');
 
 module.exports = (el, options, callback) => {
     Dword(el, options, callback);
@@ -729,31 +731,10 @@ Dword.prototype._doDiff = function(path, callback) {
 };
 
 Dword.prototype._diff = function(newValue, callback) {
-    var self = this;
+    this._Value = self._story.getData(self._FileName);
+    const patch = daffy.createPatch(self._Value, newValue);
     
-    self._loadDiff(function(error) {
-        var patch;
-        
-        if (error) {
-            smalltalk.alert(this._TITLE, error);
-        } else {
-            self._Value = self._story.getData(self._FileName);
-            patch       = daffy.createPatch(self._Value, newValue);
-            callback(patch);
-        }
-    });
-};
-
-Dword.prototype._loadDiff = function(callback) {
-    var self    = this,
-        url     = this._PREFIX + join([
-            'google-diff-match-patch/diff_match_patch.js',
-            'daffy/lib/daffy.js'
-        ].map(function(name) {
-            return self._DIR + name;
-        }));
-    
-    load.js(url, callback);
+    callback(patch);
 };
 
 Dword.prototype._zip = function(value, callback) {
