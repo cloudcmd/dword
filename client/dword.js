@@ -7,6 +7,7 @@ require('../css/dword.css');
 
 const wraptile = require('wraptile/legacy');
 const daffy = require('daffy');
+const zipio = require('zipio');
 
 const Story = require('./story');
 
@@ -644,7 +645,7 @@ Dword.prototype.save = function() {
                 else
                     dword._write(self._FileName + query, result);
             }, function(func) {
-                self._zip(value, function(error, data) {
+                zipio(value, (error, data) => {
                     if (error)
                         console.error(error);
                     
@@ -735,27 +736,6 @@ Dword.prototype._diff = function(newValue, callback) {
     const patch = daffy.createPatch(self._Value, newValue);
     
     callback(patch);
-};
-
-Dword.prototype._zip = function(value, callback) {
-    var self    = this,
-        prefix  = this._PREFIX;
-    
-    exec.parallel([
-        function(callback) {
-            var url = prefix + self._DIR + 'zipio/lib/zipio.js';
-            
-            load.js(url, callback);
-        },
-        function(callback) {
-            loadRemote('pako', {prefix: prefix}, callback);
-        }
-    ], function(error) {
-        if (!error)
-            global.zipio(value, callback);
-        else
-            smalltalk.alert(this._TITLE, error);
-    });
 };
 
 Dword.prototype._setEmmet = function() {
