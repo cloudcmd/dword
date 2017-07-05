@@ -52,6 +52,7 @@
     "cssnano": "^3.7.7",
     "daffy": "^1.0.3",
     "eslint": "^4.0.0",
+    "execon": "^1.2.9",
     "nodemon": "^1.11.0",
     "rollup": "^0.43.0",
     "rollup-plugin-babel": "^2.6.1",

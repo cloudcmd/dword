@@ -13,5 +13,7 @@ modules/codemirror/bin
 modules/codemirror/lib/codemirror.js
 modules/codemirror/package.json
 
+modules/execon
+
 package-lock.json
 

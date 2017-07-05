@@ -18,7 +18,6 @@
   ],
   "dependencies": {
     "codemirror-emmet": "~1.1.0",
-    "execon": "~1.2.7",
     "jshint": "~2.9.0",
     "load": "~1.1.4",
     "loadremote": "~1.2.0",

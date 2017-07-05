@@ -4,5 +4,7 @@
 bower.json
 webpack.config.js
 
-client/dword.js
+client
+!client/codemirror
+modules/execon
 

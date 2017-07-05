@@ -9,6 +9,8 @@ const wraptile = require('wraptile/legacy');
 const daffy = require('daffy');
 const zipio = require('zipio');
 
+window.exec = window.exec || require('execon');
+
 const Story = require('./story');
 
 module.exports = (el, options, callback) => {
@@ -52,17 +54,15 @@ function Dword(el, options, callback) {
     this._Element.addEventListener('drop', onDrop);
     this._Element.addEventListener('dragover', onDragOver);
     
-    loadScript(this._PREFIX + '/modules/execon/lib/exec.js', () => {
-        this._init(() => {
-            callback(this);
-        });
+    this._init(() => {
+        callback(this);
     });
     
-    this._patch = function(path, patch) {
+    this._patch = (path, patch) => {
         this._patchHttp(path, patch);
     };
-
-    this._write = function(path, result) {
+    
+    this._write = (path, result) => {
         this._writeHttp(path, result);
     };
 }
@@ -732,8 +732,13 @@ Dword.prototype._doDiff = function(path, callback) {
 };
 
 Dword.prototype._diff = function(newValue, callback) {
-    this._Value = self._story.getData(self._FileName);
-    const patch = daffy.createPatch(self._Value, newValue);
+    const {
+        _story,
+        _FileName,
+    } = this;
+    
+    this._Value = _story.getData(_FileName);
+    const patch = daffy.createPatch(this._Value, newValue);
     
     callback(patch);
 };
