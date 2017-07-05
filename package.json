@@ -34,7 +34,6 @@
     "express": "^4.14.0",
     "fullstore": "^1.0.0",
     "join-io": "^1.4.0",
-    "mollify": "^1.0.4",
     "os-homedir": "^1.0.0",
     "patchfile": "^1.0.1",
     "readjson": "^1.1.0",
@@ -47,7 +46,9 @@
     "babel-cli": "^6.18.0",
     "babel-loader": "^7.0.0",
     "babel-preset-es2015-rollup": "^3.0.0",
+    "clean-css-loader": "^0.1.2",
     "codemirror": "5.27.4",
+    "css-loader": "^0.28.4",
     "cssnano": "^3.7.7",
     "eslint": "^4.0.0",
     "nodemon": "^1.11.0",
@@ -59,6 +60,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.0",
     "rollup-plugin-uglify": "^2.0.1",
+    "style-loader": "^0.18.2",
     "webpack": "^3.0.0"
   },
   "repository": {

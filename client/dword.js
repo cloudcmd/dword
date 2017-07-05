@@ -3,6 +3,8 @@
 
 'use strict';
 
+require('../css/dword.css');
+
 const Story = require('./story');
 const wraptile = require('wraptile/legacy');
 

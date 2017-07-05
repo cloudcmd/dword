@@ -8,7 +8,6 @@ const socketFile = require('socket-file');
 const express = require('express');
 const currify = require('currify/legacy');
 const storage = require('fullstore/legacy');
-const mollify = require('mollify');
 const join = require('join-io');
 
 const editFn = require('./edit');
@@ -36,10 +35,6 @@ const readJSHINT = () => {
 
 const jshint = readJSHINT();
 
-const minifyFunc = mollify({
-    dir : DIR_ROOT
-});
-
 module.exports = (options = {}) => {
     optionsStorage(options);
     
@@ -54,7 +49,6 @@ module.exports = (options = {}) => {
         .get(jshintFn)
         .get(restafaryFn(''))
         .get(joinFn(options))
-        .get(minifyFn)
         .get(staticFn)
         .put(restafaryFn(prefix));
     
@@ -143,13 +137,11 @@ function modulesFn(req, res, next) {
 }
 
 function _joinFn(o, req, res, next) {
-    const minify = checkOption(o.minify);
-    
     if (req.url.indexOf('/join'))
         return next ();
-        
+    
     const joinFunc = join({
-        minify,
+        minify: false,
         dir: DIR_ROOT
     });
     
@@ -177,21 +169,6 @@ function _restafaryFn(prefix, req, res, next) {
     });
     
     restafaryFunc(req, res, next);
-}
-
-function minifyFn(o, req, res, next) {
-    const url = req.url;
-    const minify = checkOption(o.minify);
-    
-    if (!minify)
-        return next();
-    
-    const sendFile = (url) => () => {
-        const file = path.normalize(DIR_ROOT + url);
-        res.sendFile(file);
-    };
-    
-    minifyFunc(req, res, sendFile(url));
 }
 
 function staticFn(req, res) {

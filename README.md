@@ -70,11 +70,10 @@ const express = require('express');
 const app = express();
 
 app.use(dword({
-    minify  : true,  /* default */
     online  : true,  /* default */
     diff    : true,  /* default */
     zip     : true,  /* default */
-    authCheck: function(socket, success) { /* optional */
+    authCheck: (socket, success) => { /* optional */
     }
 }));
 
