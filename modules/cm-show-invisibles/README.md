@@ -14,7 +14,7 @@ npm i cm-show-invisibles --save
 ## How to use?
 
 ```js
-var cm = CodeMirror(document.body, {
+const cm = CodeMirror(document.body, {
     showInvisibles: true,
     maxInvisibles: 16 // optional
 });

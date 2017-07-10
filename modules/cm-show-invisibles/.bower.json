@@ -23,15 +23,15 @@
     ".*",
     "webpack.config.js"
   ],
-  "version": "2.0.1",
-  "_release": "2.0.1",
+  "version": "2.0.2",
+  "_release": "2.0.2",
   "_resolution": {
     "type": "version",
-    "tag": "v2.0.1",
-    "commit": "09f3d5bdc1f339086f74b562898370c0180b3eab"
+    "tag": "v2.0.2",
+    "commit": "c31e182264f136b2097025609cc95c8914629b6c"
   },
   "_source": "https://github.com/coderaiser/cm-show-invisibles.git",
-  "_target": "^2.0.1",
+  "_target": "^2.0.2",
   "_originalSource": "cm-show-invisibles",
   "_direct": true
 }

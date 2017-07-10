@@ -28,7 +28,7 @@
         
         if (!prev && val) {
             add(Maximum);
-            
+         
             cm.addOverlay({
                 name: 'invisibles',
                 token: function nextToken(stream) {
@@ -113,10 +113,10 @@
     
     function getEOL() {
         const style = [
-            '.CodeMirror-code > div > pre > span::after {',
-            'pointer-events: none;',
-            'color: #404F7D;',
-            'content: "¬"',
+            '.CodeMirror-code > div > pre > span::after, .CodeMirror-line > span::after {',
+                'pointer-events: none;',
+                'color: #404F7D;',
+                'content: "¬"',
             '}',
         ].join('');
         
