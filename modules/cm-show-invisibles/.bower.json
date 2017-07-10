@@ -31,7 +31,6 @@
     "commit": "c31e182264f136b2097025609cc95c8914629b6c"
   },
   "_source": "https://github.com/coderaiser/cm-show-invisibles.git",
-  "_target": "^2.0.2",
-  "_originalSource": "cm-show-invisibles",
-  "_direct": true
+  "_target": "2.0.2",
+  "_originalSource": "cm-show-invisibles"
 }

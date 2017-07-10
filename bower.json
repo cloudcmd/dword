@@ -24,7 +24,7 @@
     "jsSHA": "^2.1.0",
     "emitify": "3.1.0",
     "cm-searchbox": "1.0.8",
-    "smalltalk": "2.4.0",
-    "cm-show-invisibles": "2.0.2"
+    "cm-show-invisibles": "2.0.2",
+    "smalltalk": "2.4.1"
   }
 }
