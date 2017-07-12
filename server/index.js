@@ -56,7 +56,9 @@ module.exports = (options) => {
     return router;
 };
 
-module.exports.listen = (socket, options = {}) => {
+module.exports.listen = (socket, options) => {
+    options = options || {};
+    
     if (!options.prefix)
         options.prefix = '/dword';
     
