@@ -35,7 +35,8 @@ const readJSHINT = () => {
 
 const jshint = readJSHINT();
 
-module.exports = (options = {}) => {
+module.exports = (options) => {
+    options = options || {};
     optionsStorage(options);
     
     const router = Router();
