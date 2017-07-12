@@ -152,7 +152,7 @@ function _joinFn(o, req, res, next) {
 }
 
 function _restafaryFn(prefix, req, res, next) {
-    const {url} = req;
+    const url = req.url
     const api = '/api/v1/fs';
     const indexOf = url.indexOf.bind(url);
     const not = (fn) => (a) => !fn(a);
