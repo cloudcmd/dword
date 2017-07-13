@@ -144,7 +144,6 @@ function _joinFn(o, req, res, next) {
         return next ();
     
     const joinFunc = join({
-        minify: false,
         dir: DIR_ROOT
     });
     
