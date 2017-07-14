@@ -4,8 +4,10 @@
   "description": "Web editor based on CodeMirror",
   "main": "server/index.js",
   "bin": {
-    "dword": "bin/dword.js",
-    "dword_": "legacy/bin/dword.js"
+    "dword": "bin/dword.js"
+  },
+  "engines": {
+    "node": ">=4"
   },
   "scripts": {
     "start": "bin/dword.js package.json",
@@ -18,14 +20,10 @@
     "build:client:dev": "NODE_ENV=development npm run build:client",
     "build:codemirror": "cp -r node_modules/codemirror modules/",
     "build:codemirror:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
-    "build:server": "redrun 6to5:*",
     "watch:server": "npm run watch \"npm start\"",
     "watch:client": "npm run watch \"npm run build:client:dev\"",
     "watch": "nodemon -w server -w client -x",
-    "6to5:lib": "babel server -d server_",
-    "6to5:bin": "babel bin -d legacy/bin",
-    "build": "redrun build:codemirror build:client* build:server build:codemirror legacy:*",
-    "legacy:index": "echo \"module.exports = require('../server_');\" > legacy/index.js",
+    "build": "redrun build:codemirror build:client* build:codemirror",
     "wisdom": "npm run build"
   },
   "dependencies": {
@@ -43,7 +41,7 @@
     "wraptile": "^1.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
+    "babel-core": "^6.25.0",
     "babel-loader": "^7.0.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "clean-css-loader": "^0.1.2",

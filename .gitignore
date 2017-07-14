@@ -3,8 +3,7 @@ dist
 dist-dev
 node_modules
 npm-debug.log
-legacy
-server_
+yarn.lock
 
 modules/pako/dist
 !modules/pako/dist/paco.min.js

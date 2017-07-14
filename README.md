@@ -119,14 +119,6 @@ dword('[data-name="js-edit"]', function(editor) {
 ```
 For more information you could always look around into `assets` and `bin` directory.
 
-## Environments
-
-In old `node.js` environments that supports `es5` only, `dword` could be used with:
-
-```js
-var dword = require('dword/legacy');
-```
-
 ## Related
 
 - [Edward](https://github.com/cloudcmd/edward "Edwdard") - web editor based on [Ace](https://ace.c9.io "Ace").
