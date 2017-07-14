@@ -3,7 +3,7 @@
 const DIR_ROOT = __dirname + '/..';
 const path = require('path');
 
-const restafary = require('restafary/legacy');
+const restafary = require('restafary');
 const socketFile = require('socket-file');
 const express = require('express');
 const currify = require('currify/legacy');
