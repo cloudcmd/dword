@@ -4,6 +4,7 @@ dist-dev
 node_modules
 npm-debug.log
 yarn.lock
+yarn-error.log
 
 modules/pako/dist
 !modules/pako/dist/paco.min.js

@@ -3,6 +3,7 @@
 ./src/index.js
 bower.json
 webpack.config.js
+yarn-error.log
 
 client
 !client/codemirror
