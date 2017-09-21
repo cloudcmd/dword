@@ -19,11 +19,11 @@
     "build:client": "webpack --progress",
     "build:client:dev": "NODE_ENV=development npm run build:client",
     "build:codemirror": "cp -r node_modules/codemirror modules/",
-    "build:codemirror:buble": "rollup -u CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
+    "build:codemirror:buble": "rollup --amd.id CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
     "watch:server": "npm run watch \"npm start\"",
     "watch:client": "npm run watch \"npm run build:client:dev\"",
     "watch": "nodemon -w server -w client -x",
-    "build": "redrun build:codemirror build:client* build:codemirror",
+    "build": "redrun build:codemirror build:client* build:codemirror:buble",
     "wisdom": "npm run build"
   },
   "dependencies": {
@@ -43,6 +43,7 @@
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "clean-css-loader": "^0.1.2",
     "codemirror": "5.30.0",

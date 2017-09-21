@@ -7,10 +7,12 @@ import postcss from 'rollup-plugin-postcss';
 import nano from 'cssnano';
 
 export default {
-    entry: 'src/index.js',
-    format: 'umd',
-    dest: 'dist/codemirror.js',
-    moduleName: 'CodeMirror',
+    input: 'src/index.js',
+    output: {
+        file: 'dist/codemirror.js',
+        format: 'umd',
+    },
+    name: 'CodeMirror',
     plugins: [
         postcss({
             extenstions: ['.css'],

@@ -7,8 +7,8 @@ import postcss from 'rollup-plugin-postcss';
 import nano from 'cssnano';
 
 export default {
-    entry: 'src/index.js',
-    moduleName: 'CodeMirror',
+    input: 'src/index.js',
+    name: 'CodeMirror',
     plugins: [
     postcss({
         extenstions: ['.css'],
