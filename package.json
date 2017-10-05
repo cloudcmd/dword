@@ -18,13 +18,16 @@
     "lint:server": "eslint server",
     "build:client": "webpack --progress",
     "build:client:dev": "NODE_ENV=development npm run build:client",
-    "build:codemirror": "cp -r node_modules/codemirror modules/",
+    "cp:codemirror:modules": "cp -r node_modules/codemirror modules/",
+    "cp:codemirror:dist": "cp dist/codemirror.js dist-dev/codemirror.js",
     "build:codemirror:buble": "rollup --amd.id CodeMirror -c .rollup.buble.js -m -f umd -o dist/codemirror.js",
     "watch:server": "npm run watch \"npm start\"",
     "watch:client": "npm run watch \"npm run build:client:dev\"",
     "watch": "nodemon -w server -w client -x",
-    "build": "redrun build:codemirror build:client* build:codemirror:buble",
-    "wisdom": "npm run build"
+    "build": "redrun build:client* build:codemirror:buble cp:codemirror:*",
+    "wisdom": "npm run build",
+    "rm:dist": "rimraf dist",
+    "rm:dist-dev": "rimraf dist-dev"
   },
   "dependencies": {
     "ashify": "^1.0.1",
@@ -52,6 +55,7 @@
     "eslint": "^4.0.0",
     "execon": "^1.2.9",
     "nodemon": "^1.11.0",
+    "rimraf": "^2.6.2",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.1",
     "rollup-plugin-buble": "^0.16.0",
@@ -60,7 +64,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^0.5.0",
     "rollup-plugin-uglify": "^2.0.1",
-    "style-loader": "^0.18.2",
+    "style-loader": "^0.19.0",
     "webpack": "^3.0.0",
     "zipio": "^1.0.2"
   },
