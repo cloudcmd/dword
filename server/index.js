@@ -18,6 +18,7 @@ const rootStorage = storage();
 const optionsStorage = storage();
 
 const optionsFn = currify(configFn);
+const dword = currify(_dword);
 const restafaryFn = currify(_restafaryFn);
 const joinFn = currify(_joinFn);
 
@@ -43,7 +44,7 @@ module.exports = (options) => {
     const prefix = options.prefix || '/dword';
     
     router.route(prefix + '/*')
-        .get(dword(options))
+        .get(dword(prefix))
         .get(optionsFn(options))
         .get(editFn)
         .get(modulesFn)
@@ -80,13 +81,7 @@ function checkOption(isOption) {
     return isOption;
 }
 
-function dword(options) {
-    return serve.bind(null, options);
-}
-
-function serve(options, req, res, next) {
-    const o = options || {};
-    const prefix = o.prefix || '/dword';
+function _dword(prefix, req, res, next) {
     const url = req.url
     
     if (url.indexOf(prefix))
