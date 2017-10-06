@@ -22,6 +22,7 @@ const plugins = clean([
         comments: false,
     })
 ]);
+
 const loaders = clean([
     !isDev && {
         test: /\.js$/,
