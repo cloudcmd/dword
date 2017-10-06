@@ -1,3 +1,15 @@
+2017.10.06, v6.0.6
+
+fix:
+- feature(server) serve: options -> dword: prefix
+
+feature:
+- (server) serve: options -> dword: prefix
+- (package) style-loader v0.19.0
+- (package) rm babel-preset-es2015-rollup
+- (package) rollup-plugin-buble v0.16.0
+
+
 2017.09.22, v6.0.5
 
 feature:
