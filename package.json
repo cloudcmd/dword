@@ -48,7 +48,7 @@
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.6.0",
     "clean-css-loader": "^0.1.2",
-    "codemirror": "5.30.0",
+    "codemirror": "5.31.0",
     "css-loader": "^0.28.4",
     "cssnano": "^3.7.7",
     "daffy": "^1.0.3",
