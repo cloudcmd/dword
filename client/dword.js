@@ -188,33 +188,22 @@ Dword.prototype._init = function(fn) {
     ]);
 };
 
-function _run(dword, fn) {
-    dword.isKey() && fn();
-}
-
 function addCommands(dword) {
-    const run = wraptile(_run, dword);
+    const call = (fn) => fn.call(dword);
+    const wrapCall = wraptile(call);
+    
+    const callIfKey = wraptile((fn) => {
+        dword.isKey() && call(fn);
+    });
     
     const commands = {
-        'Ctrl-G': function () {
-            dword.goToLine();
-        },
-        'Ctrl-S': run(() => {
-            dword.save();
-        }),
-        'F2': run(() => {
-            dword.save();
-        }),
-        'Ctrl-B' : run(() => {
-            dword.beautify();
-        }),
-        'Ctrl-M' : run(() => {
-            dword.minify();
-        }),
-        'Ctrl-E' : run(() => {
-            dword.evaluate();
-        }),
-        'Ctrl-/' : 'toggleComment'
+        'Ctrl-G': wrapCall(dword.goToLine),
+        'Ctrl-S': callIfKey(dword.save),
+        'F2'    : callIfKey(dword.save),
+        'Ctrl-B': callIfKey(dword.beautify),
+        'Ctrl-M': callIfKey(dword.minify),
+        'Ctrl-E': callIfKey(dword.evaluate),
+        'Ctrl-/': 'toggleComment'
     };
     
     Object.keys(commands).forEach((name) => {
