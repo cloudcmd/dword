@@ -9,15 +9,17 @@ const wraptile = require('wraptile/legacy');
 const currify = require('currify/legacy');
 const daffy = require('daffy');
 const zipio = require('zipio');
-const load = require('load.js');
-const loadJS = currify(load.js);
-
-const notGlobal = (name) => !window[name];
-const addPrefix = currify((prefix, name) => prefix + obj[name]);
-
-window.exec = window.exec || require('execon');
 
 const Story = require('./story');
+
+window.exec = window.exec || require('execon');
+window.load = window.load || require('load.js');
+
+const {load} = window;
+
+const loadParallel = currify(load.parallel);
+const notGlobal = (name) => !window[name];
+const addPrefix = currify((obj, prefix, name) => prefix + obj[name]);
 
 module.exports = (el, options, callback) => {
     Dword(el, options, callback);
@@ -433,9 +435,8 @@ Dword.prototype.setOptions = function(options) {
 Dword.prototype.setMode = function(mode, callback) {
     const isJSON = mode === 'json';
     
-    var fn = (mode) => {
+    const fn = (mode) => {
         this._Ace.setOption('mode', mode);
-        
         exec(callback);
     };
     
@@ -458,27 +459,26 @@ Dword.prototype.setMode = function(mode, callback) {
     return this;
 };
 
-Dword.prototype.setModeForPath   = function(path) {
-    var dword = this;
-    var self = this;
-    var modesByName = CodeMirror.findModeByFileName;
-    var name = path.split('/').pop();
+Dword.prototype.setModeForPath = function(path) {
+    const {findModeByFileName} = CodeMirror;
+    const name = path.split('/').pop();
     
-    self._addExt(name, function(name) {
-        var info = modesByName(name) || {};
-        var mode = info.mode;
-        var htmlMode = modesByName('.html').mode;
-        var isHTML = mode === htmlMode;
+    this._addExt(name, (name) => {
+        const dword = this;
+        const info = findModeByFileName(name) || {};
+        const {mode} = info;
+        const htmlMode = findModeByFileName('.html').mode;
+        const isHTML = mode === htmlMode;
         
         dword.setOption('matchTags', isHTML);
         
         if (isHTML)
-            self._setEmmet();
+            this._setEmmet();
         
-        dword.setMode(mode, function() {
-            var reg     = /^(json|javascript)$/,
-                isLint  = reg.test(mode),
-                isJS    = /.js$/.test(name);
+        dword.setMode(mode, () => {
+            const reg = /^(json|javascript)$/;
+            const isLint = reg.test(mode);
+            const isJS = /.js$/.test(name);
             
             if (!isLint)
                 return dword.setOption('lint', false);
@@ -486,7 +486,7 @@ Dword.prototype.setModeForPath   = function(path) {
             if (!isJS)
                 return dword.setOption('lint', true);
             
-            self._setJsHintConfig(function(jshint) {
+            this._setJsHintConfig((jshint) => {
                 dword.setOption('lint', jshint);
             });
         });
@@ -501,14 +501,14 @@ Dword.prototype.selectAll = function() {
 };
 
 Dword.prototype.copyToClipboard = function() {
-    var msg = 'Could not copy, use &ltCtrl&gt + &ltС&gt insted!';
+    const msg = 'Could not copy, use &ltCtrl&gt + &ltС&gt insted!';
     
     if (!this._clipboard('copy'))
         smalltalk.alert(this._TITLE, msg);
 };
 
 Dword.prototype.cutToClipboard = function() {
-    var msg = 'Could not cut, use &ltCtrl&gt + &ltX&gt insted!';
+    const msg = 'Could not cut, use &ltCtrl&gt + &ltX&gt insted!';
     
     if (!this._clipboard('cut'))
         return smalltalk.alert(this._TITLE, msg);
@@ -517,20 +517,20 @@ Dword.prototype.cutToClipboard = function() {
 };
 
 Dword.prototype.pasteFromClipboard = function() {
-    var msg = 'Could not paste, use &ltCtrl&gt + &ltV&gt insted!';
+    const msg = 'Could not paste, use &ltCtrl&gt + &ltV&gt insted!';
     
     if (!this._clipboard('paste'))
         smalltalk.alert(this._TITLE, msg);
 };
 
 Dword.prototype._clipboard = function(cmd) {
-    var result;
-    var value;
-    var Ace = this._Ace;
-    var story = this._story;
-    var NAME = 'editor-clipboard';
-    var body = document.body;
-    var textarea = document.createElement('textarea');
+    let result;
+    let value;
+    const Ace = this._Ace;
+    const story = this._story;
+    const NAME = 'editor-clipboard';
+    const body = document.body;
+    const textarea = document.createElement('textarea');
     
     if (!/^cut|copy|paste$/.test(cmd))
         throw Error('cmd could be "cut" or "copy" only!');
@@ -563,8 +563,7 @@ Dword.prototype._clipboard = function(cmd) {
 };
 
 Dword.prototype.showMessage = function(text) {
-    var self        = this,
-        HIDE_TIME   = 2000;
+    const HIDE_TIME = 2000;
     
     if (!this._ElementMsg) {
         this._ElementMsg = createMsg();
@@ -574,31 +573,30 @@ Dword.prototype.showMessage = function(text) {
     this._ElementMsg.textContent = text;
     this._ElementMsg.hidden = false;
     
-    setTimeout(function() {
-        self._ElementMsg.hidden = true;
+    setTimeout(() => {
+        this._ElementMsg.hidden = true;
     }, HIDE_TIME);
     
     return this;
 };
 
 Dword.prototype.sha          = function(callback) {
-    var dword   = this,
-        url     = this._PREFIX + this._DIR + 'jsSHA/src/sha.js';
+    const url = this._PREFIX + this._DIR + 'jsSHA/src/sha.js';
     
-    load.js(url, function() {
-        var shaObj, hash, error,
-            value   = dword.getValue();
+    load.js(url, () => {
+        const value = this.getValue();
+        let hash;
         
-        error = exec.try(function() {
-            shaObj  = new window.jsSHA('SHA-1', 'TEXT');
+        const error = exec.try(() => {
+            const shaObj = new window.jsSHA('SHA-1', 'TEXT');
             shaObj.update(value);
-            hash    = shaObj.getHash('HEX');
+            hash = shaObj.getHash('HEX');
         });
         
         callback(error, hash);
     });
     
-    return dword;
+    return this;
 };
 
 Dword.prototype.beautify = function() {
@@ -612,34 +610,32 @@ Dword.prototype.minify = function() {
 };
 
 Dword.prototype.save = function() {
-    var self    = this,
-        dword   = this,
-        value   = dword.getValue();
+    const value = this.getValue();
     
-    this._loadOptions(function(error, config) {
-        var isDiff      = config.diff,
-            isZip       = config.zip,
-            doDiff      = self._doDiff.bind(self);
+    this._loadOptions((error, config) => {
+        const isDiff = config.diff;
+        const isZip = config.zip;
+        const doDiff = this._doDiff.bind(this);
         
-        exec.if(!isDiff, function(patch) {
-            var query           = '',
-                patchLength     = patch && patch.length || 0,
-                length          = self._Value.length,
-                isLessMaxLength = length < self._MAX_FILE_SIZE,
-                isLessLength    = isLessMaxLength && patchLength < length,
-                isStr           = typeof patch === 'string',
-                isPatch         = patch && isStr && isLessLength;
+        exec.if(!isDiff, (patch) => {
+            let query = '';
+            const patchLength = patch && patch.length || 0;
+            const length = self._Value.length;
+            const isLessMaxLength = length < self._MAX_FILE_SIZE;
+            const isLessLength = isLessMaxLength && patchLength < length;
+            const isStr = typeof patch === 'string';
+            const isPatch = patch && isStr && isLessLength;
             
-            self._Value         = value;
+            this._Value = value;
             
-            exec.if(!isZip || isPatch, function(equal, data) {
-                var result  = data || self._Value;
+            exec.if(!isZip || isPatch, (equal, data) => {
+                const result  = data || this._Value;
                 
                 if (isPatch)
-                    dword._patch(self._FileName, patch);
-                else
-                    dword._write(self._FileName + query, result);
-            }, function(func) {
+                    return this._patch(this._FileName, patch);
+                
+                this._write(this._FileName + query, result);
+            }, (func) => {
                 zipio(value, (error, data) => {
                     if (error)
                         console.error(error);
@@ -649,32 +645,31 @@ Dword.prototype.save = function() {
                 });
             });
             
-        }, exec.with(doDiff, self._FileName));
+        }, exec.with(doDiff, this._FileName));
     });
     
-    return dword;
+    return this;
 };
 
 Dword.prototype._loadOptions = function(callback) {
-    var self    = this,
-        url     = this._PREFIX + '/options.json';
+    const url = this._PREFIX + '/options.json';
     
-    if (self._Options)
-        callback(null, self._Options);
-    else
-        load.json(url, function(error, data) {
-            self._Options = data;
-            callback(error, data);
-        });
+    if (this._Options)
+        return callback(null, self._Options);
+        
+    load.json(url, (error, data) => {
+        this._Options = data;
+        callback(error, data);
+    });
 };
     
 Dword.prototype._patchHttp = function(path, patch) {
-    var onSave = this._onSave.bind(this);
+    const onSave = this._onSave.bind(this);
     restafary.patch(path, patch, onSave);
 };
 
 Dword.prototype._writeHttp = function(path, result) {
-    var onSave = this._onSave.bind(this);
+    const onSave = this._onSave.bind(this);
     restafary.write(path, result, onSave);
 };
 
@@ -986,9 +981,9 @@ Dword.prototype._loadFiles = function(callback) {
     
     const scripts = Object.keys(obj)
         .filter(notGlobal)
-        .map(addPrefix(this._PREFIX));
+        .map(addPrefix(obj, this._PREFIX));
     
-    exec.if(!scripts.length, callback, loadJS(scripts));
+    exec.if(!scripts.length, callback, loadParallel(scripts));
 };
  
 Dword.prototype._loadFilesAll = function(callback) {
