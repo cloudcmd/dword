@@ -972,64 +972,62 @@ Dword.prototype._loadStyles = function(callback) {
 };
 
 Dword.prototype._loadFiles = function(callback) {
-    var self = this;
-    var obj = {
+    const obj = {
         loadRemote  : getModulePath('loadremote', 'lib'),
         load        : getModulePath('load'),
         Emitify     : getModulePath('emitify', 'dist', '.min.js'),
         join        : '/join/join.js'
     };
-        
-    var scripts = Object.keys(obj)
-        .filter(function(name) {
+    
+    const scripts = Object.keys(obj)
+        .filter((name) => {
             return !window[name];
         })
-        .map(function(name) {
-            return self._PREFIX + obj[name];
+        .map((name) => {
+            return this._PREFIX + obj[name];
         });
     
-    exec.if(!scripts.length, callback, function() {
+    exec.if(!scripts.length, callback, () => {
         loadScript(scripts, callback);
     });
 };
  
 Dword.prototype._loadFilesAll = function(callback) {
-    var self        = this,
-        DIR         = this._DIR,
-        PREFIX      = this._PREFIX,
-        initSocket  = this._initSocket.bind(this);
+    const DIR = this._DIR;
+    const PREFIX = this._PREFIX;
+    const initSocket = this._initSocket.bind(this);
     
     exec.series([
-        function(callback) {
-            var options = {
+        (callback) => {
+            const options = {
                 prefix: PREFIX
             };
             
             loadRemote('codemirror', options, callback);
         },
         
-        function(callback) {
+        (callback) => {
             loadRemote('socket', {
                 name : 'io',
-                prefix: self._SOCKET_PATH
+                prefix: this._SOCKET_PATH
             }, initSocket);
             
             callback();
         },
         
-        function(callback) {
+        (callback) => {
             CodeMirror.modeURL = PREFIX + DIR + 'codemirror/mode/%N/%N.js';
             callback();
         },
          
-        function(callback) {
-            var js = PREFIX + '/restafary.js';
-            var dir = DIR + 'codemirror/';
-            var client = 'client/codemirror/';
-            var addon = dir + 'addon/';
-            var lint = addon + 'lint/';
+        (callback) => {
+            const js = PREFIX + '/restafary.js';
+            const dir = DIR + 'codemirror/';
+            const client = 'client/codemirror/';
+            const addon = dir + 'addon/';
+            const lint = addon + 'lint/';
             
-            var urlJS = PREFIX + join([
+            const urlJS = PREFIX + join([
                 dir     + 'mode/meta',
                 
                 lint    + 'lint',
@@ -1042,41 +1040,40 @@ Dword.prototype._loadFilesAll = function(callback) {
                 DIR     + 'jshint/dist/jshint',
                 DIR     + 'cm-searchbox/lib/searchbox',
                 DIR     + 'cm-show-invisibles/dist/show-invisibles',
-                getKeyMapPath(dir, self._Config),
+                getKeyMapPath(dir, this._Config),
                 dir     + 'keymap/vim',
-            ].filter(function(name) {
-                return name;
-            }).concat([
-                'display/autorefresh',
+            ].filter(Boolean)
+                .concat([
+                    'display/autorefresh',
                 
-                'comment/comment',
-                'comment/continuecomment',
+                    'comment/comment',
+                    'comment/continuecomment',
                 
-                'mode/loadmode',
-                'mode/overlay',
+                    'mode/loadmode',
+                    'mode/overlay',
                 
-                'search/searchcursor',
-                'search/match-highlighter',
-                'search/matchesonscrollbar',
+                    'search/searchcursor',
+                    'search/match-highlighter',
+                    'search/matchesonscrollbar',
                 
-                'dialog/dialog',
-                'scroll/annotatescrollbar',
-                'fold/xml-fold',
+                    'dialog/dialog',
+                    'scroll/annotatescrollbar',
+                    'fold/xml-fold',
                 
-                'edit/closebrackets',
-                'edit/matchbrackets',
-                'edit/matchtags'
-            ].map(function(name) {
-                return addon + name;
-            })
-            ).map(function(name) {
-                return name + '.js';
-            }));
+                    'edit/closebrackets',
+                    'edit/matchbrackets',
+                    'edit/matchtags'
+                ].map((name) => {
+                    return addon + name;
+                })
+                ).map((name) => {
+                    return name + '.js';
+                }));
              
             load.parallel([urlJS, js], callback);
         },
         
-        function() {
+        () => {
             restafary.prefix(PREFIX + '/api/v1/fs');
             callback();
         }
@@ -1084,13 +1081,12 @@ Dword.prototype._loadFilesAll = function(callback) {
 };
  
 function getKeyMapPath(dir, config) {
-    var path = '';
-    var keyMap = config && config.options && config.options.keyMap;
+    const keyMap = config && config.options && config.options.keyMap;
     
     if (keyMap && keyMap !== 'default')
-        path = dir + 'keymap/' + keyMap;
+        return dir + 'keymap/' + keyMap;
     
-    return path;
+    return '';
 }
 
 function loadScript(srcs, callback) {
