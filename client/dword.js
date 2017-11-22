@@ -1,4 +1,4 @@
-/* global CodeMirror, exec, load, io, join, restafary, Emitify, loadRemote */
+/* global CodeMirror, exec, io, join, restafary, Emitify, loadRemote */
 /* global smalltalk */
 
 'use strict';
@@ -6,8 +6,14 @@
 require('../css/dword.css');
 
 const wraptile = require('wraptile/legacy');
+const currify = require('currify/legacy');
 const daffy = require('daffy');
 const zipio = require('zipio');
+const load = require('load.js');
+const loadJS = currify(load.js);
+
+const notGlobal = (name) => !window[name];
+const addPrefix = currify((prefix, name) => prefix + obj[name]);
 
 window.exec = window.exec || require('execon');
 
@@ -974,22 +980,15 @@ Dword.prototype._loadStyles = function(callback) {
 Dword.prototype._loadFiles = function(callback) {
     const obj = {
         loadRemote  : getModulePath('loadremote', 'lib'),
-        load        : getModulePath('load'),
         Emitify     : getModulePath('emitify', 'dist', '.min.js'),
         join        : '/join/join.js'
     };
     
     const scripts = Object.keys(obj)
-        .filter((name) => {
-            return !window[name];
-        })
-        .map((name) => {
-            return this._PREFIX + obj[name];
-        });
+        .filter(notGlobal)
+        .map(addPrefix(this._PREFIX));
     
-    exec.if(!scripts.length, callback, () => {
-        loadScript(scripts, callback);
-    });
+    exec.if(!scripts.length, callback, loadJS(scripts));
 };
  
 Dword.prototype._loadFilesAll = function(callback) {
@@ -1087,32 +1086,5 @@ function getKeyMapPath(dir, config) {
         return dir + 'keymap/' + keyMap;
     
     return '';
-}
-
-function loadScript(srcs, callback) {
-    var i,
-        func    = function() {
-            --i;
-            
-            if (!i)
-                callback();
-        };
-    
-    if (typeof srcs === 'string')
-        srcs = [srcs];
-    
-    i = srcs.length;
-    
-    srcs.forEach(function(src) {
-        var element = document.createElement('script');
-    
-        element.src = src;
-        element.addEventListener('load', function load() {
-            func();
-            element.removeEventListener('load', load);
-        });
-    
-        document.body.appendChild(element);
-    });
 }
 
