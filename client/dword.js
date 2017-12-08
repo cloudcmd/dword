@@ -425,7 +425,6 @@ Dword.prototype.setOption = function(name, value) {
 };
 
 Dword.prototype.setKeyMap = setKeyMap;
-
 Dword.prototype.setOptions = function(options) {
     Object.keys(options).forEach((name) => {
         const value = options[name];
