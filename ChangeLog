@@ -1,3 +1,10 @@
+2017.12.08, v6.1.0
+
+feature:
+- (dword) vim: add ability to save file with :w command
+- (package) rollup v0.52.1
+
+
 2017.11.22, v6.0.11
 
 feature:
