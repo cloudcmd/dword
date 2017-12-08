@@ -11,6 +11,7 @@ const daffy = require('daffy');
 const zipio = require('zipio');
 
 const Story = require('./story');
+const setKeyMap = require('./set-key-map');
 
 window.exec = window.exec || require('execon');
 window.load = window.load || require('load.js');
@@ -179,6 +180,7 @@ Dword.prototype._init = function(fn) {
             });
             
             this._Ace = CodeMirror(this._Element, all);
+            CodeMirror.commands.save = this.save.bind(this);
             
             if (Value)
                 this._initValue(this._FileName, Value);
@@ -422,6 +424,8 @@ Dword.prototype.setOption = function(name, value) {
     return this;
 };
 
+Dword.prototype.setKeyMap = setKeyMap;
+
 Dword.prototype.setOptions = function(options) {
     Object.keys(options).forEach((name) => {
         const value = options[name];
@@ -620,8 +624,8 @@ Dword.prototype.save = function() {
         exec.if(!isDiff, (patch) => {
             let query = '';
             const patchLength = patch && patch.length || 0;
-            const length = self._Value.length;
-            const isLessMaxLength = length < self._MAX_FILE_SIZE;
+            const length = this._Value.length;
+            const isLessMaxLength = length < this._MAX_FILE_SIZE;
             const isLessLength = isLessMaxLength && patchLength < length;
             const isStr = typeof patch === 'string';
             const isPatch = patch && isStr && isLessLength;
@@ -655,8 +659,8 @@ Dword.prototype._loadOptions = function(callback) {
     const url = this._PREFIX + '/options.json';
     
     if (this._Options)
-        return callback(null, self._Options);
-        
+        return callback(null, this._Options);
+    
     load.json(url, (error, data) => {
         this._Options = data;
         callback(error, data);
@@ -708,11 +712,10 @@ Dword.prototype._onSave = function(error, text) {
 };
 
 Dword.prototype._doDiff = function(path, callback) {
-    var self    = this,
-        value   = this.getValue();
+    const value = this.getValue();
     
-    this._diff(value, function(patch) {
-        self._story.checkHash(path, function(error, equal) {
+    this._diff(value, (patch) => {
+        this._story.checkHash(path, (error, equal) => {
             if (!equal)
                 patch = '';
             
@@ -745,20 +748,19 @@ Dword.prototype._setEmmet = function() {
 };
 
 Dword.prototype._setJsHintConfig = function(callback) {
-    var self        = this,
-        JSHINT_PATH = this._PREFIX + '/jshint.json';
+    const JSHINT_PATH = this._PREFIX + '/jshint.json';
     
     if (this._JSHintConfig)
         callback(this._JSHintConfig);
-    else
-        load.json(JSHINT_PATH, function(error, json) {
-            if (!error)
-                self._JSHintConfig = json;
-            else
-                smalltalk.alert(this._TITLE, error);
-            
-            callback(self._JSHintConfig);
-        });
+       
+    return load.json(JSHINT_PATH, (error, json) => {
+        if (!error)
+            return this._JSHintConfig = json;
+        
+        smalltalk.alert(this._TITLE, error);
+        
+        callback(this._JSHintConfig);
+    });
 };
 
 Dword.prototype._addExt = function(name, fn) {
