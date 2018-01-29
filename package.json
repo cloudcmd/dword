@@ -65,7 +65,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-postcss": "^1.2.1",
     "rollup-plugin-uglify": "^2.0.1",
-    "style-loader": "^0.19.0",
+    "style-loader": "^0.20.1",
     "webpack": "^3.0.0",
     "zipio": "^1.0.2"
   },
