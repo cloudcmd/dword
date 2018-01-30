@@ -1,3 +1,15 @@
+2018.01.30, v6.1.2
+
+feature:
+- (package) codemirror v5.34.0
+- (package) rollup-plugin-uglify v3.0.0
+- (package) rollup v0.55.1
+- (package) style-loader v0.20.1
+- (package) rollup-plugin-postcss v1.2.1
+- (package) rollup v0.54.0
+- (package) rollup v0.53.0
+
+
 2017.12.22, v6.1.1
 
 feature:
