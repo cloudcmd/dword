@@ -9,10 +9,10 @@ import nano from 'cssnano';
 export default {
     input: 'src/index.js',
     output: {
+        name: 'CodeMirror',
         file: 'dist/codemirror.js',
         format: 'umd',
     },
-    name: 'CodeMirror',
     plugins: [
         postcss({
             extenstions: ['.css'],
