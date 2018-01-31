@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function() {
-    this.setOption('keyMap', 'vim');
+module.exports = function(keyMap) {
+    this.setOption('keyMap', keyMap);
 };
 
