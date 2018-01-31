@@ -1,3 +1,9 @@
+2018.01.31, v6.1.3
+
+fix:
+- (set-key-map) add ability to use keyMaps other then vim
+
+
 2018.01.30, v6.1.2
 
 feature:
