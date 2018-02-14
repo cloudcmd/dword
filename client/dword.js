@@ -937,38 +937,32 @@ Dword.prototype._onDrop = function(event) {
 function getModulePath(name, lib, ext) {
     ext = ext || '.js';
     
-    var path = '';
     var libdir = '/';
     var dir = '/modules/';
     
     if (lib)
         libdir  = '/' + lib + '/';
     
-    path    = dir + name + libdir + name + ext;
-    
-    return path;
+    return dir + name + libdir + name + ext;
 }
 
 Dword.prototype._loadStyles = function(callback) {
-    var urlCSS  = '',
-        dir     = this._DIR + 'codemirror/',
-        addon   = dir + 'addon/',
-        lint    = addon + 'lint/',
-        theme   = this._Config.options.theme,
-        urls    =[
-            addon   + 'dialog/dialog',
-            addon   + 'search/matchesonscrollbar',
-            lint    + 'lint',
-            '/css/dword',
-        ];
+    const dir = this._DIR + 'codemirror/';
+    const addon = dir + 'addon/';
+    const lint = addon + 'lint/';
+    const theme = this._Config.options.theme;
+    const urls = [
+        addon   + 'dialog/dialog',
+        addon   + 'search/matchesonscrollbar',
+        lint    + 'lint',
+        '/css/dword',
+    ];
     
     if (theme && theme !== 'default')
         urls.unshift(dir + 'theme/' + theme);
     
-    urlCSS = this._PREFIX + join(urls
-        .map(function(name) {
-            return name + '.css';
-        }));
+    const addCss = (a) => `${a}.css`;
+    const urlCSS = this._PREFIX + join(urls.map(addCss))
     
     load(urlCSS, callback);
 };
