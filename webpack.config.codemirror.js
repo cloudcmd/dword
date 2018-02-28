@@ -4,7 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const {optimize} = webpack;
 
-const dir = './client';
+const dir = './codemirror';
 
 const {env} = process;
 const isDev = env.NODE_ENV === 'development';
@@ -18,22 +18,18 @@ const clean = (array) => array.filter(notEmpty);
 const rules = clean([
     !isDev && {
         test: /\.js$/,
-        exclude: /node_modules/,
         loader: 'babel-loader',
-    }, {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader!clean-css-loader'
     }
 ]);
 
 module.exports = {
     devtool,
     entry: {
-        dword: `${dir}/dword.js`,
+        CodeMirror: `${dir}/codemirror.js`,
     },
     output: {
-        library: 'dword',
-        filename: '[name].js',
+        library: 'CodeMirror',
+        filename: 'codemirror.js',
         path: isDev ? distDev : dist,
         pathinfo: isDev,
         libraryTarget: 'var',
@@ -46,6 +42,6 @@ module.exports = {
 
 function devtoolModuleFilenameTemplate(info) {
     const resource = info.absoluteResourcePath.replace(__dirname + path.sep, '');
-    return `file://dword/${resource}`;
+    return `file://codemirror/${resource}`;
 }
 
