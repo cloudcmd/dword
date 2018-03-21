@@ -20,7 +20,6 @@
     "build:client": "npm run build-progress -- --mode production",
     "build:client:dev": "NODE_ENV=development npm run build-progress -- --mode development",
     "cp:codemirror:modules": "cp -r node_modules/codemirror modules/",
-    "cp:codemirror:dist": "cp dist/codemirror.js dist-dev/codemirror.js",
     "build-progress:codemirror": "webpack --progress --config ./webpack.config.codemirror.js",
     "build:codemirror:dev": "NODE_ENV=development npm run build-progress:codemirror --mode development",
     "build:codemirror": "npm run build-progress:codemirror --mode production",
