@@ -11,16 +11,16 @@ module.exports = (req, res, next) => {
     
     readEdit((error, data) => {
         if (error)
-            res.status(404)
+            return res.status(404)
                 .send(error.message);
-        else
-            res .type('json')
-                .send(data);
+        
+        res.type('json')
+            .send(data);
     });
 }
 
 function replace(from, to) {
-    Object.keys(from).forEach(function(name) {
+    Object.keys(from).forEach((name) => {
         to[name] = from[name];
     });
 }
@@ -28,7 +28,7 @@ function replace(from, to) {
 function copy(from) {
     return Object
         .keys(from)
-        .reduce(function(value, name) {
+        .reduce((value, name) => {
             value[name] = from[name];
             return value;
         }, {});
