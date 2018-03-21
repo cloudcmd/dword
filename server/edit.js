@@ -43,8 +43,8 @@ function readEdit(callback) {
         if (error && error.code !== 'ENOENT')
             return callback(Error(`dword --config ${homePath}: ${error.message}`));
         
-        if (error)
-            return callback(error);
+        if (!edit)
+            return callback(null, data);
         
         replace(edit, data);
         callback(null, data);

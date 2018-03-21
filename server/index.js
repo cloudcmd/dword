@@ -92,9 +92,6 @@ function _dword(prefix, req, res, next) {
     if (/^\/dword\.js(\.map)?$/.test(req.url))
         req.url = `/dist${req.url}`;
     
-   // if (/^\/dist\/codemirror.js(\.map)?$/.test(req.url))
-   //     return next();
-    
     if (isDev)
         req.url = req.url.replace(/^\/dist\//, '/dist-dev/');
     
