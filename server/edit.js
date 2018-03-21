@@ -40,14 +40,14 @@ function readEdit(callback) {
     readjson(homePath, (error, edit) => {
         const data = copy(Edit);
         
-        if (!error)
-            replace(edit, data);
-        else if (error.code !== 'ENOENT')
-            error = Error(`dword --config ${homePath}: ${error.message}`);
-        else
-            error = null;
+        if (error && error.code !== 'ENOENT')
+            return callback(Error(`dword --config ${homePath}: ${error.message}`));
         
-        callback(error, data);
+        if (error)
+            return callback(error);
+        
+        replace(edit, data);
+        callback(null, data);
     });
 }
 
