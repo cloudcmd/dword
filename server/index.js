@@ -23,7 +23,7 @@ const restafaryFn = currify(_restafaryFn);
 const joinFn = currify(_joinFn);
 
 const readjson = require('readjson');
-const HOME = require('os-homedir')();
+const HOME = require('os').homedir();
 
 const isDev = process.env.NODE_ENV === 'development';
 

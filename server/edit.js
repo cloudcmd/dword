@@ -3,7 +3,7 @@
 const readjson = require('readjson');
 
 const Edit = require('../json/edit.json');
-const HOME = require('os-homedir')();
+const HOME = require('os').homedir();
 
 module.exports = (req, res, next) => {
     if (req.url !== '/edit.json')
