@@ -1,3 +1,12 @@
+2018.03.21, v6.1.7
+
+fix:
+- (package) cp:codemirror:dist
+
+feature:
+- (dword) os-homedir -> os.homedir
+
+
 2018.03.21, v6.1.6
 
 feature:
