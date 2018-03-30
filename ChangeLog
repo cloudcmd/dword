@@ -1,3 +1,9 @@
+2018.03.30, v7.0.1
+
+fix:
+- (modules) codemirror v5.36.0
+
+
 2018.03.30, v7.0.0
 
 feature:
