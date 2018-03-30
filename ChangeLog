@@ -1,3 +1,9 @@
+2018.03.30, v7.0.0
+
+feature:
+- (dword) socket-file v2.0.0: authCheck -> auth
+
+
 2018.03.21, v6.1.7
 
 fix:
