@@ -23,8 +23,10 @@ const rules = clean([
     }, {
         test: /\.css$/,
         loader: 'style-loader!css-loader!clean-css-loader'
-    }
-]);
+}, {
+    test: /\.(png|gif|svg|woff|woff2|eot|ttf)$/,
+    loader: 'url-loader?limit=50000',
+}]);
 
 module.exports = {
     devtool,

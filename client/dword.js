@@ -1,5 +1,4 @@
 /* global CodeMirror, exec, io, join, restafary, Emitify, loadRemote */
-/* global smalltalk */
 
 'use strict';
 
@@ -9,6 +8,7 @@ const wraptile = require('wraptile/legacy');
 const currify = require('currify/legacy');
 const daffy = require('daffy');
 const zipio = require('zipio');
+const smalltalk = require('smalltalk');
 
 const Story = require('./story');
 const setKeyMap = require('./set-key-map');
@@ -114,32 +114,6 @@ Dword.prototype._init = function(fn) {
                 this._Config = config;
                 callback();
             });
-        },
-        
-        (callback) => {
-            const name = 'smalltalk';
-            const js = '.min.js';
-            const dir = '/modules/' + name + '/dist/';
-            const isFlex = () => {
-                return document.body.style.flex !== 'undefined';
-            };
-            
-            const getJsName = () => {
-                const is = window.Promise;
-                const jsName = is ? js : '.poly' + js;
-                
-                if (isFlex())
-                    return jsName;
-                    
-                return '.native' + jsName;
-            }
-            
-            const jsName = getJsName();
-            const names = [jsName, '.min.css'].map((ext) => {
-                return this._PREFIX + dir + name + ext;
-            });
-            
-            load.parallel(names, callback);
         },
         
         loadFilesAll,

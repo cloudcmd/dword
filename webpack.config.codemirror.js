@@ -19,8 +19,7 @@ const rules = clean([
     !isDev && {
         test: /\.js$/,
         loader: 'babel-loader',
-    }
-]);
+}]);
 
 module.exports = {
     devtool,
