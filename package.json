@@ -41,8 +41,7 @@
     "readjson": "^1.1.0",
     "restafary": "^3.0.0",
     "socket-file": "^2.0.0",
-    "socket.io": "^2.0.3",
-    "wraptile": "^1.0.0"
+    "socket.io": "^2.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
@@ -63,6 +62,7 @@
     "url-loader": "^1.0.1",
     "webpack": "^4.0.1",
     "webpack-cli": "^2.0.9",
+    "wraptile": "^2.0.0",
     "zipio": "^1.0.2"
   },
   "repository": {
