@@ -18,6 +18,8 @@ window.load = window.load || require('load.js');
 
 const {load} = window;
 
+const _clipboard = require('./_clipboard');
+
 const loadParallel = currify(load.parallel);
 const notGlobal = (name) => !window[name];
 const addPrefix = currify((obj, prefix, name) => prefix + obj[name]);
@@ -500,45 +502,7 @@ Dword.prototype.pasteFromClipboard = function() {
         smalltalk.alert(this._TITLE, msg);
 };
 
-Dword.prototype._clipboard = function(cmd) {
-    let result;
-    let value;
-    const Ace = this._Ace;
-    const story = this._story;
-    const NAME = 'editor-clipboard';
-    const body = document.body;
-    const textarea = document.createElement('textarea');
-    
-    if (!/^cut|copy|paste$/.test(cmd))
-        throw Error('cmd could be "cut" or "copy" only!');
-    
-    body.appendChild(textarea);
-    
-    if (cmd === 'paste') {
-        textarea.focus();
-        result = document.execCommand(cmd);
-        value = textarea.value;
-        
-        if (!result) {
-            this._showMessageOnce('Could not paste from clipboard. Inner buffer used.');
-            result  = true;
-            value   = story.getData(NAME);
-        }
-        
-        if (value)
-            Ace.getDoc().replaceSelection(value);
-    } else {
-        textarea.value = Ace.getSelection('\n');
-        story.setData(NAME, textarea.value);
-        textarea.select();
-        result = document.execCommand(cmd);
-    }
-    
-    body.removeChild(textarea);
-    
-    return result;
-};
-
+Dword.prototype._clipboard = _clipboard;
 Dword.prototype.showMessage = function(text) {
     const HIDE_TIME = 2000;
     

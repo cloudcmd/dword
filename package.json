@@ -44,6 +44,7 @@
     "socket.io": "^2.0.3"
   },
   "devDependencies": {
+    "@cloudcmd/clipboard": "^1.0.0",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.6.0",
