@@ -1,6 +1,6 @@
 {
   "name": "dword",
-  "version": "7.0.7",
+  "version": "7.0.8",
   "description": "Web editor based on CodeMirror",
   "main": "server/index.js",
   "bin": {
