@@ -53,7 +53,7 @@
     "css-loader": "^0.28.4",
     "cssnano": "^3.7.7",
     "daffy": "^1.0.3",
-    "eslint": "^4.0.0",
+    "eslint": "^5.0.0",
     "execon": "^1.2.9",
     "load.js": "^1.1.4",
     "nodemon": "^1.11.0",
