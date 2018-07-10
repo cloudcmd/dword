@@ -1,3 +1,12 @@
+2018.07.10, v7.0.10
+
+feature:
+- (package) smalltalk v3.1.0
+- (package) css-loader v1.0.0
+- (package) cssnano v4.0.0
+- (package) eslint v5.0.0
+
+
 2018.06.22, v7.0.9
 
 feature:
