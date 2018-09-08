@@ -44,10 +44,10 @@
     "socket.io": "^2.0.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "@cloudcmd/clipboard": "1.0.2",
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.0.0",
-    "babel-preset-env": "^1.6.0",
+    "babel-loader": "^8.0.0",
     "clean-css-loader": "^1.0.1",
     "codemirror": "5.39.2",
     "css-loader": "^1.0.0",
