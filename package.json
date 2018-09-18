@@ -55,7 +55,7 @@
     "daffy": "^1.0.3",
     "eslint": "^5.0.0",
     "execon": "^1.2.9",
-    "load.js": "^1.1.4",
+    "load.js": "^2.0.0",
     "nodemon": "^1.11.0",
     "rimraf": "^2.6.2",
     "smalltalk": "^3.1.0",
