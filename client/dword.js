@@ -12,6 +12,7 @@ const smalltalk = require('smalltalk');
 
 const Story = require('./story');
 const setKeyMap = require('./set-key-map');
+const showMessage = require('./show-message');
 
 window.exec = window.exec || require('execon');
 window.load = window.load || require('load.js');
@@ -78,6 +79,8 @@ function Dword(el, options, callback) {
     };
 }
 
+Dword.prototype.showMessage = showMessage;
+
 Dword.prototype.isKey = function() {
     return this._isKey;
 };
@@ -90,13 +93,6 @@ Dword.prototype.enableKey = function() {
 Dword.prototype.disableKey = function() {
     this._isKey = false;
     return this;
-};
-
-Dword.prototype._showMessageOnce = function(msg) {
-    if (!this._showedOnce) {
-        this.showMessage(msg);
-        this._showedOnce = true;
-    }
 };
 
 function empty() {}
@@ -503,23 +499,6 @@ Dword.prototype.pasteFromClipboard = function() {
 };
 
 Dword.prototype._clipboard = _clipboard;
-Dword.prototype.showMessage = function(text) {
-    const HIDE_TIME = 2000;
-    
-    if (!this._ElementMsg) {
-        this._ElementMsg = createMsg();
-        this._Element.appendChild(this._ElementMsg);
-    }
-    
-    this._ElementMsg.textContent = text;
-    this._ElementMsg.hidden = false;
-    
-    setTimeout(() => {
-        this._ElementMsg.hidden = true;
-    }, HIDE_TIME);
-    
-    return this;
-};
 
 Dword.prototype.sha          = function(callback) {
     const url = this._PREFIX + this._DIR + 'jsSHA/src/sha.js';
