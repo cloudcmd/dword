@@ -1,3 +1,10 @@
+2018.09.20, v7.0.14
+
+feature:
+- (package) codemirror v5.40.2
+- (show-message) mv out from dword
+
+
 2018.09.18, v7.0.13
 
 feature:
