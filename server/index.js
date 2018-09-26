@@ -6,8 +6,8 @@ const path = require('path');
 const restafary = require('restafary');
 const socketFile = require('socket-file');
 const express = require('express');
-const currify = require('currify/legacy');
-const storage = require('fullstore/legacy');
+const currify = require('currify');
+const storage = require('fullstore');
 const join = require('join-io');
 
 const editFn = require('./edit');

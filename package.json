@@ -7,7 +7,7 @@
     "dword": "bin/dword.js"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=8"
   },
   "scripts": {
     "start": "bin/dword.js package.json",
