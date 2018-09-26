@@ -222,15 +222,6 @@ Dword.prototype.evaluate = function() {
     return this;
 };
 
-function createMsg() {
-    const wrapper = document.createElement('div');
-    const html = '<div class="dword-msg">/div>';
-    
-    wrapper.innerHTML = html;
-    
-    return wrapper.firstChild;
-}
-
 Dword.prototype.addKeyMap = function(keyMap) {
     this._Ace.addKeyMap(keyMap);
     return this;
