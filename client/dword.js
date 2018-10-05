@@ -671,104 +671,96 @@ Dword.prototype._setJsHintConfig = function(callback) {
 };
 
 Dword.prototype._addExt = function(name, fn) {
-    var self = this;
+    if (this._Ext)
+        return add(null, this._Ext);
     
-    if (self._Ext)
-        add(null, self._Ext);
-    else
-        load.json(self._PREFIX + '/json/ext.json', function(error, data) {
-            self._Ext = data;
-            add(error, self._Ext);
-        });
+    load.json(this._PREFIX + '/json/ext.json', (error, data) => {
+        this._Ext = data;
+        add(error, self._Ext);
+    });
     
     function add(error, exts) {
         if (error)
-            console.error(Error('Could not load ext.json!'));
-        else
-            Object.keys(exts).some(function(ext) {
-                var arr = exts[ext],
-                    is  = ~arr.indexOf(name);
-                
-                if (is)
-                    name += '.' + ext;
-                
-                return is;
-            });
+            return console.error(Error('Could not load ext.json!'));
+        
+        Object.keys(exts).some((ext) => {
+            const arr = exts[ext];
+            const is = ~arr.indexOf(name);
+            
+            if (is)
+                name += '.' + ext;
+            
+            return is;
+        });
         
         fn(name);
     }
 };
 
 function getHost() {
-    var l       = location,
-        href    = l.origin || l.protocol + '//' + l.host;
+    const l = location;
+    const href = l.origin || l.protocol + '//' + l.host;
     
     return href;
 }
 
 Dword.prototype._initSocket = function(error) {
-    var socket,
-        self            = this,
-        dword           = this,
-        href            = getHost(),
-        FIVE_SECONDS    = 5000,
-        patch    = function(name, data) {
-            socket.emit('patch', name, data);
-        };
-        
+    const dword = this;
+    const href = getHost();
+    const FIVE_SECONDS = 5000;
+    const patch = (name, data) => {
+        socket.emit('patch', name, data);
+    };
+    
     if (error)
         return smalltalk.alert(this._TITLE, error);
     
-    socket  = io.connect(href + this._PREFIX, {
+    const socket = io.connect(href + this._PREFIX, {
         'max reconnection attempts' : Math.pow(2, 32),
         'reconnection limit'        : FIVE_SECONDS,
         path                        : this._SOCKET_PATH + '/socket.io'
     });
     
-    socket.on('reject', function() {
-        self.emit('reject');
+    socket.on('reject', () => {
+        this.emit('reject');
     });
     
-    self._socket = socket;
+    this._socket = socket;
     
-    socket.on('connect', function() {
-        dword._patch = patch;
+    socket.on('connect', () => {
+        this._patch = patch;
     });
     
-    socket.on('message', function(msg) {
-        self._onSave(null, msg);
+    socket.on('message', (msg) => {
+        dword._onSave(null, msg);
     });
     
-    socket.on('file', function(name, data) {
-        if (self._Ace) {
-            self._initValue(name, data);
-        } else {
-            self._FileName    = name;
-            self._Value       = data;
-        }
+    socket.on('file', (name, data) => {
+        if (dword._Ace)
+            return this._initValue(name, data);
+        
+        this._FileName    = name;
+        this._Value       = data;
     });
     
-    socket.on('patch', function(name, data, hash) {
-        if (name !== self._FileName)
+    socket.on('patch', (name, data, hash) => {
+        if (name !== this._FileName)
             return;
         
-        self._loadDiff(function(error) {
-            var cursor, value;
-            
+        this._loadDiff((error) => {
             if (error)
                 return console.error(error);
             
-            if (hash !== self._story.getHash(name))
+            if (hash !== this._story.getHash(name))
                 return;
-                
-            cursor  = dword.getCursor(),
-            value   = dword.getValue();
-            value   = daffy.applyPatch(value, data);
+            
+            const cursor = dword.getCursor();
+            const value = daffy.applyPatch(dword.getValue(), data);
             
             dword.setValue(value);
             
-            dword.sha(function(error, hash) {
-                self._story.setData(name, value)
+            dword.sha((error, hash) => {
+                this._story.setData(name, value)
                     .setHash(name, hash);
                 
                 dword.moveCursorTo(cursor.row, cursor.column);
@@ -776,11 +768,11 @@ Dword.prototype._initSocket = function(error) {
         });
     });
     
-    socket.on('disconnect', function() {
-        dword._patch = self._patchHttp;
+    socket.on('disconnect', () => {
+        this._patch = this._patchHttp;
     });
     
-    socket.on('err', function(error) {
+    socket.on('err', (error) => {
         smalltalk.alert(this._TITLE, error);
     });
 };
@@ -792,16 +784,16 @@ Dword.prototype._initValue = function(name, data) {
 };
 
 Dword.prototype._readWithFlag = function(flag) {
-    var dword   = this,
-        path    = this._FileName + '?' + flag;
+    const dword = this;
+    const path = this._FileName + '?' + flag;
     
-    restafary.read(path, function(error, data) {
+    restafary.read(path, (error, data) => {
         if (error)
-            smalltalk.alert(dword._TITLE, error);
-        else
-            dword
-                .setValue(data)
-                .moveCursorTo(0, 0);
+            return smalltalk.alert(dword._TITLE, error);
+        
+        dword
+            .setValue(data)
+            .moveCursorTo(0, 0);
     });
 };
 
@@ -811,8 +803,8 @@ Dword.prototype._readWithFlag = function(flag) {
  * to upload file from download bar
  */
 Dword.prototype._onDragOver = function(event) {
-    var dataTransfer    = event.dataTransfer,
-        effectAllowed   = dataTransfer.effectAllowed;
+    const dataTransfer = event.dataTransfer;
+    const effectAllowed = dataTransfer.effectAllowed;
     
     if (/move|linkMove/.test(effectAllowed))
         dataTransfer.dropEffect = 'move';
@@ -823,20 +815,18 @@ Dword.prototype._onDragOver = function(event) {
 };
 
 Dword.prototype._onDrop = function(event) {
-    var dword   = this,
-        reader, files,
-        onLoad   =  function(event) {
-            var data    = event.target.result;
-            
-            dword.setValue(data);
-        };
+    const dword = this;
+    const onLoad = (event) => {
+        const data = event.target.result;
+        dword.setValue(data);
+    };
     
     event.preventDefault();
     
-    files   = event.dataTransfer.files;
+    const files = event.dataTransfer.files;
     
-    [].forEach.call(files, function(file) {
-        reader  = new FileReader();
+    [...files].forEach((file) => {
+        const reader = new FileReader();
         reader.addEventListener('load', onLoad);
         reader.readAsBinaryString(file);
     });
@@ -845,8 +835,8 @@ Dword.prototype._onDrop = function(event) {
 function getModulePath(name, lib, ext) {
     ext = ext || '.js';
     
-    var libdir = '/';
-    var dir = '/modules/';
+    let libdir = '/';
+    const dir = '/modules/';
     
     if (lib)
         libdir  = '/' + lib + '/';
