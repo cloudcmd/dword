@@ -1,3 +1,10 @@
+2018.10.09, v8.0.1
+
+feature:
+- (package) currify v3.0.0
+- (package) add build:start, build:start:dev
+
+
 2018.09.26, v8.0.0
 
 feature:
