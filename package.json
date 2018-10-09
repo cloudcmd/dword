@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "ashify": "^1.0.1",
-    "currify": "^2.0.0",
+    "currify": "^3.0.0",
     "express": "^4.14.0",
     "fullstore": "^1.0.0",
     "join-io": "^2.0.0",
