@@ -41,7 +41,7 @@
     "join-io": "^2.0.0",
     "patchfile": "^1.0.1",
     "readjson": "^1.1.0",
-    "restafary": "^4.0.0",
+    "restafary": "^5.0.0",
     "socket-file": "^2.0.0",
     "socket.io": "^2.0.3"
   },
