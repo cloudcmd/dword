@@ -676,7 +676,7 @@ Dword.prototype._addExt = function(name, fn) {
     
     load.json(this._PREFIX + '/json/ext.json', (error, data) => {
         this._Ext = data;
-        add(error, self._Ext);
+        add(error, this._Ext);
     });
     
     function add(error, exts) {
@@ -894,15 +894,6 @@ Dword.prototype._loadFilesAll = function(callback) {
         },
         
         (callback) => {
-            loadRemote('socket', {
-                name : 'io',
-                prefix: this._SOCKET_PATH
-            }, initSocket);
-            
-            callback();
-        },
-        
-        (callback) => {
             CodeMirror.modeURL = PREFIX + DIR + 'codemirror/mode/%N/%N.js';
             callback();
         },
@@ -958,6 +949,15 @@ Dword.prototype._loadFilesAll = function(callback) {
                 }));
              
             load.parallel([urlJS, js], callback);
+        },
+        
+        (callback) => {
+            loadRemote('socket', {
+                name : 'io',
+                prefix: this._SOCKET_PATH
+            }, initSocket);
+            
+            callback();
         },
         
         () => {
