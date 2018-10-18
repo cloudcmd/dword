@@ -20,7 +20,7 @@
     "build:client": "npm run build-progress -- --mode production",
     "build:client:dev": "NODE_ENV=development npm run build-progress -- --mode development",
     "build:start": "redrun build:client start",
-    "build:start:dev": "redrun build:client start:dev",
+    "build:start:dev": "redrun build:client:dev start:dev",
     "cp:codemirror:modules": "cp -r node_modules/codemirror modules/",
     "build-progress:codemirror": "webpack --progress --config ./webpack.config.codemirror.js",
     "build:codemirror:dev": "NODE_ENV=development npm run build-progress:codemirror --mode development",
