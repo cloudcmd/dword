@@ -1,4 +1,4 @@
-/* global CodeMirror, exec, io, join, restafary, Emitify, loadRemote */
+/* global CodeMirror, exec, join, restafary, Emitify, loadRemote */
 
 'use strict';
 
@@ -6,9 +6,10 @@ require('../css/dword.css');
 
 const wraptile = require('wraptile/legacy');
 const currify = require('currify/legacy');
-const daffy = require('daffy');
-const zipio = require('zipio');
+const {promisify} = require('es6-promisify');
+const {createPatch} = require('daffy');
 const smalltalk = require('smalltalk');
+const jssha = require('jssha');
 
 const Story = require('./story');
 const setKeyMap = require('./set-key-map');
@@ -16,10 +17,13 @@ const showMessage = require('./show-message');
 
 window.exec = window.exec || require('execon');
 window.load = window.load || require('load.js');
-
 const {load} = window;
 
+const loadJSON = promisify(load.json);
+
 const _clipboard = require('./_clipboard');
+const save = require('./save');
+const _initSocket = require('./_init-socket');
 
 const loadParallel = currify(load.parallel);
 const notGlobal = (name) => !window[name];
@@ -54,9 +58,9 @@ function Dword(el, options, callback) {
     if (typeof el === 'string')
         el = document.querySelector(el);
     
-    this._MAX_FILE_SIZE   = options.maxSize || 512000;
-    this._PREFIX          = options.prefix || '/dword';
-    this._SOCKET_PATH     = options.socketPath || '';
+    this._maxSize = options.maxSize || 512000;
+    this._PREFIX = options.prefix || '/dword';
+    this._SOCKET_PATH = options.socketPath || '';
     
     this._Element = el || document.body;
     
@@ -491,23 +495,12 @@ Dword.prototype.pasteFromClipboard = function() {
 
 Dword.prototype._clipboard = _clipboard;
 
-Dword.prototype.sha          = function(callback) {
-    const url = this._PREFIX + this._DIR + 'jsSHA/src/sha.js';
+Dword.prototype.sha = function() {
+    const value = this.getValue();
+    const shaObj = new jssha('SHA-1', 'TEXT');
+    shaObj.update(value);
     
-    load.js(url, () => {
-        const value = this.getValue();
-        let hash;
-        
-        const error = exec.try(() => {
-            const shaObj = new window.jsSHA('SHA-1', 'TEXT');
-            shaObj.update(value);
-            hash = shaObj.getHash('HEX');
-        });
-        
-        callback(error, hash);
-    });
-    
-    return this;
+    return shaObj.getHash('HEX');
 };
 
 Dword.prototype.beautify = function() {
@@ -520,60 +513,21 @@ Dword.prototype.minify = function() {
     return this;
 };
 
-Dword.prototype.save = function() {
-    const value = this.getValue();
-    
-    this._loadOptions((error, config) => {
-        const isDiff = config.diff;
-        const isZip = config.zip;
-        const doDiff = this._doDiff.bind(this);
-        
-        exec.if(!isDiff, (patch) => {
-            let query = '';
-            const patchLength = patch && patch.length || 0;
-            const length = this._Value.length;
-            const isLessMaxLength = length < this._MAX_FILE_SIZE;
-            const isLessLength = isLessMaxLength && patchLength < length;
-            const isStr = typeof patch === 'string';
-            const isPatch = patch && isStr && isLessLength;
-            
-            this._Value = value;
-            
-            exec.if(!isZip || isPatch, (equal, data) => {
-                const result  = data || this._Value;
-                
-                if (isPatch)
-                    return this._patch(this._FileName, patch);
-                
-                this._write(this._FileName + query, result);
-            }, (func) => {
-                zipio(value, (error, data) => {
-                    if (error)
-                        console.error(error);
-                    
-                    query = '?unzip';
-                    func(null, data);
-                });
-            });
-            
-        }, exec.with(doDiff, this._FileName));
-    });
-    
-    return this;
-};
+Dword.prototype.save = save;
 
-Dword.prototype._loadOptions = function(callback) {
+Dword.prototype._loadOptions = async function() {
     const url = this._PREFIX + '/options.json';
     
     if (this._Options)
-        return callback(null, this._Options);
+        return this._Options;
     
-    load.json(url, (error, data) => {
-        this._Options = data;
-        callback(error, data);
-    });
+    const data = await loadJSON(url);
+    
+    this._Options = data;
+    
+    return data;
 };
-    
+
 Dword.prototype._patchHttp = function(path, patch) {
     const onSave = this._onSave.bind(this);
     restafary.patch(path, patch, onSave);
@@ -585,73 +539,68 @@ Dword.prototype._writeHttp = function(path, result) {
 };
 
 Dword.prototype._onSave = function(error, text) {
-    var self        = this,
-        dword       = this,
-        Value       = self._Value,
-        FileName    = self._FileName,
-        msg         = 'Try again?';
-        
+    const dword = this;
+    const {
+        _Value,
+        _FileName,
+    } = this;
+    
+    let msg = 'Try again?';
+    
     if (error) {
         if (error.message)
             msg = error.message + '\n' + msg;
         else
             msg = 'Can\'t save.' + msg;
         
-        smalltalk.confirm(this._TITLE, msg).then(function() {
-            var onSave = self._onSave.bind(self);
-            restafary.write(self._FileName, self._Value, onSave);
-        }).catch(empty).then(function(){
+        const onSave = this._onSave.bind(this);
+        smalltalk.confirm(this._TITLE, msg).then(() => {
+            restafary.write(_FileName, _Value, onSave);
+        }).catch(empty).then(()=> {
             dword.focus();
         });
     } else {
         dword.showMessage(text);
         
-        dword.sha(function(error, hash) {
-            if (error)
-                console.error(error);
-            
-            self._story.setData(FileName, Value)
-                .setHash(FileName, hash);
-        });
+        const hash = dword.sha();
+        this._story
+            .setData(_FileName, _Value)
+            .setHash(_FileName, hash);
         
-        self._Emitter.emit('save', Value.length);
+        this._Emitter.emit('save', _Value.length);
     }
 };
 
-Dword.prototype._doDiff = function(path, callback) {
+Dword.prototype._doDiff = async function(path) {
     const value = this.getValue();
     
-    this._diff(value, (patch) => {
-        this._story.checkHash(path, (error, equal) => {
-            if (!equal)
-                patch = '';
-            
-            callback(patch);
-        });
-    });
+    const patch = this._diff(value)
+    const equal = await this._story.checkHash(path);
+    
+    return equal ? patch : '';
 };
 
-Dword.prototype._diff = function(newValue, callback) {
+Dword.prototype._diff = function(newValue) {
     const {
         _story,
         _FileName,
     } = this;
     
     this._Value = _story.getData(_FileName);
-    const patch = daffy.createPatch(this._Value, newValue);
-    
-    callback(patch);
+    return createPatch(this._Value, newValue);
 };
 
 Dword.prototype._setEmmet = function() {
-    var dir = this._DIR + 'codemirror-emmet/dist/';
-    var extensions = this._Config.extensions;
-    var isEmmet = extensions.emmet;
+    const dir = this._DIR + 'codemirror-emmet/dist/';
+    const extensions = this._Config.extensions;
+    const isEmmet = extensions.emmet;
     
-    if (isEmmet)
-        load.js(this._PREFIX + join([
-            dir + 'emmet.min.js'
-        ]));
+    if (!isEmmet)
+        return;
+    
+    load.js(this._PREFIX + join([
+        dir + 'emmet.min.js'
+    ]));
 };
 
 Dword.prototype._setJsHintConfig = function(callback) {
@@ -697,86 +646,7 @@ Dword.prototype._addExt = function(name, fn) {
     }
 };
 
-function getHost() {
-    const l = location;
-    const href = l.origin || l.protocol + '//' + l.host;
-    
-    return href;
-}
-
-Dword.prototype._initSocket = function(error) {
-    const dword = this;
-    const href = getHost();
-    const FIVE_SECONDS = 5000;
-    const patch = (name, data) => {
-        socket.emit('patch', name, data);
-    };
-    
-    if (error)
-        return smalltalk.alert(this._TITLE, error);
-    
-    const socket = io.connect(href + this._PREFIX, {
-        'max reconnection attempts' : Math.pow(2, 32),
-        'reconnection limit'        : FIVE_SECONDS,
-        path                        : this._SOCKET_PATH + '/socket.io'
-    });
-    
-    socket.on('reject', () => {
-        this.emit('reject');
-    });
-    
-    this._socket = socket;
-    
-    socket.on('connect', () => {
-        this._patch = patch;
-    });
-    
-    socket.on('message', (msg) => {
-        dword._onSave(null, msg);
-    });
-    
-    socket.on('file', (name, data) => {
-        if (dword._Ace)
-            return this._initValue(name, data);
-        
-        this._FileName    = name;
-        this._Value       = data;
-    });
-    
-    socket.on('patch', (name, data, hash) => {
-        if (name !== this._FileName)
-            return;
-        
-        this._loadDiff((error) => {
-            if (error)
-                return console.error(error);
-            
-            if (hash !== this._story.getHash(name))
-                return;
-            
-            const cursor = dword.getCursor();
-            const value = daffy.applyPatch(dword.getValue(), data);
-            
-            dword.setValue(value);
-            
-            dword.sha((error, hash) => {
-                this._story.setData(name, value)
-                    .setHash(name, hash);
-                
-                dword.moveCursorTo(cursor.row, cursor.column);
-            });
-        });
-    });
-    
-    socket.on('disconnect', () => {
-        this._patch = this._patchHttp;
-    });
-    
-    socket.on('err', (error) => {
-        smalltalk.alert(this._TITLE, error);
-    });
-};
-
+Dword.prototype._initSocket = _initSocket;
 Dword.prototype._initValue = function(name, data) {
     return this.setModeForPath(name)
         .setValueFirst(name, data)

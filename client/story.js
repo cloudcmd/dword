@@ -2,6 +2,8 @@
 
 /* global restafary */
 
+const {promisify} = require('es6-promisify');
+
 module.exports = Story;
 
 function Story() {
@@ -9,25 +11,21 @@ function Story() {
         return new Story();
 }
 
-Story.prototype.checkHash = function(name, callback) {
-    this.loadHash(name, (error, loadHash) => {
-        const nameHash = name + '-hash';
-        const storeHash = localStorage.getItem(nameHash);
-        const equal = loadHash === storeHash;
-        
-        callback(error, equal);
-    });
+Story.prototype.checkHash = async function(name) {
+    const loadHash = await this.loadHash(name);
+    const nameHash = name + '-hash';
+    const storeHash = localStorage.getItem(nameHash);
     
-    return this;
+    return loadHash === storeHash;
 };
 
-Story.prototype.loadHash = function(name, callback) {
+Story.prototype.loadHash = promisify(function(name, callback) {
     const query = '?hash';
     
     restafary.read(name + query, callback);
     
     return this;
-};
+});
 
 Story.prototype.setData = function(name, data) {
     const nameData = name + '-data';
