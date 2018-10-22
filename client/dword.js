@@ -1,4 +1,4 @@
-/* global CodeMirror, exec, join, restafary, Emitify, loadRemote */
+/* global CodeMirror, exec, join, restafary, loadRemote */
 
 'use strict';
 
@@ -10,6 +10,7 @@ const {promisify} = require('es6-promisify');
 const {createPatch} = require('daffy');
 const smalltalk = require('smalltalk');
 const jssha = require('jssha');
+const Emitify = require('emitify/legacy');
 
 const Story = require('./story');
 const setKeyMap = require('./set-key-map');
@@ -738,7 +739,6 @@ Dword.prototype._loadStyles = function(callback) {
 Dword.prototype._loadFiles = function(callback) {
     const obj = {
         loadRemote  : getModulePath('loadremote', 'lib'),
-        Emitify     : getModulePath('emitify', 'dist', '.min.js'),
         join        : '/join/join.js'
     };
     
