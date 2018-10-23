@@ -61,7 +61,7 @@ function Dword(el, options, callback) {
     
     this._maxSize = options.maxSize || 512000;
     this._PREFIX = options.prefix || '/dword';
-    this._SOCKET_PATH = options.socketPath || '';
+    this._socketPath = options.socketPath || '';
     
     this._Element = el || document.body;
     
@@ -539,39 +539,7 @@ Dword.prototype._writeHttp = function(path, result) {
     restafary.write(path, result, onSave);
 };
 
-Dword.prototype._onSave = function(error, text) {
-    const dword = this;
-    const {
-        _Value,
-        _FileName,
-    } = this;
-    
-    let msg = 'Try again?';
-    
-    if (error) {
-        if (error.message)
-            msg = error.message + '\n' + msg;
-        else
-            msg = 'Can\'t save.' + msg;
-        
-        const onSave = this._onSave.bind(this);
-        smalltalk.confirm(this._TITLE, msg).then(() => {
-            restafary.write(_FileName, _Value, onSave);
-        }).catch(empty).then(()=> {
-            dword.focus();
-        });
-    } else {
-        dword.showMessage(text);
-        
-        const hash = dword.sha();
-        this._story
-            .setData(_FileName, _Value)
-            .setHash(_FileName, hash);
-        
-        this._Emitter.emit('save', _Value.length);
-    }
-};
-
+Dword.prototype._onSave = require('./_on-save');
 Dword.prototype._doDiff = async function(path) {
     const value = this.getValue();
     
@@ -587,7 +555,7 @@ Dword.prototype._diff = function(newValue) {
         _FileName,
     } = this;
     
-    this._Value = _story.getData(_FileName);
+    this._Value = _story.getData(_FileName) || this._Value;
     return createPatch(this._Value, newValue);
 };
 
@@ -751,31 +719,26 @@ Dword.prototype._loadFiles = function(callback) {
  
 Dword.prototype._loadFilesAll = function(callback) {
     const DIR = this._DIR;
-    const PREFIX = this._PREFIX;
-    const initSocket = this._initSocket.bind(this);
+    const prefix = this._PREFIX;
     
     exec.series([
         (callback) => {
-            const options = {
-                prefix: PREFIX
-            };
-            
-            loadRemote('codemirror', options, callback);
+            loadRemote('codemirror', {prefix}, callback);
         },
         
         (callback) => {
-            CodeMirror.modeURL = PREFIX + DIR + 'codemirror/mode/%N/%N.js';
+            CodeMirror.modeURL = prefix + DIR + 'codemirror/mode/%N/%N.js';
             callback();
         },
          
         (callback) => {
-            const js = PREFIX + '/restafary.js';
+            const js = prefix + '/restafary.js';
             const dir = DIR + 'codemirror/';
             const client = 'client/codemirror/';
             const addon = dir + 'addon/';
             const lint = addon + 'lint/';
             
-            const urlJS = PREFIX + join([
+            const urlJS = prefix + join([
                 dir     + 'mode/meta',
                 
                 lint    + 'lint',
@@ -822,18 +785,21 @@ Dword.prototype._loadFilesAll = function(callback) {
         },
         
         (callback) => {
-            loadRemote('socket', {
-                name : 'io',
-                prefix: this._SOCKET_PATH
-            }, initSocket);
-            
+            restafary.prefix(prefix + '/api/v1/fs');
             callback();
         },
         
+        (callback) => {
+            loadRemote('socket', {
+                name : 'io',
+                prefix: this._socketPath,
+            }, callback);
+        },
+        
         () => {
-            restafary.prefix(PREFIX + '/api/v1/fs');
+            this._initSocket();
             callback();
-        }
+        },
     ]);
 };
  

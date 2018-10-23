@@ -23,7 +23,7 @@ module.exports = function() {
     const socket = io.connect(href + this._PREFIX, {
         'max reconnection attempts' : Math.pow(2, 32),
         'reconnection limit'        : FIVE_SECONDS,
-        path                        : this._SOCKET_PATH + '/socket.io'
+        path                        : this._socketPath + '/socket.io'
     });
     
     this._socket = socket;

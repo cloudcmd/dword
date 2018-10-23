@@ -8,7 +8,8 @@ const setValue = wraptile(_setValue);
 
 module.exports = function() {
     save.call(this)
-        .then(setValue(this));
+        .then(setValue(this))
+        .catch(this._onSave.bind(this));
     
     return this;
 }
