@@ -61,6 +61,7 @@ function Dword(el, options, callback) {
     
     this._maxSize = options.maxSize || 512000;
     this._PREFIX = options.prefix || '/dword';
+    this._prefixSocket = options.prefixSocket || '/dword';
     this._socketPath = options.socketPath || '';
     
     this._Element = el || document.body;
