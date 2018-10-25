@@ -1,3 +1,12 @@
+2018.10.25, v9.0.0
+
+fix:
+- feature(dword) split prefix to: prefix and prefixSocket
+
+feature:
+- (dword) split prefix to: prefix and prefixSocket
+
+
 2018.10.24, v8.0.8
 
 feature:
