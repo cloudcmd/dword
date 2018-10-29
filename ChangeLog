@@ -1,3 +1,12 @@
+2018.10.29, v9.0.1
+
+fix:
+- docs(ChangeLog) rm 
+
+feature:
+- (package) codemirror v5.41.0
+
+
 2018.10.25, v9.0.0
 
 feature:
