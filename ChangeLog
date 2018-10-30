@@ -1,3 +1,9 @@
+2018.10.30, v9.0.3
+
+feature:
+- (server) dword: rm condition has no sense
+
+
 2018.10.30, v9.0.2
 
 feature:
