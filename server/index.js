@@ -5,14 +5,12 @@ const path = require('path');
 
 const restafary = require('restafary');
 const socketFile = require('socket-file');
-const express = require('express');
+const {Router} = require('express');
 const currify = require('currify');
 const storage = require('fullstore');
 const join = require('join-io');
 
 const editFn = require('./edit');
-
-const Router = express.Router;
 
 const rootStorage = storage();
 const optionsStorage = storage();
