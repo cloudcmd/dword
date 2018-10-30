@@ -1,9 +1,10 @@
-/* global CodeMirror, exec, join, restafary, loadRemote */
+/* global CodeMirror, exec, join, loadRemote */
 
 'use strict';
 
 require('../css/dword.css');
 
+const restafary = require('restafary/legacy/client');
 const wraptile = require('wraptile/legacy');
 const currify = require('currify/legacy');
 const {promisify} = require('es6-promisify');
@@ -733,7 +734,6 @@ Dword.prototype._loadFilesAll = function(callback) {
         },
          
         (callback) => {
-            const js = prefix + '/restafary.js';
             const dir = DIR + 'codemirror/';
             const client = 'client/codemirror/';
             const addon = dir + 'addon/';
@@ -782,7 +782,7 @@ Dword.prototype._loadFilesAll = function(callback) {
                     return name + '.js';
                 }));
              
-            load.parallel([urlJS, js], callback);
+            load(urlJS, callback);
         },
         
         (callback) => {
