@@ -84,12 +84,9 @@ function checkOption(isOption) {
 }
 
 function _dword(prefix, req, res, next) {
-    const url = req.url
+    const {url} = req;
     
-    if (url.indexOf(prefix))
-        return next();
-    
-    req.url = req.url.replace(prefix, '');
+    req.url = url.replace(prefix, '');
     
     if (/^\/dword\.js(\.map)?$/.test(req.url))
         req.url = `/dist${req.url}`;
