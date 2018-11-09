@@ -1,8 +1,7 @@
 'use strict';
 
-/* global restafary */
-
 const {promisify} = require('es6-promisify');
+const restafary = require('restafary/legacy/client');
 
 module.exports = Story;
 
