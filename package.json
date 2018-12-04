@@ -92,5 +92,8 @@
   "bugs": {
     "url": "https://github.com/cloudcmd/dword/issues"
   },
-  "homepage": "https://github.com/cloudcmd/dword"
+  "homepage": "https://github.com/cloudcmd/dword",
+  "publishConfig": {
+    "access": "public"
+  }
 }
