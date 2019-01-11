@@ -24,14 +24,14 @@
         else if (!prev && val)
             cm.addOverlay({
                 token: function(stream) {
-                    var ret     = null,
-                        match   = stream.match(/\s+$/);
-                    
+                    var ret = null;
+                    var match = stream.match(/\s+$/);
+                
                     if (match && match[0] !== stream.string)
                         ret =  'trailing-whitespace';
-                    
+                
                     stream.match(/^\s*\S/);
-                    
+                
                     return ret;
                 },
                 name: 'trailingspace'

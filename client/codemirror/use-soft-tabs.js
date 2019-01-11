@@ -16,10 +16,10 @@
     CodeMirror.defineOption('useSoftTabs', false, function(cm) {
         cm.addKeyMap({
             'Tab': function (cm) {
-                var line,
-                    sel     = cm.getSelection('\n'),
-                    coupleLines = sel.length > 0,
-                    isSelected  = cm.somethingSelected();
+                var line;
+                var sel = cm.getSelection('\n');
+                var coupleLines = sel.length > 0;
+                var isSelected = cm.somethingSelected();
                 
                 if (isSelected) {
                     line    = cm.getLine(cm.getCursor().line);
