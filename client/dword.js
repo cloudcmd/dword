@@ -125,7 +125,9 @@ Dword.prototype._init = function(fn) {
         loadStyles,
         
         () => {
-            const options = this._Config.options;
+            const {
+                options
+            } = this._Config;
             const Value = this._Value;
             const all = {
                 autofocus           : true,
@@ -355,7 +357,7 @@ Dword.prototype.setValueFirst = function(name, value) {
     
     return this;
 };
-    
+
 /*
  * CodeMirror set default line separator to "\n"
  * what is great for Linux, but Windows use "\r\n"
@@ -563,7 +565,9 @@ Dword.prototype._diff = function(newValue) {
 
 Dword.prototype._setEmmet = function() {
     const dir = this._DIR + 'codemirror-emmet/dist/';
-    const extensions = this._Config.extensions;
+    const {
+        extensions
+    } = this._Config;
     const isEmmet = extensions.emmet;
     
     if (!isEmmet)
@@ -579,7 +583,7 @@ Dword.prototype._setJsHintConfig = function(callback) {
     
     if (this._JSHintConfig)
         callback(this._JSHintConfig);
-       
+    
     return load.json(JSHINT_PATH, (error, json) => {
         if (!error)
             return this._JSHintConfig = json;
@@ -644,8 +648,12 @@ Dword.prototype._readWithFlag = function(flag) {
  * to upload file from download bar
  */
 Dword.prototype._onDragOver = function(event) {
-    const dataTransfer = event.dataTransfer;
-    const effectAllowed = dataTransfer.effectAllowed;
+    const {
+        dataTransfer
+    } = event;
+    const {
+        effectAllowed
+    } = dataTransfer;
     
     if (/move|linkMove/.test(effectAllowed))
         dataTransfer.dropEffect = 'move';
@@ -664,7 +672,9 @@ Dword.prototype._onDrop = function(event) {
     
     event.preventDefault();
     
-    const files = event.dataTransfer.files;
+    const {
+        files
+    } = event.dataTransfer;
     
     [...files].forEach((file) => {
         const reader = new FileReader();
@@ -689,7 +699,9 @@ Dword.prototype._loadStyles = function(callback) {
     const dir = this._DIR + 'codemirror/';
     const addon = dir + 'addon/';
     const lint = addon + 'lint/';
-    const theme = this._Config.options.theme;
+    const {
+        theme
+    } = this._Config.options;
     const urls = [
         addon   + 'dialog/dialog',
         addon   + 'search/matchesonscrollbar',
@@ -718,7 +730,7 @@ Dword.prototype._loadFiles = function(callback) {
     
     exec.if(!scripts.length, callback, loadParallel(scripts));
 };
- 
+
 Dword.prototype._loadFilesAll = function(callback) {
     const DIR = this._DIR;
     const prefix = this._PREFIX;
@@ -732,7 +744,7 @@ Dword.prototype._loadFilesAll = function(callback) {
             CodeMirror.modeURL = prefix + DIR + 'codemirror/mode/%N/%N.js';
             callback();
         },
-         
+        
         (callback) => {
             const dir = DIR + 'codemirror/';
             const client = 'client/codemirror/';
@@ -757,21 +769,21 @@ Dword.prototype._loadFilesAll = function(callback) {
             ].filter(Boolean)
                 .concat([
                     'display/autorefresh',
-                
+                    
                     'comment/comment',
                     'comment/continuecomment',
-                
+                    
                     'mode/loadmode',
                     'mode/overlay',
-                
+                    
                     'search/searchcursor',
                     'search/match-highlighter',
                     'search/matchesonscrollbar',
-                
+                    
                     'dialog/dialog',
                     'scroll/annotatescrollbar',
                     'fold/xml-fold',
-                
+                    
                     'edit/closebrackets',
                     'edit/matchbrackets',
                     'edit/matchtags'
@@ -781,7 +793,7 @@ Dword.prototype._loadFilesAll = function(callback) {
                 ).map((name) => {
                     return name + '.js';
                 }));
-             
+            
             load(urlJS, callback);
         },
         
@@ -803,7 +815,7 @@ Dword.prototype._loadFilesAll = function(callback) {
         },
     ]);
 };
- 
+
 function getKeyMapPath(dir, config) {
     const keyMap = config && config.options && config.options.keyMap;
     
