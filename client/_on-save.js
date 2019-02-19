@@ -20,7 +20,7 @@ module.exports = function onSave(error, text) {
         
         return confirm(this._TITLE, msg).then(() => {
             write(this._FileName, this._Value, onSave);
-        }).catch(empty).then(()=> {
+        }).catch(empty).then(() => {
             this.focus();
         });
     }

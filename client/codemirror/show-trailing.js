@@ -1,3 +1,5 @@
+'use strict';
+
 /* global CodeMirror */
 /* global define */
 
@@ -10,12 +12,12 @@
         define(['../../lib/codemirror'], mod);
     else // Plain browser env
         mod(CodeMirror);
-})(function(CodeMirror) {
+})((CodeMirror) => {
     'use strict';
     
     add();
     
-    CodeMirror.defineOption('showTrailing', false, function(cm, val, prev) {
+    CodeMirror.defineOption('showTrailing', false, (cm, val, prev) => {
         if (prev === CodeMirror.Init)
             prev = false;
         
@@ -23,23 +25,23 @@
             cm.removeOverlay('trailingspace');
         else if (!prev && val)
             cm.addOverlay({
-                token: function(stream) {
-                    var ret = null;
-                    var match = stream.match(/\s+$/);
+                token(stream) {
+                    let ret = null;
+                    const match = stream.match(/\s+$/);
                     
                     if (match && match[0] !== stream.string)
-                        ret =  'trailing-whitespace';
+                        ret = 'trailing-whitespace';
                     
                     stream.match(/^\s*\S/);
                     
                     return ret;
                 },
-                name: 'trailingspace'
+                name: 'trailingspace',
             });
     });
     
     function add() {
-        var style = document.createElement('style');
+        const style = document.createElement('style');
         
         style.setAttribute('data-name', 'js-showTrailing');
         

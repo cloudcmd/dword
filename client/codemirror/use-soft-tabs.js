@@ -10,19 +10,19 @@
         define(['../../lib/codemirror'], mod);
     else // Plain browser env
         mod(CodeMirror);
-})(function(CodeMirror) {
+})((CodeMirror) => {
     'use strict';
     
-    CodeMirror.defineOption('useSoftTabs', false, function(cm) {
+    CodeMirror.defineOption('useSoftTabs', false, (cm) => {
         cm.addKeyMap({
-            'Tab': function (cm) {
-                var line;
-                var sel = cm.getSelection('\n');
-                var coupleLines = sel.length > 0;
-                var isSelected = cm.somethingSelected();
+            'Tab' (cm) {
+                let line;
+                const sel = cm.getSelection('\n');
+                const coupleLines = sel.length > 0;
+                const isSelected = cm.somethingSelected();
                 
                 if (isSelected) {
-                    line    = cm.getLine(cm.getCursor().line);
+                    line = cm.getLine(cm.getCursor().line);
                     // Indent only if there are multiple lines selected, or if the selection spans a full line
                     
                     if (coupleLines && (~sel.indexOf('\n') || sel.length === line.length)) {
@@ -32,9 +32,9 @@
                     cm.execCommand('insertSoftTab');
                 }
             },
-            'Shift-Tab': function (cm) {
+            'Shift-Tab' (cm) {
                 cm.indentSelection('subtract');
-            }
+            },
         });
     });
 });

@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
         res.type('json')
             .send(data);
     });
-}
+};
 
 function replace(from, to) {
     Object.keys(from).forEach((name) => {

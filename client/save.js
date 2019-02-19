@@ -12,7 +12,7 @@ module.exports = function() {
         .catch(this._onSave.bind(this));
     
     return this;
-}
+};
 
 async function save() {
     const value = this.getValue();
@@ -22,7 +22,7 @@ async function save() {
         _maxSize,
     } = this;
     
-    const {diff, zip} = await this._loadOptions()
+    const {diff, zip} = await this._loadOptions();
     
     if (diff) {
         const patch = await this._doDiff(_filename);

@@ -42,18 +42,18 @@ function main(name) {
     
     const env = process.env;
     
-    const port =    env.PORT            ||  /* c9           */
-                    env.VCAP_APP_PORT   ||  /* cloudfoundry */
+    const port = env.PORT || /* c9           */
+                    env.VCAP_APP_PORT || /* cloudfoundry */
                     1337;
     
-    const ip =  env.IP                  ||  /* c9           */
+    const ip = env.IP || /* c9           */
                 '0.0.0.0';
     
     app .use(express.static(DIR))
         .use(dword({
             online: false,
             diff: true,
-            zip: true
+            zip: true,
         }));
     
     server.listen(port, ip);
@@ -100,7 +100,7 @@ function usage() {
 
 function help() {
     const bin = require('../json/bin');
-        
+    
     usage();
     console.log('Options:');
     
