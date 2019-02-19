@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const args = process.argv.slice(2);
-const arg = args[0];
+const [arg] = args;
 
 if (!arg)
     usage();
@@ -40,7 +40,7 @@ function main(name) {
     const app = express();
     const server = http.createServer(app);
     
-    const env = process.env;
+    const {env} = process;
     
     const port = env.PORT || /* c9           */
                     env.VCAP_APP_PORT || /* cloudfoundry */

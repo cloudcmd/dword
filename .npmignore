@@ -9,3 +9,5 @@ client
 !client/codemirror
 modules/execon
 
+madrun.js
+

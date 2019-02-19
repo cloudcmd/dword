@@ -1,3 +1,5 @@
+'use strict';
+
 /* global CodeMirror */
 /* global define */
 
