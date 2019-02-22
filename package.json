@@ -54,7 +54,7 @@
     "@cloudcmd/create-element": "^1.1.0",
     "babel-loader": "^8.0.0",
     "clean-css-loader": "^1.0.1",
-    "codemirror": "^5.43.0",
+    "codemirror": "^5.44.0",
     "css-loader": "^2.0.1",
     "cssnano": "^4.0.0",
     "daffy": "^1.0.3",
