@@ -312,8 +312,8 @@ Dword.prototype.once = function(event, fn) {
     return this;
 };
 
-Dword.prototype.emit = function() {
-    this._Emitter.emit.apply(this._Emitter, arguments);
+Dword.prototype.emit = function(...args) {
+    this._Emitter.emit(...args);
     return this;
 };
 
