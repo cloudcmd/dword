@@ -189,8 +189,6 @@ function addCommands(dword) {
         'Ctrl-G': wrapCall(dword.goToLine),
         'Ctrl-S': callIfKey(dword.save),
         'F2'    : callIfKey(dword.save),
-        'Ctrl-B': callIfKey(dword.beautify),
-        'Ctrl-M': callIfKey(dword.minify),
         'Ctrl-E': callIfKey(dword.evaluate),
         'Ctrl-/': 'toggleComment',
     };
@@ -506,15 +504,6 @@ Dword.prototype.sha = function() {
     return shaObj.getHash('HEX');
 };
 
-Dword.prototype.beautify = function() {
-    this._readWithFlag('beautify');
-    return this;
-};
-
-Dword.prototype.minify = function() {
-    this._readWithFlag('minify');
-    return this;
-};
 
 Dword.prototype.save = save;
 
@@ -622,20 +611,6 @@ Dword.prototype._initValue = function(name, data) {
     return this.setModeForPath(name)
         .setValueFirst(name, data)
         .moveCursorTo(0, 0);
-};
-
-Dword.prototype._readWithFlag = function(flag) {
-    const dword = this;
-    const path = this._FileName + '?' + flag;
-    
-    restafary.read(path, (error, data) => {
-        if (error)
-            return smalltalk.alert(dword._TITLE, error);
-        
-        dword
-            .setValue(data)
-            .moveCursorTo(0, 0);
-    });
 };
 
 /**

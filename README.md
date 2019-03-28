@@ -9,9 +9,6 @@ Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL
 [DependencyStatusURL]:      https://david-dm.org/cloudcmd/dword "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
-[beautifile]:               https://github.com/coderaiser/node-beautifile "Beautifile"
-[beautify.json]:            https://github.com/coderaiser/node-beautifile/tree/master/json/beautify.json "beautify.json"
-
 [edit.json]:                https://github.com/cloudcmd/dword/tree/master/json/edit.json "edit.json"
 
 Web editor based on [CodeMirror](http://codemirror.net).
@@ -24,7 +21,6 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Built-in `emmet` (for html files)
 - Drag n drop (drag file from desktop to editor).
 - Built-in `jshint` (with options in `.jshintrc` file, could be overriden by `~/.jshintrc`)
-- Built-in [beautifier][beautifile] (with options in [json/beautify.json][beautify.json], could be overriden by `~/.beautify.json`)
 - Configurable options ([json/edit.json][edit.json] could be overriden by `~/.dword.json`)
 
 ## Install
@@ -51,8 +47,6 @@ Usage: `dword [filename]`
 | `Ctrl + f`            | find
 | `Ctrl + h`            | replace
 | `Ctrl + g`            | go to line
-| `Ctrl + b`            | beautify js, css or html
-| `Ctrl + m`            | minify js, css or html
 | `Ctrl + e`            | evaluate (JavaScript only supported)
 
 ## API
