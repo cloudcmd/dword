@@ -504,7 +504,6 @@ Dword.prototype.sha = function() {
     return shaObj.getHash('HEX');
 };
 
-
 Dword.prototype.save = save;
 
 Dword.prototype._loadOptions = async function() {
