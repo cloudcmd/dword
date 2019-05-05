@@ -21,19 +21,7 @@ const dword = currify(_dword);
 const restboxFn = currify(_restboxFn);
 const joinFn = currify(_joinFn);
 
-const readjson = require('readjson');
-const HOME = require('os').homedir();
-
 const isDev = process.env.NODE_ENV === 'development';
-
-const readJSHINT = () => {
-    const home = path.join(HOME, '.jshintrc');
-    const root = path.join(DIR_ROOT,'.jshintrc');
-    
-    return readjson.sync.try(home) || readjson.sync(root);
-};
-
-const jshint = readJSHINT();
 
 const cut = currify((prefix, req, res, next) => {
     req.url = req.url.replace(prefix, '');
@@ -58,7 +46,6 @@ module.exports = (options) => {
         .get(optionsFn(options))
         .get(editFn)
         .get(modulesFn)
-        .get(jshintFn)
         .get(restboxFn({prefix, dropbox, dropboxToken}))
         .get(restafaryFn)
         .get(joinFn(options))
@@ -121,14 +108,6 @@ function configFn(o, req, res, next) {
             zip,
             online,
         });
-}
-
-function jshintFn(req, res, next) {
-    if (req.url.indexOf('/jshint.json'))
-        return next();
-    
-    res .type('json')
-        .send(jshint);
 }
 
 function modulesFn(req, res, next) {

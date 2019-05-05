@@ -45,7 +45,6 @@ function Dword(el, options, callback) {
     this._Options;
     this._FileName;
     this._ElementMsg;
-    this._JSHintConfig;
     this._Ext;
     this._DIR = '/modules/';
     this._TITLE = 'Dword';
@@ -456,10 +455,6 @@ Dword.prototype.setModeForPath = function(path) {
             
             if (!isJS)
                 return dword.setOption('lint', true);
-            
-            this._setJsHintConfig((jshint) => {
-                dword.setOption('lint', jshint);
-            });
         });
     });
     
@@ -560,22 +555,6 @@ Dword.prototype._setEmmet = function() {
     load.js(this._PREFIX + join([
         dir + 'emmet.min.js',
     ]));
-};
-
-Dword.prototype._setJsHintConfig = function(callback) {
-    const JSHINT_PATH = this._PREFIX + '/jshint.json';
-    
-    if (this._JSHintConfig)
-        callback(this._JSHintConfig);
-    
-    return load.json(JSHINT_PATH, (error, json) => {
-        if (!error)
-            return this._JSHintConfig = json;
-        
-        smalltalk.alert(this._TITLE, error);
-        
-        callback(this._JSHintConfig);
-    });
 };
 
 Dword.prototype._addExt = function(name, fn) {

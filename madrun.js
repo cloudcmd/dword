@@ -14,7 +14,7 @@ module.exports = {
     'build-progress': () => 'webpack --progress',
     'build:client': () => run('build-progress', '--mode production'),
     'build:client:dev': () => `NODE_ENV=development ${run('build-progress')} --mode development`,
-    'build:start': () => run('build:client start'),
+    'build:start': () => run(['build:client', 'start']),
     'build:start:dev': () => run(['build:client:dev', 'start:dev']),
     'cp:codemirror:modules': () => 'cp -r node_modules/codemirror modules/',
     'build-progress:codemirror': () => 'webpack --progress --config ./webpack.config.codemirror.js',
