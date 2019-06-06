@@ -71,7 +71,7 @@
     "rimraf": "^2.6.2",
     "smalltalk": "^3.3.0",
     "style-loader": "^0.23.0",
-    "url-loader": "^1.0.1",
+    "url-loader": "^2.0.0",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.0.1",
     "wraptile": "^2.0.0",
