@@ -147,15 +147,19 @@ Dword.prototype._init = function(fn) {
                 this._socket.emit('auth', username, password);
             });
             
-            Object.keys(options).forEach((name) => {
-                if (name === 'tabSize')
-                    return all.indentUnit = options.tabSize;
+            for (const name of Object.keys(options)) {
+                if (name === 'tabSize') {
+                    all.indentUnit = options.tabSize;
+                    continue;
+                }
                 
-                if (name === 'wrap')
-                    return all.lineWrapping = options.wrap;
+                if (name === 'wrap') {
+                    all.lineWrapping = options.wrap;
+                    continue;
+                }
                 
                 all[name] = options[name];
-            });
+            }
             
             this._Ace = CodeMirror(this._Element, all);
             CodeMirror.commands.save = this.save.bind(this);
@@ -192,12 +196,12 @@ function addCommands(dword) {
         'Ctrl-/': 'toggleComment',
     };
     
-    Object.keys(commands).forEach((name) => {
+    for (const name of Object.keys(commands)) {
         if (/^Ctrl/.test(name)) {
             const nameCmd = name.replace('Ctrl', 'Cmd');
             commands[nameCmd] = commands[name];
         }
-    });
+    }
     
     dword.addKeyMap(commands);
 }
@@ -393,11 +397,11 @@ Dword.prototype.setOption = function(name, value) {
 
 Dword.prototype.setKeyMap = setKeyMap;
 Dword.prototype.setOptions = function(options) {
-    Object.keys(options).forEach((name) => {
+    for (const name of Object.keys(options)) {
         const value = options[name];
         
         this.setOption(name, value);
-    });
+    }
     
     return this;
 };
@@ -619,11 +623,11 @@ Dword.prototype._onDrop = function(event) {
     
     const {files} = event.dataTransfer;
     
-    [...files].forEach((file) => {
+    for (const file of files) {
         const reader = new FileReader();
         reader.addEventListener('load', onLoad);
         reader.readAsBinaryString(file);
-    });
+    }
 };
 
 function getModulePath(name, lib, ext) {
@@ -730,8 +734,7 @@ Dword.prototype._loadFilesAll = function(callback) {
                     'edit/matchtags',
                 ].map((name) => {
                     return addon + name;
-                })
-                ).map((name) => {
+                })).map((name) => {
                     return name + '.js';
                 }));
             

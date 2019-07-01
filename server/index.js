@@ -33,9 +33,8 @@ module.exports = (options) => {
     optionsStorage(options);
     
     const router = Router();
-    const prefix = options.prefix || '/dword';
-    
     const {
+        prefix = '/dword',
         dropbox,
         dropboxToken,
     } = options;

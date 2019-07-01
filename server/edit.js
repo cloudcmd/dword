@@ -20,9 +20,9 @@ module.exports = (req, res, next) => {
 };
 
 function replace(from, to) {
-    Object.keys(from).forEach((name) => {
+    for (const name of Object.keys(from)) {
         to[name] = from[name];
-    });
+    }
 }
 
 function copy(from) {
