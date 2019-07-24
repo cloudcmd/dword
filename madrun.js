@@ -1,16 +1,23 @@
 'use strict';
 
-const {run} = require('madrun');
+const {
+    run,
+    predefined,
+} = require('madrun');
+const {eslint} = predefined;
 
 module.exports = {
     'start': () => 'bin/dword.js package.json',
     'start:dev': () => `NODE_ENV=development ${run('start')}`,
-    'lint': () => run(['putout', 'lint:*']),
-    'lint:bin': () => 'eslint --rule \'no-console:0\' bin',
-    'lint:client': () => 'eslint --env browser --rule \'no-console:0\' client',
-    'lint:server': () => 'eslint server madrun.js',
-    'putout': () => 'putout bin client server madrun.js',
-    'fix:lint': () => run(['putout', 'lint:*'], '--fix'),
+    'lint': () => eslint({
+        names: [
+            'bin',
+            'client',
+            'server',
+            'madrun.js',
+        ],
+    }),
+    'fix:lint': () => run('lint', '--fix'),
     'build-progress': () => 'webpack --progress',
     'build:client': () => run('build-progress', '--mode production'),
     'build:client:dev': () => `NODE_ENV=development ${run('build-progress')} --mode development`,

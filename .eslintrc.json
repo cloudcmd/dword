@@ -1,4 +1,18 @@
 {
+    "overrides": [{
+        "files": ["bin", "client/**"],
+        "rules": {
+            "no-console": "off"
+        }
+    }, {
+        "files": ["client/**"],
+        "env": {
+            "browser": true
+        },
+        "rules": {
+            "no-console": "off"
+        }
+    }],
   "extends": [
       "plugin:putout/recommended"
   ],
