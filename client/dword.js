@@ -439,8 +439,7 @@ Dword.prototype.setModeForPath = function(path) {
     
     this._addExt(name, (name) => {
         const dword = this;
-        const info = findModeByFileName(name) || {};
-        const {mode} = info;
+        const {mode} = findModeByFileName(name) || {};
         const htmlMode = findModeByFileName('.html').mode;
         const isHTML = mode === htmlMode;
         

@@ -3,8 +3,7 @@
 'use strict';
 
 const fs = require('fs');
-const args = process.argv.slice(2);
-const [arg] = args;
+const [arg] = process.argv.slice(2);
 
 if (!arg)
     usage();
