@@ -68,7 +68,7 @@
     "madrun": "^2.0.1",
     "nodemon": "^1.11.0",
     "putout": "^5.7.0",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.0",
     "smalltalk": "^3.3.0",
     "style-loader": "^1.0.0",
     "url-loader": "^2.0.0",
