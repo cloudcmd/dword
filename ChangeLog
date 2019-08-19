@@ -1,3 +1,13 @@
+2019.08.19, v11.0.4
+
+feature:
+- (package) eslint-plugin-putout v2.0.0
+- (package) rimraf v3.0.0
+- (package) putout v5.7.0
+- (package) style-loader v1.0.0
+- (package) codemirror v5.48.4
+
+
 2019.07.24, v11.0.3
 
 feature:
