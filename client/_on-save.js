@@ -1,7 +1,7 @@
 'use strict';
 
 const {confirm} = require('smalltalk');
-const {write} = require('restafary/legacy/client');
+const {write} = require('restafary/client');
 
 function empty() {}
 

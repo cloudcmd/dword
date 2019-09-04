@@ -1,6 +1,6 @@
 'use strict';
 
-const wraptile = require('wraptile/legacy');
+const wraptile = require('wraptile');
 const {promisify} = require('es6-promisify');
 const zipio = promisify(require('zipio'));
 

@@ -4,14 +4,14 @@
 
 require('../css/dword.css');
 
-const restafary = require('restafary/legacy/client');
-const wraptile = require('wraptile/legacy');
-const currify = require('currify/legacy');
+const restafary = require('restafary/client');
+const wraptile = require('wraptile');
+const currify = require('currify');
 const {promisify} = require('es6-promisify');
 const {createPatch} = require('daffy');
 const smalltalk = require('smalltalk');
 const jssha = require('jssha');
-const Emitify = require('emitify/legacy');
+const Emitify = require('emitify');
 
 const Story = require('./story');
 const setKeyMap = require('./set-key-map');
