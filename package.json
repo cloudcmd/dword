@@ -39,7 +39,7 @@
     "ashify": "^1.0.1",
     "currify": "^3.0.0",
     "express": "^4.14.0",
-    "fullstore": "^1.0.0",
+    "fullstore": "^2.0.2",
     "join-io": "^3.0.1",
     "readjson": "^1.1.0",
     "restafary": "^7.0.0",
