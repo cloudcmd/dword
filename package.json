@@ -73,7 +73,7 @@
     "url-loader": "^2.0.0",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.0.1",
-    "wraptile": "^2.0.0",
+    "wraptile": "^3.0.0",
     "zipio": "^1.0.2"
   },
   "repository": {
