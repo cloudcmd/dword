@@ -36,7 +36,7 @@
     "rm:dist-dev": "madrun rm:dist-dev"
   },
   "dependencies": {
-    "ashify": "^1.0.1",
+    "ashify": "^2.0.1",
     "currify": "^3.0.0",
     "express": "^4.14.0",
     "fullstore": "^2.0.2",
