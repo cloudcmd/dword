@@ -50,7 +50,7 @@
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@cloudcmd/clipboard": "1.0.2",
-    "@cloudcmd/create-element": "^1.1.0",
+    "@cloudcmd/create-element": "^2.0.1",
     "babel-loader": "^8.0.0",
     "clean-css-loader": "^2.0.0",
     "codemirror": "^5.48.4",
