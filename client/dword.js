@@ -108,14 +108,14 @@ Dword.prototype._init = function(fn) {
     
     exec.series([
         loadFiles,
-        (callback) => {
-            load.json(this._PREFIX + '/edit.json', (error, config) => {
-                if (error)
-                    return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
-                
-                this._Config = config;
-                callback();
-            });
+        async (callback) => {
+            const [error, config] = await tryToCatch(load.json, this._PREFIX + '/edit.json');
+            
+            if (error)
+                return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
+            
+            this._Config = config;
+            callback();
         },
         
         loadFilesAll,
