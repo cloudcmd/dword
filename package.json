@@ -67,7 +67,7 @@
     "nodemon": "^1.11.0",
     "putout": "^6.1.0",
     "rimraf": "^3.0.0",
-    "smalltalk": "^3.3.0",
+    "smalltalk": "^4.0.2",
     "style-loader": "^1.0.0",
     "url-loader": "^2.0.0",
     "webpack": "^4.0.1",
