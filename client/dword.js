@@ -21,8 +21,6 @@ window.exec = window.exec || require('execon');
 window.load = window.load || require('load.js');
 const {load} = window;
 
-const loadJSON = promisify(load.json);
-
 const _clipboard = require('./_clipboard');
 const save = require('./save');
 const _initSocket = require('./_init-socket');
@@ -510,7 +508,7 @@ Dword.prototype._loadOptions = async function() {
     if (this._Options)
         return this._Options;
     
-    const data = await loadJSON(url);
+    const data = await load.json(url);
     
     this._Options = data;
     
