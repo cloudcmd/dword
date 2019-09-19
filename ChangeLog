@@ -1,3 +1,13 @@
+2019.09.19, v11.1.4
+
+feature:
+- (package) smalltalk v4.0.2
+- (package) putout v6.1.0
+- (package) @cloudcmd/create-element v2.0.1
+- (package) load.js v3.0.2
+- (package) currify v4.0.0
+
+
 2019.09.11, v11.1.3
 
 feature:
