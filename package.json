@@ -36,7 +36,7 @@
     "rm:dist-dev": "madrun rm:dist-dev"
   },
   "dependencies": {
-    "currify": "^3.0.0",
+    "currify": "^4.0.0",
     "express": "^4.14.0",
     "fullstore": "^2.0.2",
     "join-io": "^3.0.1",
