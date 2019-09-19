@@ -65,7 +65,7 @@
     "load.js": "^3.0.2",
     "madrun": "^3.0.1",
     "nodemon": "^1.11.0",
-    "putout": "^5.7.0",
+    "putout": "^6.1.0",
     "rimraf": "^3.0.0",
     "smalltalk": "^3.3.0",
     "style-loader": "^1.0.0",
