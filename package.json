@@ -38,7 +38,6 @@
   "dependencies": {
     "currify": "^4.0.0",
     "express": "^4.14.0",
-    "fullstore": "^2.0.2",
     "join-io": "^3.0.1",
     "readjson": "^1.1.0",
     "restafary": "^8.0.1",
@@ -52,6 +51,7 @@
     "@cloudcmd/clipboard": "1.0.2",
     "@cloudcmd/create-element": "^2.0.1",
     "babel-loader": "^8.0.0",
+    "callbackify": "^1.1.0",
     "clean-css-loader": "^2.0.0",
     "codemirror": "^5.49.0",
     "css-loader": "^3.0.0",
@@ -65,6 +65,7 @@
     "load.js": "^3.0.2",
     "madrun": "^3.0.1",
     "nodemon": "^1.11.0",
+    "once": "^1.4.0",
     "putout": "^6.1.0",
     "rimraf": "^3.0.0",
     "smalltalk": "^4.0.2",

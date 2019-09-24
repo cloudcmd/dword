@@ -63,6 +63,7 @@ const express = require('express');
 const app = express();
 
 app.use(dword({
+    root: '/',              // default
     online: true,           // default
     diff: true,             // default
     zip: true,              // default

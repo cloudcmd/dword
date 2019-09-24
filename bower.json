@@ -19,8 +19,6 @@
   "dependencies": {
     "codemirror-emmet": "~1.1.0",
     "jshint": "~2.9.0",
-    "load": "~1.1.4",
-    "loadremote": "~1.2.0",
     "cm-searchbox": "1.0.8",
     "cm-show-invisibles": "2.0.2"
   }

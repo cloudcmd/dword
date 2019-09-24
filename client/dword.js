@@ -1,4 +1,4 @@
-/* global CodeMirror, exec, join, loadRemote */
+/* global CodeMirror, exec, join */
 
 'use strict';
 
@@ -7,25 +7,24 @@ require('../css/dword.css');
 const restafary = require('restafary/client');
 const wraptile = require('wraptile');
 const currify = require('currify');
-const {promisify} = require('es6-promisify');
 const {createPatch} = require('daffy');
 const smalltalk = require('smalltalk');
 const jssha = require('jssha');
 const Emitify = require('emitify');
+const tryToCatch = require('try-to-catch');
 
 const Story = require('./story');
 const setKeyMap = require('./set-key-map');
 const showMessage = require('./show-message');
+const loadRemote = require('./loadremote');
 
-window.exec = window.exec || require('execon');
-window.load = window.load || require('load.js');
-const {load} = window;
+const exec = require('execon');
+const load = require('load.js');
 
 const _clipboard = require('./_clipboard');
 const save = require('./save');
 const _initSocket = require('./_init-socket');
 
-const loadParallel = currify(load.parallel);
 const notGlobal = (name) => !window[name];
 const addPrefix = currify((obj, prefix, name) => prefix + obj[name]);
 
@@ -101,13 +100,9 @@ Dword.prototype.disableKey = function() {
 
 function empty() {}
 
-Dword.prototype._init = function(fn) {
-    const loadFiles = this._loadFiles.bind(this);
-    const loadFilesAll = this._loadFilesAll.bind(this);
-    const loadStyles = this._loadStyles.bind(this);
-    
+Dword.prototype._init = async function(fn) {
+    await loadFiles(this._PREFIX);
     exec.series([
-        loadFiles,
         async (callback) => {
             const [error, config] = await tryToCatch(load.json, this._PREFIX + '/edit.json');
             
@@ -118,8 +113,11 @@ Dword.prototype._init = function(fn) {
             callback();
         },
         
-        loadFilesAll,
-        loadStyles,
+        async (cb) => {
+            await this._loadFilesAll();
+            await this._loadStyles();
+            cb();
+        },
         
         () => {
             const {options} = this._Config;
@@ -569,7 +567,7 @@ Dword.prototype._addExt = function(name, fn) {
     
     function add(error, exts) {
         if (error)
-            return console.error(Error('Could not load ext.json!'));
+            return;
         
         Object.keys(exts).some((ext) => {
             const arr = exts[ext];
@@ -627,19 +625,7 @@ Dword.prototype._onDrop = function(event) {
     }
 };
 
-function getModulePath(name, lib, ext) {
-    ext = ext || '.js';
-    
-    let libdir = '/';
-    const dir = '/modules/';
-    
-    if (lib)
-        libdir = '/' + lib + '/';
-    
-    return dir + name + libdir + name + ext;
-}
-
-Dword.prototype._loadStyles = function(callback) {
+Dword.prototype._loadStyles = async function() {
     const dir = this._DIR + 'codemirror/';
     const addon = dir + 'addon/';
     const lint = addon + 'lint/';
@@ -657,104 +643,86 @@ Dword.prototype._loadStyles = function(callback) {
     const addCss = (a) => `${a}.css`;
     const urlCSS = this._PREFIX + join(urls.map(addCss));
     
-    load(urlCSS, callback);
+    await load(urlCSS);
 };
 
-Dword.prototype._loadFiles = function(callback) {
+async function loadFiles(prefix) {
     const obj = {
-        loadRemote  : getModulePath('loadremote', 'lib'),
         join        : '/join/join.js',
     };
     
     const scripts = Object.keys(obj)
         .filter(notGlobal)
-        .map(addPrefix(obj, this._PREFIX));
+        .map(addPrefix(obj, prefix));
     
-    exec.if(!scripts.length, callback, loadParallel(scripts));
-};
+    if (scripts.length)
+        await load.parallel(scripts);
+}
 
-Dword.prototype._loadFilesAll = function(callback) {
+Dword.prototype._loadFilesAll = async function() {
     const DIR = this._DIR;
     const prefix = this._PREFIX;
     
-    exec.series([
-        (callback) => {
-            loadRemote('codemirror', {prefix}, callback);
-        },
+    const promises = [
+        loadRemote('codemirror', {prefix}),
+        loadRemote('socket', {
+            name: 'io',
+            prefix: this._socketPath,
+        }),
+    ];
+    
+    await Promise.all(promises);
+    
+    this._initSocket();
+    restafary.prefix(prefix + '/api/v1/fs');
+    
+    CodeMirror.modeURL = prefix + DIR + 'codemirror/mode/%N/%N.js';
+    
+    const dir = DIR + 'codemirror/';
+    const client = 'client/codemirror/';
+    const addon = dir + 'addon/';
+    const lint = addon + 'lint/';
+    
+    const urlJS = prefix + join([
+        dir + 'mode/meta',
         
-        (callback) => {
-            CodeMirror.modeURL = prefix + DIR + 'codemirror/mode/%N/%N.js';
-            callback();
-        },
+        lint + 'lint',
+        lint + 'javascript-lint',
+        lint + 'json-lint',
         
-        (callback) => {
-            const dir = DIR + 'codemirror/';
-            const client = 'client/codemirror/';
-            const addon = dir + 'addon/';
-            const lint = addon + 'lint/';
+        client + 'show-trailing',
+        client + 'use-soft-tabs',
+        
+        DIR + 'jshint/dist/jshint',
+        DIR + 'cm-searchbox/lib/searchbox',
+        DIR + 'cm-show-invisibles/lib/show-invisibles',
+        getKeyMapPath(dir, this._Config),
+        dir + 'keymap/vim',
+    ].filter(Boolean)
+        .concat([
+            'display/autorefresh',
             
-            const urlJS = prefix + join([
-                dir + 'mode/meta',
-                
-                lint + 'lint',
-                lint + 'javascript-lint',
-                lint + 'json-lint',
-                
-                client + 'show-trailing',
-                client + 'use-soft-tabs',
-                
-                DIR + 'jshint/dist/jshint',
-                DIR + 'cm-searchbox/lib/searchbox',
-                DIR + 'cm-show-invisibles/dist/show-invisibles',
-                getKeyMapPath(dir, this._Config),
-                dir + 'keymap/vim',
-            ].filter(Boolean)
-                .concat([
-                    'display/autorefresh',
-                    
-                    'comment/comment',
-                    'comment/continuecomment',
-                    
-                    'mode/loadmode',
-                    'mode/overlay',
-                    
-                    'search/searchcursor',
-                    'search/match-highlighter',
-                    'search/matchesonscrollbar',
-                    
-                    'dialog/dialog',
-                    'scroll/annotatescrollbar',
-                    'fold/xml-fold',
-                    
-                    'edit/closebrackets',
-                    'edit/matchbrackets',
-                    'edit/matchtags',
-                ].map((name) => {
-                    return addon + name;
-                })).map((name) => {
-                    return name + '.js';
-                }));
+            'comment/comment',
+            'comment/continuecomment',
             
-            load(urlJS, callback);
-        },
-        
-        (callback) => {
-            restafary.prefix(prefix + '/api/v1/fs');
-            callback();
-        },
-        
-        (callback) => {
-            loadRemote('socket', {
-                name : 'io',
-                prefix: this._socketPath,
-            }, callback);
-        },
-        
-        () => {
-            this._initSocket();
-            callback();
-        },
-    ]);
+            'mode/loadmode',
+            'mode/overlay',
+            
+            'search/searchcursor',
+            'search/match-highlighter',
+            'search/matchesonscrollbar',
+            
+            'dialog/dialog',
+            'scroll/annotatescrollbar',
+            'fold/xml-fold',
+            
+            'edit/closebrackets',
+            'edit/matchbrackets',
+            'edit/matchtags',
+        ].map((name) => addon + name))
+        .map((name) => name + '.js'));
+    
+    await load(urlJS);
 };
 
 function getKeyMapPath(dir, config) {
