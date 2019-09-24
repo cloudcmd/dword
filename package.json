@@ -41,7 +41,7 @@
     "fullstore": "^2.0.2",
     "join-io": "^3.0.1",
     "readjson": "^1.1.0",
-    "restafary": "^7.0.0",
+    "restafary": "^8.0.1",
     "restbox": "^2.0.0",
     "socket-file": "^3.0.1",
     "socket.io": "^2.0.3"
