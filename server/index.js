@@ -70,7 +70,7 @@ module.exports.listen = (socket, options) => {
     } = options;
     
     return socketFile(socket, {
-        root,
+        root: maybe(root),
         auth,
         prefix: prefixSocket,
     });
