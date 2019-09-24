@@ -1,3 +1,9 @@
+2019.09.25, v11.2.0
+
+fix:
+- (dword) singletone (coderaiser/cloudcmd/issues/254)
+
+
 2019.09.24, v11.1.6
 
 feature:
