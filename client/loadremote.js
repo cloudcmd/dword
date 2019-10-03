@@ -44,22 +44,12 @@ module.exports = async (name, options = {}) => {
     
     let remoteTmpls;
     let local;
-    let remote;
-    let moduleName;
     
-    if (error) {
-        if (!module)
-            moduleName = 'module';
-        
-        if (!config)
-            moduleName = 'config';
-        
-        alert('Error: could not load ' + moduleName);
-        return;
-    }
+    if (error)
+        return alert(`Error: could not load module or config: ${error.message}`);
     
     const online = config.online && navigator.onLine;
-    module = binom(name, modules);
+    const module = binom(name, modules);
     const isArray = Array.isArray(module.local);
     const {version} = module;
     
@@ -75,7 +65,7 @@ module.exports = async (name, options = {}) => {
         return prefix + url;
     });
     
-    remote = remoteTmpls.map((tmpl) => {
+    const remote = remoteTmpls.map((tmpl) => {
         return tmpl.replace(/{{\sversion\s}}/g, version);
     });
     

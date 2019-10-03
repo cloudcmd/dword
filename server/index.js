@@ -158,7 +158,7 @@ function _restboxFn({root, dropbox, dropboxToken}, req, res, next) {
 
 function _restafaryFn(root, req, res, next) {
     const {url} = req;
-    const api = '/api/v1/fs';
+    const prefix = '/api/v1/fs';
     const indexOf = url.indexOf.bind(url);
     const not = (fn) => (a) => !fn(a);
     const isRestafary = [
@@ -170,7 +170,7 @@ function _restafaryFn(root, req, res, next) {
         return next();
     
     const middle = restafary({
-        prefix: api,
+        prefix,
         root: maybe(root),
     });
     

@@ -4,8 +4,6 @@
 /* global define */
 
 (function(mod) {
-    'use strict';
-    
     if (typeof exports === 'object' && typeof module === 'object') // CommonJS
         mod(require('../../lib/codemirror'));
     else if (typeof define === 'function' && define.amd) // AMD
@@ -13,8 +11,6 @@
     else // Plain browser env
         mod(CodeMirror);
 })((CodeMirror) => {
-    'use strict';
-    
     add();
     
     CodeMirror.defineOption('showTrailing', false, (cm, val, prev) => {
