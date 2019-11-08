@@ -9,7 +9,7 @@ module.exports = {
         'bin',
         'client',
         'server',
-        'madrun.js',
+        '.madrun.js',
         'webpack.config.js',
     ].join(' '),
     'fix:lint': () => run('lint', '--fix'),
