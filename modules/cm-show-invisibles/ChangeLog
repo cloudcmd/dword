@@ -1,3 +1,18 @@
+2019.12.16, v3.0.0
+
+fix:
+- (cm-show-invisibles) line-end-mark display when no line numbers (#4)
+
+feature:
+- (cm-show-invisibles) add support of GFM (#9)
+- (cm-show-invisibles) drop support of build
+- (bower) ignore: add webpack.config.js
+- (npmignore) add
+- (travis) node_js: 6, 8
+- (show-invisibles) add eslint
+- (show-invisibles) es2015-ify
+
+
 2017.07.10, v2.0.2
 
 fix:

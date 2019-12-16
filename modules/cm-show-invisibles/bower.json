@@ -20,7 +20,6 @@
   "ignore": [
     "**/.*",
     "img",
-    ".*",
-    "webpack.config.js"
+    ".*"
   ]
 }

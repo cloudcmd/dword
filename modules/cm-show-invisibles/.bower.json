@@ -20,17 +20,16 @@
   "ignore": [
     "**/.*",
     "img",
-    ".*",
-    "webpack.config.js"
+    ".*"
   ],
-  "version": "2.0.2",
-  "_release": "2.0.2",
+  "version": "3.0.0",
+  "_release": "3.0.0",
   "_resolution": {
     "type": "version",
-    "tag": "v2.0.2",
-    "commit": "c31e182264f136b2097025609cc95c8914629b6c"
+    "tag": "v3.0.0",
+    "commit": "088db440418d99d43a86c6e3736096c0f3cff519"
   },
   "_source": "https://github.com/coderaiser/cm-show-invisibles.git",
-  "_target": "2.0.2",
+  "_target": "^3.0.0",
   "_originalSource": "cm-show-invisibles"
 }

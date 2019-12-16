@@ -1,9 +1,9 @@
+'use strict';
+
 /* global CodeMirror */
 /* global define */
 
 ((mod) => {
-    'use strict';
-    
     if (typeof exports === 'object' && typeof module === 'object') // CommonJS
         return mod(require('codemirror/lib/codemirror'));
     
@@ -12,8 +12,6 @@
     
     mod(CodeMirror);
 })((CodeMirror) => {
-    'use strict';
-    
     CodeMirror.defineOption('showInvisibles', false, (cm, val, prev) => {
         let Count = 0;
         const Maximum = cm.getOption('maxInvisibles') || 16;
@@ -28,7 +26,7 @@
         
         if (!prev && val) {
             add(Maximum);
-         
+            
             cm.addOverlay({
                 name: 'invisibles',
                 token: function nextToken(stream) {
@@ -66,7 +64,7 @@
                     }
                     
                     return 'cm-eol';
-                }
+                },
             });
         }
     });
@@ -83,19 +81,23 @@
         
         for (let i = 1; i <= max; ++i) {
             spaceChars += spaceChar;
-            
-            const rule = classBase + i + '::before { content: "' + spaceChars + '";}\n';
-            rules += rule;
+            rules += classBase + i + `:not([class*="cm-trailing-space-"])::before { content: "${spaceChars}";}\n`;
         }
         
-        style.textContent = getStyle() + '\n' + getEOL() + '\n' + rules;
+        const gfmRules = '[class*=cm-trailing-space]::before{content: "·";}';
+        
+        style.textContent = [
+            getStyle(),
+            getEOL(),
+            rules,
+            gfmRules,
+        ].join('\n');
         
         document.head.appendChild(style);
     }
     
     function rm() {
         const style = document.querySelector('[data-name="js-show-invisibles"]');
-        
         document.head.removeChild(style);
     }
     
@@ -105,7 +107,7 @@
             'position: absolute;',
             'pointer-events: none;',
             'color: #404F7D;',
-            '}'
+            '}',
         ].join('');
         
         return style;
@@ -114,9 +116,9 @@
     function getEOL() {
         const style = [
             '.CodeMirror-code > div > pre > span::after, .CodeMirror-line > span::after {',
-                'pointer-events: none;',
-                'color: #404F7D;',
-                'content: "¬"',
+            'pointer-events: none;',
+            'color: #404F7D;',
+            'content: "¬"',
             '}',
         ].join('');
         

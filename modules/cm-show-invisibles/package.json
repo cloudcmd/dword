@@ -1,19 +1,11 @@
 {
   "name": "cm-show-invisibles",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Addon for CodeMirror that helps to show invisibles.",
   "main": "legacy/show-invisibles.js",
   "scripts": {
-    "build:client": "webpack --progress",
-    "build:legacy": "babel lib -d legacy",
-    "build": "redrun rm:* build:*",
-    "wisdom": "npm run build",
-    "lint:hint": "jshint lib && jscs lib",
-    "lint:eslint": "eslint lib",
-    "lint": "redrun lint:*",
-    "test": "npm run lint",
-    "rm:legacy": "rimraf legacy",
-    "rm:dist": "rimraf dist"
+    "lint": "madrun lint",
+    "fix:lint": "madrun fix:lint"
   },
   "repository": {
     "type": "git",
@@ -32,15 +24,11 @@
   },
   "homepage": "https://github.com/coderaiser/cm-show-invisibles",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.0.0",
-    "babel-preset-es2015": "^6.24.1",
-    "eslint": "^4.0.0",
-    "jscs": "^2.10.1",
-    "jshint": "^2.9.1",
-    "redrun": "^5.9.15",
-    "rimraf": "^2.6.1",
-    "webpack": "^2.6.1"
+    "eslint": "^6.7.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-putout": "^3.0.0",
+    "madrun": "^5.0.1",
+    "putout": "^7.3.1",
+    "supertape": "^1.2.4"
   }
 }
