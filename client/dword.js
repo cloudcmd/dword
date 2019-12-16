@@ -172,6 +172,7 @@ Dword.prototype._init = async function(fn) {
             fn();
             
             this.setOptions(options);
+            this._initSocket();
         },
     ]);
 };
@@ -673,7 +674,6 @@ Dword.prototype._loadFilesAll = async function() {
     
     await Promise.all(promises);
     
-    this._initSocket();
     restafary.prefix(prefix + '/api/v1/fs');
     
     CodeMirror.modeURL = prefix + DIR + 'codemirror/mode/%N/%N.js';
@@ -690,7 +690,7 @@ Dword.prototype._loadFilesAll = async function() {
         lint + 'javascript-lint',
         lint + 'json-lint',
         
-        client + 'show-trailing',
+        //client + 'show-trailing',
         client + 'use-soft-tabs',
         
         DIR + 'jshint/dist/jshint',
