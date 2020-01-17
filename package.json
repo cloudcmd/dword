@@ -57,7 +57,7 @@
     "css-loader": "^3.0.0",
     "cssnano": "^4.0.0",
     "daffy": "^1.0.3",
-    "emitify": "^3.1.0",
+    "emitify": "^4.0.1",
     "eslint": "^6.0.1",
     "eslint-plugin-putout": "^3.0.0",
     "execon": "^1.2.9",
