@@ -5,14 +5,14 @@
     "remote": "//cdnjs.cloudflare.com/ajax/libs/socket.io/{{ version }}/socket.io.js"
 }, {
     "name": "codemirror",
-    "version": "5.42.0",
+    "version": "5.50.2",
     "local": [
         "/dist/codemirror.js",
         "/modules/codemirror/lib/codemirror.css"
     ],
     "remote": [
-        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/codemirror/{{ version }}/codemirror.min.css"
+        "https://cdn.jsdelivr.net/npm/codemirror@{{ version }}/lib/codemirror.min.js",
+        "https://cdn.jsdelivr.net/npm/codemirror@{{ version }}/lib/codemirror.min.css"
     ]
 }, {
     "name": "pako",
