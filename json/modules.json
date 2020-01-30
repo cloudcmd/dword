@@ -5,7 +5,7 @@
     "remote": "//cdnjs.cloudflare.com/ajax/libs/socket.io/{{ version }}/socket.io.js"
 }, {
     "name": "codemirror",
-    "version": "5.50.2",
+    "version": "5.51.0",
     "local": [
         "/dist/codemirror.js",
         "/modules/codemirror/lib/codemirror.css"
