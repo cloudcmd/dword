@@ -1,3 +1,11 @@
+2020.02.21, v12.0.0
+
+feature:
+- (dword) drop support of node < 10
+- (package) codemirror v5.52.0
+- (package) join-io v4.0.0
+
+
 2020.01.30, v11.2.7
 
 feature:
