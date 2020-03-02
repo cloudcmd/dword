@@ -1,3 +1,10 @@
+2020.03.02, v12.0.2
+
+feature:
+- (package) socket-file v4.0.0
+- (package) readjson v2.0.1
+
+
 2020.02.26, v12.0.1
 
 feature:
