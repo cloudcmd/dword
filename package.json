@@ -42,7 +42,7 @@
     "readjson": "^2.0.1",
     "restafary": "^8.0.1",
     "restbox": "^2.0.0",
-    "socket-file": "^3.0.1",
+    "socket-file": "^4.0.0",
     "socket.io": "^2.0.3"
   },
   "devDependencies": {
