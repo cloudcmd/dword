@@ -39,7 +39,7 @@
     "currify": "^4.0.0",
     "express": "^4.14.0",
     "join-io": "^4.0.0",
-    "readjson": "^1.1.0",
+    "readjson": "^2.0.1",
     "restafary": "^8.0.1",
     "restbox": "^2.0.0",
     "socket-file": "^3.0.1",
