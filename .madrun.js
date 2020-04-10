@@ -22,7 +22,7 @@ module.exports = {
     'build-progress:codemirror': () => 'webpack --progress --config ./webpack.config.codemirror.js',
     'build:codemirror:dev': () => `NODE_ENV=development ${run('build-progress:codemirror')} --mode development`,
     'build:codemirror': () => run('build-progress:codemirror', '--mode production'),
-    'watch:server': () => run('watch' , run('start')),
+    'watch:server': () => run('watch', run('start')),
     'watch:client': () => run('watch', run('build:client:dev')),
     'watch': () => 'nodemon -w server -w client -x',
     'build': () => run(['build:client*', 'build:codemirror*', 'cp:codemirror:*']),

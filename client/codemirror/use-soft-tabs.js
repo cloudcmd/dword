@@ -13,7 +13,7 @@
 })((CodeMirror) => {
     CodeMirror.defineOption('useSoftTabs', false, (cm) => {
         cm.addKeyMap({
-            'Tab' (cm) {
+            'Tab'(cm) {
                 let line;
                 const sel = cm.getSelection('\n');
                 const coupleLines = sel.length > 0;
@@ -30,7 +30,7 @@
                     cm.execCommand('insertSoftTab');
                 }
             },
-            'Shift-Tab' (cm) {
+            'Shift-Tab'(cm) {
                 cm.indentSelection('subtract');
             },
         });
