@@ -1,3 +1,10 @@
+2020.04.16, v12.0.6
+
+feature:
+- (package) jssha v3.1.0
+- (modules) codemirror v5.52.2
+
+
 2020.04.10, v12.0.5
 
 feature:
