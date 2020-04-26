@@ -9,7 +9,7 @@ const wraptile = require('wraptile');
 const currify = require('currify');
 const {createPatch} = require('daffy');
 const smalltalk = require('smalltalk');
-const jssha = require('jssha');
+const jssha = require('jssha').default;
 const Emitify = require('emitify');
 const tryToCatch = require('try-to-catch');
 
