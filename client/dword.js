@@ -366,7 +366,7 @@ function getLineSeparator(value) {
     if (typeof value !== 'string')
         throw Error('value should be string!');
     
-    if (~value.indexOf('\r\n'))
+    if (value.includes('\r\n'))
         return '\r\n';
     
     return '\n';
@@ -572,7 +572,7 @@ Dword.prototype._addExt = function(name, fn) {
         
         Object.keys(exts).some((ext) => {
             const arr = exts[ext];
-            const is = ~arr.indexOf(name);
+            const is = arr.includes(name);
             
             if (is)
                 name += '.' + ext;

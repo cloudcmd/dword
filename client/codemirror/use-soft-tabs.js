@@ -23,7 +23,7 @@
                     line = cm.getLine(cm.getCursor().line);
                     // Indent only if there are multiple lines selected, or if the selection spans a full line
                     
-                    if (coupleLines && (~sel.indexOf('\n') || sel.length === line.length)) {
+                    if (coupleLines && (sel.includes('\n') || sel.length === line.length)) {
                         cm.indentSelection('add');
                     }
                 } else {
