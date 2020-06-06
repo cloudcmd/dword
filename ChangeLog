@@ -1,3 +1,13 @@
+2020.06.06, v12.0.8
+
+feature:
+- (package) codemirror v5.54.0
+- (package) eslint v7.0.0
+- (package) madrun v6.0.0
+- (package) putout v8.0.2
+- (package) eslint-plugin-putout v4.0.1
+
+
 2020.04.26, v12.0.7
 
 fix:
