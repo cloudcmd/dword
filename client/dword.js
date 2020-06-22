@@ -28,9 +28,7 @@ const _initSocket = require('./_init-socket');
 const notGlobal = (name) => !window[name];
 const addPrefix = currify((obj, prefix, name) => prefix + obj[name]);
 
-module.exports = (el, options, callback) => {
-    Dword(el, options, callback);
-};
+module.exports = Dword;
 
 function Dword(el, options, callback) {
     if (!(this instanceof Dword))

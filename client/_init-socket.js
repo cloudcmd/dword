@@ -20,7 +20,7 @@ module.exports = function() {
         socket.emit('patch', name, data);
     };
     
-    const {_prefixSocket} = this;
+    const {_prefixSocket} = dword;
     const socket = io.connect(href + _prefixSocket, {
         'max reconnection attempts' : 2 ** 32,
         'reconnection limit'        : FIVE_SECONDS,
