@@ -2,16 +2,18 @@
 
 const {run} = require('madrun');
 
+const files = [
+    'bin',
+    'client',
+    'server',
+    '.madrun.js',
+    'webpack.config.js',
+].join(' ');
+
 module.exports = {
     'start': () => 'bin/dword.js package.json',
     'start:dev': () => `NODE_ENV=development ${run('start')}`,
-    'lint': () => 'putout ' + [
-        'bin',
-        'client',
-        'server',
-        '.madrun.js',
-        'webpack.config.js',
-    ].join(' '),
+    'lint': () => `putout ${files} -f progress`,
     'fix:lint': () => run('lint', '--fix'),
     'build-progress': () => 'webpack --progress',
     'build:client': () => run('build-progress', '--mode production'),
