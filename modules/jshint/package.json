@@ -49,7 +49,7 @@
     "minimatch":           "2.0.x",
     "shelljs":             "0.3.x",
     "strip-json-comments": "1.0.x",
-    "lodash":              "3.7.x"
+    "lodash":              "4.17.x"
   },
 
   "devDependencies": {
