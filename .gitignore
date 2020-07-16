@@ -13,6 +13,11 @@ modules/codemirror/bin
 modules/codemirror/lib/codemirror.js
 modules/codemirror/package.json
 
+modules/jshint
+!modules/jshint/dist
+!modules/jshint/package.json
+!modules/jshint/README.md
+
 modules/execon
 
 package-lock.json

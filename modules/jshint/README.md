@@ -13,24 +13,23 @@
 [![devDependency Status](https://img.shields.io/david/dev/jshint/jshint.svg?style=flat)](https://david-dm.org/jshint/jshint#info=devDependencies)
 [![Coverage Status](https://img.shields.io/coveralls/jshint/jshint.svg?style=flat)](https://coveralls.io/r/jshint/jshint?branch=master)
 
-JSHint is a community-driven tool to detect errors and potential problems in
-JavaScript code and to enforce your team's coding conventions. It is very
-flexible so you can easily adjust it to your particular coding guidelines and
-the environment you expect your code to execute in. JSHint is open source and
-will always stay this way.
+JSHint is a community-driven tool that detects errors and potential problems in
+JavaScript code. Since JSHint is so flexible, you can easily adjust it in 
+the environment you expect your code to execute. JSHint is publicly available
+and will always stay this way.
 
 ## Our goal
 
-The goal of this project is to help JavaScript developers write complex programs
+The project aims to help JavaScript developers write complex programs
 without worrying about typos and language gotchas.
 
-Any code base eventually becomes huge at some point, and simple mistakes—that
-would not show themselves when written—can become show stoppers and waste
-hours of debugging. And this is when static code analysis tools come into play
-and help developers to spot such problems. JSHint scans a program written in
+Any code base eventually becomes huge at some point, so simple mistakes — that
+would not show themselves when written — can become show stoppers and add 
+extra hours of debugging. So, static code analysis tools come into play
+and help developers spot such problems. JSHint scans a program written in
 JavaScript and reports about commonly made mistakes and potential bugs. The
-potential problem could be a syntax error, a bug due to implicit type
-conversion, a leaking variable or something else.
+potential problem could be a syntax error, a bug due to an implicit type
+conversion, a leaking variable, or something else entirely.
 
 Only 15% of all programs linted on [jshint.com](http://jshint.com) pass the
 JSHint checks. In all other cases, JSHint finds some red flags that could've
@@ -52,8 +51,8 @@ JSHint including but not limited to:
  * When JSHint complains about valid JavaScript code that works in all browsers
  * When you simply want a new option or feature
 
-Before reporting a bug look around to see if there are any open or closed tickets
-that cover your issue. And remember the wisdom: pull request > bug report > tweet.
+Before reporting a bug, please look around to see if there are any open or closed tickets
+that discuss your issue, and remember the wisdom: pull request > bug report > tweet.
 
 ## Who uses JSHint?
 
@@ -63,16 +62,13 @@ Engineers from these companies and projects use JSHint:
 * [Wikipedia](https://wikipedia.org/)
 * [Facebook](https://facebook.com/)
 * [Twitter](https://twitter.com/)
-* [Bootstrap](http://getbootstrap.com/)
 * [Disqus](https://disqus.com/)
 * [Medium](https://medium.com/)
 * [Yahoo!](https://yahoo.com/)
 * [SmugMug](http://smugmug.com/)
-* [jQuery](http://jquery.com/)
-* [PDF.js](http://mozilla.github.io/pdf.js)
+* [jQuery UI](https://jqueryui.com/) ([Source](https://github.com/jquery/jquery-ui/blob/master/package.json))
+* [jQuery Mobile](https://jquerymobile.com/) ([Source](https://github.com/jquery/jquery-mobile/blob/master/package.json#))
 * [Coursera](http://coursera.com/)
-* [Adobe Brackets](http://brackets.io/)
-* [Apache Cordova](http://cordova.io/)
 * [RedHat](http://redhat.com/)
 * [SoundCloud](http://soundcloud.com/)
 * [Nodejitsu](http://nodejitsu.com/)
@@ -80,12 +76,12 @@ Engineers from these companies and projects use JSHint:
 * [Voxer](http://voxer.com/)
 * [EnyoJS](http://enyojs.com/)
 * [QuickenLoans](http://quickenloans.com/)
-* [oDesk](http://www.odesk.com/)
 * [Cloud9](http://c9.io/)
 * [CodeClimate](https://codeclimate.com/)
-* [Pandoo TEK](http://pandootek.com/)
 * [Zendesk](http://zendesk.com/)
-* [Apache CouchDB](http://couchdb.apache.org/)
+* [Google](https://www.google.com/)
+* [Codacy](https://www.codacy.com) [ref](https://support.codacy.com/hc/en-us/articles/207995005-Special-Thanks)
+* [Spotify](https://www.spotify.com)
 
 And many more!
 
@@ -102,9 +98,15 @@ reasons. This license is included as an in-line within the file it concerns.
 
 JSHint is currently maintained by [Rick Waldron](https://github.com/rwaldron/),
 [Caitlin Potter](https://github.com/caitp/), [Mike
-Sherov](https://github.com/mikesherov/), [Mike
 Pennisi](https://github.com/jugglinmike/), and [Luke
-Page](https://github.com/lukeapage).
+Page](https://github.com/lukeapage). You can reach them via admin@jshint.org.
+
+## Previous Maintainers
+
+Originating from the JSLint project in 2010, JSHint has been maintained by a
+number of dedicated individuals. In chronological order, they are: Douglas
+Crockford, Anton Kovalyov, and Mike Sherov. We appreciate their long-term
+commitment!
 
 ## Thank you!
 

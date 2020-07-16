@@ -9,5 +9,8 @@ client
 !client/codemirror
 modules/execon
 
-madrun.js
+modules/jshint
+!modules/jshint/dist
+!modules/jshint/package.json
+!modules/jshint/README.md
 
