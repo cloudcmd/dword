@@ -1,8 +1,8 @@
 {
   "name": "cm-show-invisibles",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Addon for CodeMirror that helps to show invisibles.",
-  "main": "legacy/show-invisibles.js",
+  "main": "lib/show-invisibles.js",
   "scripts": {
     "lint": "madrun lint",
     "fix:lint": "madrun fix:lint"
@@ -24,11 +24,11 @@
   },
   "homepage": "https://github.com/coderaiser/cm-show-invisibles",
   "devDependencies": {
-    "eslint": "^6.7.2",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-putout": "^3.0.0",
-    "madrun": "^5.0.1",
-    "putout": "^7.3.1",
-    "supertape": "^1.2.4"
+    "eslint": "^7.7.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-putout": "^5.0.1",
+    "madrun": "^7.0.2",
+    "putout": "^9.11.4",
+    "supertape": "^2.0.1"
   }
 }

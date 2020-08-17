@@ -22,14 +22,15 @@
     "img",
     ".*"
   ],
-  "version": "3.0.0",
-  "_release": "3.0.0",
+  "version": "3.1.0",
+  "_release": "3.1.0",
   "_resolution": {
     "type": "version",
-    "tag": "v3.0.0",
-    "commit": "088db440418d99d43a86c6e3736096c0f3cff519"
+    "tag": "v3.1.0",
+    "commit": "2c523300ef8bbdbf443be7dd862739e2ce1d43c7"
   },
   "_source": "https://github.com/coderaiser/cm-show-invisibles.git",
-  "_target": "^3.0.0",
-  "_originalSource": "cm-show-invisibles"
+  "_target": "^3.1.0",
+  "_originalSource": "cm-show-invisibles",
+  "_direct": true
 }
