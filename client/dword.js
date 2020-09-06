@@ -54,7 +54,7 @@ function Dword(el, options, callback) {
     if (typeof el === 'string')
         el = document.querySelector(el);
     
-    this._maxSize = options.maxSize || 512000;
+    this._maxSize = options.maxSize || 512_000;
     this._PREFIX = options.prefix || '/dword';
     this._prefixSocket = options.prefixSocket || '/dword';
     this._socketPath = options.socketPath || '';

@@ -13,8 +13,7 @@ const devtool = isDev ? 'eval' : 'source-map';
 const notEmpty = (a) => a;
 const clean = (array) => array.filter(notEmpty);
 
-const rules = clean([
-    !isDev && {
+const rules = clean([{
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
@@ -26,7 +25,7 @@ const rules = clean([
         use: {
             loader: 'url-loader',
             options: {
-                limit: 50000,
+                limit: 50_000,
             },
         },
     }]);
