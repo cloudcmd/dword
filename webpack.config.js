@@ -14,21 +14,21 @@ const notEmpty = (a) => a;
 const clean = (array) => array.filter(notEmpty);
 
 const rules = clean([{
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-    }, {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader!clean-css-loader',
-    }, {
-        test: /\.(png|gif|svg|woff|woff2|eot|ttf)$/,
-        use: {
-            loader: 'url-loader',
-            options: {
-                limit: 50_000,
-            },
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loader: 'babel-loader',
+}, {
+    test: /\.css$/,
+    loader: 'style-loader!css-loader!clean-css-loader',
+}, {
+    test: /\.(png|gif|svg|woff|woff2|eot|ttf)$/,
+    use: {
+        loader: 'url-loader',
+        options: {
+            limit: 50_000,
         },
-    }]);
+    },
+}]);
 
 module.exports = {
     devtool,
