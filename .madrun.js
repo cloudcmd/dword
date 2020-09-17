@@ -13,7 +13,7 @@ const files = [
 module.exports = {
     'start': () => 'bin/dword.js package.json',
     'start:dev': () => `NODE_ENV=development ${run('start')}`,
-    'lint': () => `putout ${files} --cache`,
+    'lint': () => `putout ${files}`,
     'fix:lint': () => run('lint', '--fix'),
     'build-progress': () => 'webpack --progress',
     'build:client': () => run('build-progress', '--mode production'),
