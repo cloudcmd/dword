@@ -23,7 +23,7 @@ const rules = clean([{
         'style-loader',
         'css-loader',
         'clean-css-loader',
-    ]
+    ],
 }, {
     test: /\.(png|gif|svg|woff|woff2|eot|ttf)$/,
     use: {
