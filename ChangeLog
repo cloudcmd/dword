@@ -1,3 +1,13 @@
+2020.11.22, v12.0.16
+
+fix:
+- (dword) jssha.default -> jssha
+
+feature:
+- (package) putout v11.0.4
+- (package) eslint-plugin-putout v6.0.1
+
+
 2020.10.27, v12.0.15
 
 feature:
