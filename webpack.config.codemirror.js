@@ -1,8 +1,6 @@
 'use strict';
 
 const path = require('path');
-const webpack = require('webpack');
-const {optimize} = webpack;
 
 const dir = './codemirror';
 
@@ -19,7 +17,7 @@ const rules = clean([
     !isDev && {
         test: /\.js$/,
         loader: 'babel-loader',
-}]);
+    }]);
 
 module.exports = {
     devtool,

@@ -1,25 +1,25 @@
 {
-  "name": "dword",
-  "homepage": "https://github.com/cloudcmd/dword",
-  "authors": [
-    "coderaiser <mnemonic.enemy@gmail.com>"
-  ],
-  "description": "web editor",
-  "main": "bin/dword.js",
-  "keywords": [
-    "file",
-    "edit"
-  ],
-  "license": "MIT",
-  "private": true,
-  "ignore": [
-    "node_modules",
-    "modules"
-  ],
-  "dependencies": {
-    "codemirror-emmet": "~1.1.0",
-    "cm-searchbox": "1.0.8",
-    "jshint": "^2.11.1",
-    "cm-show-invisibles": "^3.1.0"
-  }
+    "name": "dword",
+    "homepage": "https://github.com/cloudcmd/dword",
+    "authors": [
+        "coderaiser <mnemonic.enemy@gmail.com>"
+    ],
+    "description": "web editor",
+    "main": "bin/dword.js",
+    "keywords": [
+        "file",
+        "edit"
+    ],
+    "license": "MIT",
+    "private": true,
+    "ignore": [
+        "node_modules",
+        "modules"
+    ],
+    "dependencies": {
+        "codemirror-emmet": "~1.1.0",
+        "cm-searchbox": "1.0.8",
+        "jshint": "^2.11.1",
+        "cm-show-invisibles": "^3.1.0"
+    }
 }

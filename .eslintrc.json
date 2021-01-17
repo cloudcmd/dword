@@ -13,10 +13,10 @@
             "no-console": "off"
         }
     }],
-  "extends": [
-      "plugin:putout/recommended"
-  ],
-  "plugins": [
-    "putout"
-  ]
+    "extends": [
+        "plugin:putout/recommended"
+    ],
+    "plugins": [
+        "putout"
+    ]
 }

@@ -1,7 +1,10 @@
 {
     "match": {
         "client/dword.js": {
-            "remove-console": false
+            "remove-console": "off"
         }
-    }
+    },
+    "ignore": [
+        "modules"
+    ]
 }
