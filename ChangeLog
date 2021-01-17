@@ -1,3 +1,15 @@
+2021.01.17, v13.0.0
+
+feature:
+- (modules) socket.io v3.1.0
+- (package) codemirror v5.59.1
+- (dword) drop support of node < 14
+- (package) socket.io v3.1.0
+- (package) putout v13.7.0
+- (package) restafary v9.1.1
+- (package) madrun v8.6.0
+
+
 2020.11.22, v12.0.16
 
 fix:
