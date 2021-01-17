@@ -1,8 +1,6 @@
-'use strict';
+import {run} from 'madrun';
 
-const {run} = require('madrun');
-
-module.exports = {
+export default {
     'start': () => 'bin/dword.js package.json',
     'start:dev': async () => `NODE_ENV=development ${await run('start')}`,
     'lint': () => `putout .`,
