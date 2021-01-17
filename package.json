@@ -9,7 +9,7 @@
     "dword": "bin/dword.js"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "start": "madrun start",
