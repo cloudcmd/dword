@@ -22,9 +22,9 @@ module.exports = function() {
     
     const {_prefixSocket} = dword;
     const socket = io.connect(href + _prefixSocket, {
-        'max reconnection attempts' : 2 ** 32,
-        'reconnection limit'        : FIVE_SECONDS,
-        'path'                        : this._socketPath + '/socket.io',
+        'max reconnection attempts': 2 ** 32,
+        'reconnection limit': FIVE_SECONDS,
+        'path': this._socketPath + '/socket.io',
     });
     
     this._socket = socket;

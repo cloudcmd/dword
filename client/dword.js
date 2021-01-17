@@ -121,17 +121,17 @@ Dword.prototype._init = async function(fn) {
             const {options} = this._Config;
             const Value = this._Value;
             const all = {
-                autofocus           : true,
-                autoRefresh         : true,
-                lineNumbers         : true,
-                showTrailing        : true,
-                autoCloseBrackets   : true,
-                matchBrackets       : true,
-                matchTags           : false,
-                gutters             : ['CodeMirror-lint-markers'],
-                maxInvisibles       : 32,
-                searchbox           : true,
-                continueComments    : true,
+                autofocus: true,
+                autoRefresh: true,
+                lineNumbers: true,
+                showTrailing: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                matchTags: false,
+                gutters: ['CodeMirror-lint-markers'],
+                maxInvisibles: 32,
+                searchbox: true,
+                continueComments: true,
                 
                 highlightSelectionMatches: true,
             };
@@ -186,7 +186,7 @@ function addCommands(dword) {
     const commands = {
         'Ctrl-G': wrapCall(dword.goToLine),
         'Ctrl-S': callIfKey(dword.save),
-        'F2'    : callIfKey(dword.save),
+        'F2': callIfKey(dword.save),
         'Ctrl-E': callIfKey(dword.evaluate),
         'Ctrl-/': 'toggleComment',
     };
@@ -647,7 +647,7 @@ Dword.prototype._loadStyles = async function() {
 
 async function loadFiles(prefix) {
     const obj = {
-        join        : '/join/join.js',
+        join: '/join/join.js',
     };
     
     const scripts = Object.keys(obj)
@@ -724,7 +724,7 @@ Dword.prototype._loadFilesAll = async function() {
 };
 
 function getKeyMapPath(dir, config) {
-    const keyMap = config && config.options && config.options.keyMap;
+    const keyMap = config?.options?.keyMap;
     
     if (keyMap && keyMap !== 'default')
         return dir + 'keymap/' + keyMap;

@@ -44,7 +44,7 @@ function _setValue(ctx) {
 }
 
 function checkPatch(length, maxSize, patch) {
-    const patchLength = patch && patch.length || 0;
+    const patchLength = patch?.length || 0;
     const isLessMaxLength = length < maxSize;
     const isLessLength = isLessMaxLength && patchLength < length;
     const isStr = typeof patch === 'string';
