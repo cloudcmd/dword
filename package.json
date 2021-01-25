@@ -40,7 +40,7 @@
   "dependencies": {
     "currify": "^4.0.0",
     "express": "^4.14.0",
-    "join-io": "^4.0.0",
+    "join-io": "^5.0.0",
     "readjson": "^2.0.1",
     "restafary": "^9.1.1",
     "restbox": "^2.0.0",
