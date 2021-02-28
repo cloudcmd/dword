@@ -8,20 +8,17 @@
         <div class="edit" data-name="js-edit"></div>
         <script src="/dword/dword.js"></script>
         <script>
-            (function() {
-                'use strict';
-                
-                window.addEventListener('DOMContentLoaded', function domLoad() {
-                    dword('[data-name="js-edit"]', function(editor) {
-                        editor.setOptions({
-                            fontSize: '16px',
-                            fontFamily: 'Droid Sans Mono'
-                        });
+            /* global dword */
+            window.addEventListener('DOMContentLoaded', function domLoad() {
+                dword('[data-name="js-edit"]', (editor) => {
+                    editor.setOptions({
+                        fontSize: '16px',
+                        fontFamily: 'Droid Sans Mono',
                     });
-                    
-                    window.removeEventListener('DOMContentLoaded', domLoad);
                 });
-            })()
+                
+                window.removeEventListener('DOMContentLoaded', domLoad);
+            });
         </script>
     </body>
 </html>

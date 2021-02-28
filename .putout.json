@@ -1,5 +1,8 @@
 {
     "match": {
+        "client": {
+            "declare-undefined-variables": "off"
+        },
         "client/dword.js": {
             "remove-console": "off"
         }
