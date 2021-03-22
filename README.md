@@ -126,16 +126,40 @@ dword('[data-name="js-edit"]', (editor) => {
 
 #### Client API
 
-# dword(selector, callback);
+##### `dword(selector, callback)`
+
 - `selector`: **string**
-- `callback`: **function**
+- `callback`: **EditorCallback**
 
 Initialize new instance
 
-# editor.setValue(value)
-Set value to an editor
+###### `editor.setValue(value)`
 
-For more information you could always look around into `assets` and `bin` directory.
+- `value`: **string**
+
+Set value to `editor`.
+
+###### `editor.getValue()`
+
+- `returns`: **string**
+
+Get value from editor.
+
+##### Types
+
+```ts
+interface Editor {
+    setValue: (value: string) => void,
+    getValue: () => string;
+}
+
+type EditorCallback = (editor: Editor) => void;
+
+function dword(selector: string, callback: EditorCallback): void {
+}
+```
+
+For more information you could always look around `client/dword.js` directory.
 
 ## Related
 
