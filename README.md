@@ -149,14 +149,12 @@ Get value from editor.
 
 ```ts
 interface Editor {
-    setValue: (value: string) => void,
+    setValue: (value: string) => void;
     getValue: () => string;
 }
 
 type EditorCallback = (editor: Editor) => void;
-
-function dword(selector: string, callback: EditorCallback): void {
-}
+type Dword = (selector: string, callback: EditorCallback) => void;
 ```
 
 For more information you could always look around `client/dword.js` directory.
