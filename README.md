@@ -124,6 +124,17 @@ dword('[data-name="js-edit"]', (editor) => {
 });
 ```
 
+#### Client API
+
+# dword(selector, callback);
+- `selector`: **string**
+- `callback`: **function**
+
+Initialize new instance
+
+# editor.setValue(value)
+Set value to an editor
+
 For more information you could always look around into `assets` and `bin` directory.
 
 ## Related

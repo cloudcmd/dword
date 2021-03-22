@@ -34,17 +34,9 @@ function Dword(el, options, callback) {
     if (!(this instanceof Dword))
         return new Dword(el, options, callback);
     
-    this._Ace;
-    this._Value;
-    this._Config;
-    this._Options;
-    this._FileName;
-    this._ElementMsg;
-    this._Ext;
     this._DIR = '/modules/';
     this._TITLE = 'Dword';
     this._story = Story();
-    this._Emitter;
     this._Separator = '\n';
     this._isKey = true;
     
