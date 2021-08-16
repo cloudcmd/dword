@@ -58,7 +58,7 @@
     "clean-css-loader": "^3.0.0",
     "codemirror": "^5.62.2",
     "css-loader": "^5.0.0",
-    "cssnano": "^4.0.0",
+    "cssnano": "^5.0.7",
     "daffy": "^1.0.3",
     "emitify": "^4.0.1",
     "eslint": "^7.0.0",
