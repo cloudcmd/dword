@@ -56,7 +56,7 @@
     "babel-loader": "^8.0.0",
     "callbackify": "^1.1.0",
     "clean-css-loader": "^3.0.0",
-    "codemirror": "^5.62.2",
+    "codemirror": "^5.63.3",
     "css-loader": "^5.0.0",
     "cssnano": "^5.0.7",
     "daffy": "^1.0.3",
