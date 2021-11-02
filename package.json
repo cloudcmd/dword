@@ -57,7 +57,7 @@
     "callbackify": "^1.1.0",
     "clean-css-loader": "^3.0.0",
     "codemirror": "^5.63.3",
-    "css-loader": "^5.0.0",
+    "css-loader": "^6.5.0",
     "cssnano": "^5.0.7",
     "daffy": "^1.0.3",
     "emitify": "^4.0.1",
