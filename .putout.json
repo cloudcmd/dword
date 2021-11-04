@@ -1,11 +1,18 @@
 {
     "match": {
-        "client": {
-            "declare-undefined-variables": "off"
-        },
         "client/dword.js": {
             "remove-console": "off"
+        },
+        "*.md": {
+            "remove-unused-variables": "off"
         }
+    },
+    "rules": {
+        "declare-undefined-variables": ["on", {
+            "dismiss": [
+                "join"
+            ]
+        }]
     },
     "ignore": [
         "modules"

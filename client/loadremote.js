@@ -61,9 +61,7 @@ module.exports = async (name, options = {}) => {
         local = [module.local];
     }
     
-    local = local.map((url) => {
-        return prefix + url;
-    });
+    local = local.map((url) => prefix + url);
     
     const remote = remoteTmpls.map((tmpl) => {
         return tmpl.replace(/{{\sversion\s}}/g, version);
