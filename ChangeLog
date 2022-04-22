@@ -1,3 +1,14 @@
+2022.04.22, v14.0.0
+
+feature:
+- (dword) drop support of node < 16
+- (package) socket-file v6.0.0
+- (package) madrun v9.0.2
+- (package) putout v25.15.0
+- (package) eslint-plugin-putout v14.11.0
+- (package) restafary v11.0.0
+
+
 2021.11.04, v13.0.6
 
 feature:
