@@ -1,10 +1,8 @@
-# Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL]
+# Dword [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL]
 
 [NPMIMGURL]: https://img.shields.io/npm/v/dword.svg?style=flat
 [BuildStatusURL]: https://github.com/cloudcmd/dword/actions?query=workflow%3A%22Node+CI%22 "Build Status"
 [BuildStatusIMGURL]: https://github.com/cloudcmd/dword/workflows/Node%20CI/badge.svg
-[DependencyStatusURL]: https://david-dm.org/coudcmd/dword?path=packages/putout "Dependency Status"
-[DependencyStatusIMGURL]: https://david-dm.org/cloudcmd/dword.svg?path=packages/putout
 [LicenseIMGURL]: https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
 [NPM_INFO_IMG]: https://nodei.co/npm/dword.png?downloads=true&&stars&&downloadRank "npm install dword"
 [NPMURL]: https://npmjs.org/package/dword "npm"
@@ -29,7 +27,7 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 npm i dword -g
 ```
 
-![NPM_INFO][NPM_INFO_IMG]
+![NPM\_INFO][NPM_INFO_IMG]
 
 ## Command line parameters
 
@@ -67,12 +65,12 @@ const express = require('express');
 const app = express();
 
 app.use(dword({
-    root: '/',              // default
-    online: true,           // default
-    diff: true,             // default
-    zip: true,              // default
-    dropbox: false,         // optional
-    dropboxToken: 'token',  //  optional
+    root: '/', // default
+    online: true, // default
+    diff: true, // default
+    zip: true, // default
+    dropbox: false, // optional
+    dropboxToken: 'token', //  optional
 }));
 
 app.listen(31_337);

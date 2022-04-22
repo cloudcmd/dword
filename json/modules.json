@@ -19,5 +19,4 @@
     "version": "1.0.3",
     "local": "/modules/pako/dist/pako.min.js",
     "remote": "//cdnjs.cloudflare.com/ajax/libs/pako/{{ version }}/pako.min.js"
-
 }]

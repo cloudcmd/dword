@@ -41,12 +41,12 @@ function main(name) {
     
     const {env} = process;
     
-    const port = env.PORT || /* c9           */
-                    env.VCAP_APP_PORT || /* cloudfoundry */
-                    1337;
+    const port = env.PORT /* c9           */
+                    || env.VCAP_APP_PORT /* cloudfoundry */
+                    || 1337;
     
-    const ip = env.IP || /* c9           */
-                '0.0.0.0';
+    const ip = env.IP /* c9           */
+                || '0.0.0.0';
     
     app .use(express.static(DIR))
         .use(dword({
@@ -57,7 +57,7 @@ function main(name) {
     
     server.listen(port, ip);
     
-    const socket = io.listen(server);
+    const socket = io(server);
     const edSocket = dword.listen(socket);
     
     edSocket.on('connection', () => {

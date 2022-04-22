@@ -23,3 +23,4 @@ modules/execon
 package-lock.json
 
 coverage
+.idea

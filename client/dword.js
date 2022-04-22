@@ -1,6 +1,6 @@
-/* global CodeMirror, exec, join */
-
 'use strict';
+
+/* global CodeMirror, exec, join */
 
 require('../css/dword.css');
 
@@ -27,6 +27,7 @@ const _initSocket = require('./_init-socket');
 
 const notGlobal = (name) => !window[name];
 const addPrefix = currify((obj, prefix, name) => prefix + obj[name]);
+const isString = (a) => typeof a === 'string';
 
 module.exports = Dword;
 
@@ -43,7 +44,7 @@ function Dword(el, options, callback) {
     if (!callback)
         callback = options;
     
-    if (typeof el === 'string')
+    if (isString(el))
         el = document.querySelector(el);
     
     this._maxSize = options.maxSize || 512_000;
@@ -241,9 +242,11 @@ Dword.prototype.goToLine = function() {
         const coords = Ace.charCoords({line, ch}, 'local');
         
         Ace.scrollTo(null, (coords.top + coords.bottom - myHeight) / 2);
-    }).catch(empty).then(() => {
-        dword.focus();
-    });
+    })
+        .catch(empty)
+        .then(() => {
+            dword.focus();
+        });
     
     return this;
 };
@@ -484,6 +487,7 @@ Dword.prototype._clipboard = _clipboard;
 Dword.prototype.sha = function() {
     const value = this.getValue();
     const shaObj = new jssha('SHA-1', 'TEXT');
+    
     shaObj.update(value);
     
     return shaObj.getHash('HEX');

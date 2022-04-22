@@ -1,5 +1,7 @@
 'use strict';
 
+const isUndefined = (a) => typeof a === 'undefined';
+
 const DIR_ROOT = __dirname + '/..';
 const path = require('path');
 
@@ -77,10 +79,10 @@ module.exports.listen = (socket, options) => {
 };
 
 function checkOption(isOption) {
-    if (typeof isOption === 'function')
+    if (isFn(isOption))
         return isOption();
     
-    if (typeof isOption === 'undefined')
+    if (isUndefined(isOption))
         return true;
     
     return isOption;
@@ -123,7 +125,7 @@ function modulesFn(req, res, next) {
 
 function _joinFn(o, req, res, next) {
     if (req.url.indexOf('/join'))
-        return next ();
+        return next();
     
     const joinFunc = join({
         dir: DIR_ROOT,

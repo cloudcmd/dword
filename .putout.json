@@ -8,13 +8,10 @@
         }
     },
     "rules": {
-        "declare-undefined-variables": ["on", {
-            "dismiss": [
-                "join"
-            ]
-        }]
+        "nodejs/declare": "off"
     },
     "ignore": [
-        "modules"
+        "modules",
+        "codemirror"
     ]
 }
