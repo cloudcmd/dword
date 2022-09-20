@@ -9,8 +9,6 @@
 [![NPM version](https://img.shields.io/npm/v/jshint.svg?style=flat)](https://www.npmjs.com/package/jshint)
 [![Linux Build Status](https://img.shields.io/travis/jshint/jshint/master.svg?style=flat&label=Linux%20build)](https://travis-ci.org/jshint/jshint)
 [![Windows Build status](https://img.shields.io/appveyor/ci/jshint/jshint/master.svg?style=flat&label=Windows%20build)](https://ci.appveyor.com/project/jshint/jshint/branch/master)
-[![Dependency Status](https://img.shields.io/david/jshint/jshint.svg?style=flat)](https://david-dm.org/jshint/jshint)
-[![devDependency Status](https://img.shields.io/david/dev/jshint/jshint.svg?style=flat)](https://david-dm.org/jshint/jshint#info=devDependencies)
 [![Coverage Status](https://img.shields.io/coveralls/jshint/jshint.svg?style=flat)](https://coveralls.io/r/jshint/jshint?branch=master)
 
 JSHint is a community-driven tool that detects errors and potential problems in
@@ -73,6 +71,7 @@ Engineers from these companies and projects use JSHint:
 * [SoundCloud](http://soundcloud.com/)
 * [Nodejitsu](http://nodejitsu.com/)
 * [Yelp](https://yelp.com/)
+* [Find My Electric](https://www.findmyelectric.com/)
 * [Voxer](http://voxer.com/)
 * [EnyoJS](http://enyojs.com/)
 * [QuickenLoans](http://quickenloans.com/)
@@ -87,12 +86,14 @@ And many more!
 
 ## License
 
-Most files are published using [the standard MIT Expat
-license](https://www.gnu.org/licenses/license-list.html#Expat). One file,
-however, is provided under a slightly modified version of that license. The
-so-called [JSON license](https://www.gnu.org/licenses/license-list.html#JSON)
-is a non-free license, and unfortunately, we can't change it due to historical
-reasons. This license is included as an in-line within the file it concerns.
+JSHint is licensed under [the MIT Expat
+license](https://www.gnu.org/licenses/license-list.html#Expat).
+
+Prior to version 2.12.0 (release in August 2020), JSHint was partially licensed
+under the non-free [JSON
+license](https://www.gnu.org/licenses/license-list.html#JSON). [The 2020
+Relicensing document](http://jshint.com/relicensing-2020/) details the process
+maintainers followed to change the license.
 
 ## The JSHint Team
 

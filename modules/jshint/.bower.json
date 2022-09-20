@@ -1,15 +1,15 @@
 {
   "name": "jshint",
   "homepage": "https://github.com/jshint/jshint",
-  "version": "2.11.1",
-  "_release": "2.11.1",
+  "version": "2.13.5",
+  "_release": "2.13.5",
   "_resolution": {
     "type": "version",
-    "tag": "2.11.1",
-    "commit": "cd3fda07c3dc6af74a0fb5ad087d54e45afb0e68"
+    "tag": "2.13.5",
+    "commit": "ccd892c2cfa080beadbfd655a6777d34bc2b6b20"
   },
   "_source": "https://github.com/jshint/jshint.git",
-  "_target": "^2.11.1",
+  "_target": "^2.13.5",
   "_originalSource": "jshint",
   "_direct": true
 }
