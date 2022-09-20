@@ -185,7 +185,7 @@ function addCommands(dword) {
     };
     
     for (const name of Object.keys(commands)) {
-        if (/^Ctrl/.test(name)) {
+        if (name.startsWith('Ctrl')) {
             const nameCmd = name.replace('Ctrl', 'Cmd');
             commands[nameCmd] = commands[name];
         }
