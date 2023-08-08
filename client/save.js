@@ -1,5 +1,6 @@
 'use strict';
 
+const isString = (a) => typeof a === 'string';
 const wraptile = require('wraptile');
 const {promisify} = require('es6-promisify');
 const zipio = promisify(require('zipio'));
@@ -7,7 +8,8 @@ const zipio = promisify(require('zipio'));
 const setValue = wraptile(_setValue);
 
 module.exports = function() {
-    save.call(this)
+    save
+        .call(this)
         .then(setValue(this))
         .catch(this._onSave.bind(this));
     
@@ -17,10 +19,7 @@ module.exports = function() {
 async function save() {
     const value = this.getValue();
     const {length} = value;
-    const {
-        _FileName: _filename,
-        _maxSize,
-    } = this;
+    const {_FileName: _filename, _maxSize} = this;
     
     const {diff, zip} = await this._loadOptions();
     
@@ -36,6 +35,7 @@ async function save() {
         return this._write(_filename, value);
     
     const zipedValue = await zipio(value);
+    
     return this._write(`${_filename}?unzip`, zipedValue);
 }
 
@@ -47,7 +47,7 @@ function checkPatch(length, maxSize, patch) {
     const patchLength = patch?.length || 0;
     const isLessMaxLength = length < maxSize;
     const isLessLength = isLessMaxLength && patchLength < length;
-    const isStr = typeof patch === 'string';
+    const isStr = isString(patch);
     
     return patch && isStr && isLessLength;
 }

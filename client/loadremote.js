@@ -1,16 +1,17 @@
 'use strict';
 
+const isString = (a) => typeof a === 'string';
 const load = require('load.js');
 const tryToCatch = require('try-to-catch');
 const once = require('once');
 
 const loadModules = once(async (prefix) => {
-    const url = prefix + '/modules.json';
+    const url = `${prefix}/modules.json`;
     return await load.json(url);
 });
 
 const loadOptions = once(async (prefix) => {
-    const url = prefix + '/options.json';
+    const url = `${prefix}/options.json`;
     return await load.json(url);
 });
 
@@ -28,9 +29,7 @@ const off = async function(local) {
 module.exports = async (name, options = {}) => {
     const o = options;
     
-    const {
-        prefix = '',
-    } = o;
+    const {prefix = ''} = o;
     
     if (o.name && global[o.name])
         return;
@@ -76,7 +75,7 @@ module.exports = async (name, options = {}) => {
 function binom(name, array) {
     let ret;
     
-    if (typeof name !== 'string')
+    if (!isString(name))
         throw Error('name should be string!');
     
     if (!Array.isArray(array))
@@ -93,4 +92,3 @@ function binom(name, array) {
     
     return ret;
 }
-

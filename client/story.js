@@ -12,7 +12,7 @@ function Story() {
 
 Story.prototype.checkHash = async function(name) {
     const loadHash = await this.loadHash(name);
-    const nameHash = name + '-hash';
+    const nameHash = `${name}-hash`;
     const storeHash = localStorage.getItem(nameHash);
     
     return loadHash === storeHash;
@@ -27,7 +27,7 @@ Story.prototype.loadHash = promisify(function(name, callback) {
 });
 
 Story.prototype.setData = function(name, data) {
-    const nameData = name + '-data';
+    const nameData = `${name}-data`;
     
     localStorage.setItem(nameData, data);
     
@@ -35,7 +35,7 @@ Story.prototype.setData = function(name, data) {
 };
 
 Story.prototype.setHash = function(name, hash) {
-    const nameHash = name + '-hash';
+    const nameHash = `${name}-hash`;
     
     localStorage.setItem(nameHash, hash);
     
@@ -43,16 +43,15 @@ Story.prototype.setHash = function(name, hash) {
 };
 
 Story.prototype.getData = function(name) {
-    const nameData = name + '-data';
+    const nameData = `${name}-data`;
     const data = localStorage.getItem(nameData);
     
     return data || '';
 };
 
 Story.prototype.getHash = function(name) {
-    const item = name + '-hash';
+    const item = `${name}-hash`;
     const data = localStorage.getItem(item);
     
     return data || '';
 };
-

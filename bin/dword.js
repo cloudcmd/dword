@@ -30,7 +30,7 @@ function getPath(name) {
 
 function main(name) {
     const filename = getPath(name);
-    const DIR = __dirname + '/../assets/';
+    const DIR = `${__dirname}/../assets/`;
     const dword = require('..');
     const http = require('http');
     const express = require('express');
@@ -41,14 +41,12 @@ function main(name) {
     
     const {env} = process;
     
-    const port = env.PORT /* c9           */
-                    || env.VCAP_APP_PORT /* cloudfoundry */
-                    || 1337;
+    const port = env.PORT /* c9           */ || env.VCAP_APP_PORT /* cloudfoundry */ || 1337;
     
-    const ip = env.IP /* c9           */
-                || '0.0.0.0';
+    const ip = env.IP /* c9           */ || '0.0.0.0';
     
-    app .use(express.static(DIR))
+    app
+        .use(express.static(DIR))
         .use(dword({
             online: false,
             diff: true,
@@ -107,4 +105,3 @@ function help() {
         console.log(`  ${name} ${bin[name]}`);
     }
 }
-

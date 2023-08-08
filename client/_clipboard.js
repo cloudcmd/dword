@@ -11,10 +11,7 @@ const showMessageOnce = once(require('./show-message'));
 
 module.exports = (cmd) => {
     const NAME = 'editor-clipboard';
-    const {
-        _Ace,
-        _story,
-    } = this;
+    const {_Ace, _story} = this;
     
     const value = _Ace.getSelection('\n');
     const insert = (a) => _Ace.getDoc().replaceSelection(a);
@@ -29,7 +26,8 @@ module.exports = (cmd) => {
         return cut(_story, value) ? resolve() : reject();
     }
     
-    return clipboard.readText()
+    return clipboard
+        .readText()
         .then(insert)
         .catch(() => {
             showMessageOnce('Could not paste from clipboard. Inner buffer used.');
@@ -53,4 +51,3 @@ function cut(story, value) {
     
     return result;
 }
-

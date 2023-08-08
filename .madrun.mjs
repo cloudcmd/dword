@@ -24,4 +24,3 @@ export default {
     'rm:dist': () => 'rimraf dist',
     'rm:dist-dev': () => 'rimraf dist-dev',
 };
-

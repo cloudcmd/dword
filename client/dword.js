@@ -1,7 +1,6 @@
 'use strict';
 
 /* global CodeMirror, exec, join */
-
 require('../css/dword.css');
 
 const restafary = require('restafary/client');
@@ -103,13 +102,11 @@ Dword.prototype._init = async function(fn) {
             this._Config = config;
             callback();
         },
-        
         async (cb) => {
             await this._loadFilesAll();
             await this._loadStyles();
             cb();
         },
-        
         () => {
             const {options} = this._Config;
             const Value = this._Value;
@@ -196,10 +193,7 @@ function addCommands(dword) {
 
 Dword.prototype.evaluate = function() {
     const focus = this.focus.bind(this);
-    const {
-        _FileName,
-        _TITLE,
-    } = this;
+    const {_FileName, _TITLE} = this;
     
     const isJS = /\.js$/.test(_FileName);
     
@@ -212,8 +206,7 @@ Dword.prototype.evaluate = function() {
         msg = exec.try(Function(value));
     }
     
-    msg && smalltalk.alert(_TITLE, msg)
-        .then(focus);
+    msg && smalltalk.alert(_TITLE, msg).then(focus);
     
     return this;
 };
@@ -230,19 +223,21 @@ Dword.prototype.goToLine = function() {
     const cursor = dword.getCursor();
     const number = cursor.row + 1;
     
-    smalltalk.prompt(this._TITLE, msg, number).then((line) => {
-        const ch = 0;
-        
-        Ace.setCursor({
-            line: line - 1,
-            ch,
-        });
-        
-        const myHeight = Ace.getScrollInfo().clientHeight;
-        const coords = Ace.charCoords({line, ch}, 'local');
-        
-        Ace.scrollTo(null, (coords.top + coords.bottom - myHeight) / 2);
-    })
+    smalltalk
+        .prompt(this._TITLE, msg, number)
+        .then((line) => {
+            const ch = 0;
+            
+            Ace.setCursor({
+                line: line - 1,
+                ch,
+            });
+            
+            const myHeight = Ace.getScrollInfo().clientHeight;
+            const coords = Ace.charCoords({line, ch}, 'local');
+            
+            Ace.scrollTo(null, (coords.top + coords.bottom - myHeight) / 2);
+        })
         .catch(empty)
         .then(() => {
             dword.focus();
@@ -325,10 +320,8 @@ Dword.prototype.setValueFirst = function(name, value) {
     const dword = this;
     
     dword.setValue(value);
-    
     // fix of linenumbers overlap
     dword.refresh();
-    
     /*
      * getCursor returns another
      * information so set
@@ -356,7 +349,7 @@ Dword.prototype.setValueFirst = function(name, value) {
  * receive some changes insteed.
  */
 function getLineSeparator(value) {
-    if (typeof value !== 'string')
+    if (!isString(value))
         throw Error('value should be string!');
     
     if (value.includes('\r\n'))
@@ -377,8 +370,9 @@ Dword.prototype.setOption = function(name, value) {
     default:
         _Ace.setOption(name, value);
         break;
+    
     case 'fontSize':
-        _Ace.display.wrapper.style.fontSize = value + 'px';
+        _Ace.display.wrapper.style.fontSize = `${value}px`;
         break;
     }
     
@@ -425,7 +419,9 @@ Dword.prototype.setMode = function(mode, callback) {
 
 Dword.prototype.setModeForPath = function(path) {
     const {findModeByFileName} = CodeMirror;
-    const name = path.split('/').pop();
+    const name = path
+        .split('/')
+        .pop();
     
     this._addExt(name, (name) => {
         const dword = this;
@@ -529,10 +525,7 @@ Dword.prototype._doDiff = async function(path) {
 };
 
 Dword.prototype._diff = function(newValue) {
-    const {
-        _story,
-        _FileName,
-    } = this;
+    const {_story, _FileName} = this;
     
     this._Value = _story.getData(_FileName) || this._Value;
     return createPatch(this._Value, newValue);
@@ -546,9 +539,7 @@ Dword.prototype._setEmmet = function() {
     if (!isEmmet)
         return;
     
-    load.js(this._PREFIX + join([
-        dir + 'emmet.min.js',
-    ]));
+    load.js(this._PREFIX + join([`${dir}emmet.min.js`]));
 };
 
 Dword.prototype._addExt = function(name, fn) {
@@ -564,15 +555,17 @@ Dword.prototype._addExt = function(name, fn) {
         if (error)
             return;
         
-        Object.keys(exts).some((ext) => {
-            const arr = exts[ext];
-            const is = arr.includes(name);
-            
-            if (is)
-                name += '.' + ext;
-            
-            return is;
-        });
+        Object
+            .keys(exts)
+            .some((ext) => {
+                const arr = exts[ext];
+                const is = arr.includes(name);
+                
+                if (is)
+                    name += `.${ext}`;
+                
+                return is;
+            });
         
         fn(name);
     }
@@ -580,7 +573,8 @@ Dword.prototype._addExt = function(name, fn) {
 
 Dword.prototype._initSocket = _initSocket;
 Dword.prototype._initValue = function(name, data) {
-    return this.setModeForPath(name)
+    return this
+        .setModeForPath(name)
         .setValueFirst(name, data)
         .moveCursorTo(0, 0);
 };
@@ -622,13 +616,14 @@ Dword.prototype._onDrop = function(event) {
 
 Dword.prototype._loadStyles = async function() {
     const dir = this._DIR + 'codemirror/';
-    const addon = dir + 'addon/';
-    const lint = addon + 'lint/';
+    const addon = `${dir}addon/`;
+    const lint = `${addon}lint/`;
     const {theme} = this._Config.options;
+    
     const urls = [
-        addon + 'dialog/dialog',
-        addon + 'search/matchesonscrollbar',
-        lint + 'lint',
+        `${addon}dialog/dialog`,
+        `${addon}search/matchesonscrollbar`,
+        `${lint}lint`,
         '/css/dword',
     ];
     
@@ -646,7 +641,8 @@ async function loadFiles(prefix) {
         join: '/join/join.js',
     };
     
-    const scripts = Object.keys(obj)
+    const scripts = Object
+        .keys(obj)
         .filter(notGlobal)
         .map(addPrefix(obj, prefix));
     
@@ -659,7 +655,9 @@ Dword.prototype._loadFilesAll = async function() {
     const prefix = this._PREFIX;
     
     const promises = [
-        loadRemote('codemirror', {prefix}),
+        loadRemote('codemirror', {
+            prefix,
+        }),
         loadRemote('socket', {
             name: 'io',
             prefix: this._socketPath,
@@ -668,53 +666,46 @@ Dword.prototype._loadFilesAll = async function() {
     
     await Promise.all(promises);
     
-    restafary.prefix(prefix + '/api/v1/fs');
+    restafary.prefix(`${prefix}/api/v1/fs`);
     
     CodeMirror.modeURL = prefix + DIR + 'codemirror/mode/%N/%N.js';
     
-    const dir = DIR + 'codemirror/';
+    const dir = `${DIR}codemirror/`;
     const client = 'client/codemirror/';
-    const addon = dir + 'addon/';
-    const lint = addon + 'lint/';
+    const addon = `${dir}addon/`;
+    const lint = `${addon}lint/`;
     
     const urlJS = prefix + join([
-        dir + 'mode/meta',
-        
-        lint + 'lint',
-        lint + 'javascript-lint',
-        lint + 'json-lint',
-        
+        `${dir}mode/meta`,
+        `${lint}lint`,
+        `${lint}javascript-lint`,
+        `${lint}json-lint`,
         //client + 'show-trailing',
-        client + 'use-soft-tabs',
-        
-        DIR + 'jshint/dist/jshint',
-        DIR + 'cm-searchbox/lib/searchbox',
-        DIR + 'cm-show-invisibles/lib/show-invisibles',
+        `${client}use-soft-tabs`,
+        `${DIR}jshint/dist/jshint`,
+        `${DIR}cm-searchbox/lib/searchbox`,
+        `${DIR}cm-show-invisibles/lib/show-invisibles`,
         getKeyMapPath(dir, this._Config),
-        dir + 'keymap/vim',
-    ].filter(Boolean)
+        `${dir}keymap/vim`,
+    ]
+        .filter(Boolean)
         .concat([
             'display/autorefresh',
-            
             'comment/comment',
             'comment/continuecomment',
-            
             'mode/loadmode',
             'mode/overlay',
-            
             'search/searchcursor',
             'search/match-highlighter',
             'search/matchesonscrollbar',
-            
             'dialog/dialog',
             'scroll/annotatescrollbar',
             'fold/xml-fold',
-            
             'edit/closebrackets',
             'edit/matchbrackets',
             'edit/matchtags',
         ].map((name) => addon + name))
-        .map((name) => name + '.js'));
+        .map((name) => `${name}.js`));
     
     await load(urlJS);
 };
@@ -727,4 +718,3 @@ function getKeyMapPath(dir, config) {
     
     return '';
 }
-

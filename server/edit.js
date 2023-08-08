@@ -13,7 +13,8 @@ module.exports = async (req, res, next) => {
     const [error, data] = await tryToCatch(readEdit);
     
     if (error)
-        return res.status(404)
+        return res
+            .status(404)
             .send(error.message);
     
     res.json(data);
@@ -35,7 +36,7 @@ function copy(from) {
 }
 
 async function readEdit() {
-    const homePath = HOME + '/.dword.json';
+    const homePath = `${HOME}/.dword.json`;
     const data = copy(Edit);
     
     const [error, edit] = await tryToCatch(readjson, homePath);
@@ -50,4 +51,3 @@ async function readEdit() {
     
     return data;
 }
-

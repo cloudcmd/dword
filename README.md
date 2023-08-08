@@ -85,8 +85,10 @@ const io = require('socket.io');
 const socket = io.listen(server);
 
 dword.listen(socket, {
-    prefixSocket: '/dword', // optional
-    auth: (accept, reject) => (username, password) => { // optional
+    // optional
+    prefixSocket: '/dword',
+    // optional
+    auth: (accept, reject) => (username, password) => {
         accept();
     },
 });

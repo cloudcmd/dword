@@ -18,9 +18,10 @@ module.exports = function onSave(error, text) {
         
         const onSave = this._onSave.bind(this);
         
-        return confirm(this._TITLE, msg).then(() => {
-            write(this._FileName, this._Value, onSave);
-        })
+        return confirm(this._TITLE, msg)
+            .then(() => {
+                write(this._FileName, this._Value, onSave);
+            })
             .catch(empty)
             .then(() => {
                 this.focus();
@@ -30,7 +31,9 @@ module.exports = function onSave(error, text) {
     this.showMessage(text);
     
     const hash = this.sha();
-    this._story.setData(FileName, Value)
+    this
+        ._story
+        .setData(FileName, Value)
         .setHash(FileName, hash);
     
     this._Emitter.emit('save', Value.length);

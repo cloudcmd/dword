@@ -16,7 +16,5 @@
     "extends": [
         "plugin:putout/recommended"
     ],
-    "plugins": [
-        "putout"
-    ]
+    "plugins": ["putout"]
 }
