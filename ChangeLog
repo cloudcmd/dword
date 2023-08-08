@@ -1,3 +1,14 @@
+2023.08.08, v14.1.0
+
+feature:
+- cac2967 package: cssnano v6.0.1
+- adc4ca6 package: nodemon v3.0.1
+- 9023c79 package: putout v31.0.3
+- ede9dcd package: babel-loader v9.1.3
+- c016121 package: eslint-plugin-putout v19.0.3
+- 0acd90f package: webpack-cli v5.1.4
+- b70f10d package: rimraf v5.0.1
+
 2022.09.20, v14.0.1
 
 feature:

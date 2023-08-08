@@ -1,3 +1,43 @@
+## 5.65.14 (2023-07-17)
+
+### Bug fixes
+
+[clike mode](https://codemirror.net/5/mode/clike/): Fix poor indentation in some Java code.
+
+[nsis mode](https://codemirror.net/5/mode/nsis/index.html): Recognize `!assert` command.
+
+[lint addon](https://codemirror.net/5/doc/manual.html#addon_lint): Remove broken annotation deduplication.
+
+## 5.65.13 (2023-04-27)
+
+### Bug fixes
+
+[dart mode](https://codemirror.net/5/mode/dart/index.html): Add some new keywords.
+
+[clike mode](https://codemirror.net/5/mode/clike/): Tokenize Scala character literals.
+
+## 5.65.12 (2023-02-20)
+
+### Bug fixes
+
+[python mode](https://codemirror.net/5/mode/python/): Add new built-ins and keywords.
+
+## 5.65.11 (2022-12-20)
+
+### Bug fixes
+
+Also respect autocapitalize/autocorrect/spellcheck options in textarea mode.
+
+[sql-hint addon](https://codemirror.net/5/doc/manual.html#addon_sql-hint): Fix keyword completion in generic SQL mode.
+
+## 5.65.10 (2022-11-20)
+
+### Bug fixes
+
+[sql-hint addon](https://codemirror.net/5/doc/manual.html#addon_sql-hint): Fix completion when the SQL mode is wrapped by some outer mode.
+
+[javascript mode](https://codemirror.net/5/mode/javascript/index.html): Fix parsing of property keywords before private property names.
+
 ## 5.65.9 (2022-09-20)
 
 ### Bug fixes
