@@ -1,3 +1,14 @@
+2024.02.02, v15.0.0
+
+feature:
+- 5631d48 dword: codemirror v5.65.16
+- 4cd145a dword: restafary v12.0.0
+- 1914f33 dword: putout v35.0.4
+- a9fb0c5 dword: madrun v10.0.1
+- e21a198 dword: eslint-plugin-putout v22.3.1
+- 0c87831 dword: drop support of node < 18
+- 9345a91 dword: restafary v11.5.1
+
 2023.08.08, v14.1.0
 
 feature:
