@@ -1,3 +1,8 @@
+2024.02.02, v15.0.1
+
+fix:
+- 0a97279 modules: codemirror
+
 2024.02.02, v15.0.0
 
 feature:
