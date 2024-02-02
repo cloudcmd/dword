@@ -206,7 +206,9 @@ Dword.prototype.evaluate = function() {
         msg = exec.try(Function(value));
     }
     
-    msg && smalltalk.alert(_TITLE, msg).then(focus);
+    msg && smalltalk
+        .alert(_TITLE, msg)
+        .then(focus);
     
     return this;
 };
