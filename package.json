@@ -43,7 +43,7 @@
     "join-io": "^5.0.0",
     "readjson": "^2.0.1",
     "restafary": "^12.0.0",
-    "restbox": "^3.0.0",
+    "restbox": "^4.0.1",
     "socket-file": "^7.0.0",
     "socket.io": "^4.0.0",
     "try-to-catch": "^3.0.0"
