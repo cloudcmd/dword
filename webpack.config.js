@@ -1,7 +1,9 @@
-'use strict';
+import path, {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import process from 'node:process';
 
-const path = require('path');
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const dir = './client';
 
 const {env} = process;
@@ -34,7 +36,7 @@ const rules = clean([{
     },
 }]);
 
-module.exports = {
+export default {
     devtool,
     entry: {
         dword: `${dir}/dword.js`,
@@ -45,6 +47,7 @@ module.exports = {
         path: isDev ? distDev : dist,
         pathinfo: isDev,
         libraryTarget: 'var',
+        libraryExport: 'default',
         devtoolModuleFilenameTemplate,
     },
     module: {

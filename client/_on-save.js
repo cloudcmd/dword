@@ -1,11 +1,9 @@
-'use strict';
-
-const {confirm} = require('smalltalk');
-const {write} = require('restafary/client');
+import {confirm} from 'smalltalk';
+import {write} from 'restafary/client';
 
 function empty() {}
 
-module.exports = function onSave(error, text) {
+export default function onSave(error, text) {
     const Value = this._Value;
     const FileName = this._FileName;
     let msg = 'Try again?';
@@ -37,4 +35,4 @@ module.exports = function onSave(error, text) {
         .setHash(FileName, hash);
     
     this._Emitter.emit('save', Value.length);
-};
+}

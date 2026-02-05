@@ -1,20 +1,20 @@
-'use strict';
+import wraptile from 'wraptile';
+import {promisify} from 'es6-promisify';
+import _zipio from 'zipio';
 
 const isString = (a) => typeof a === 'string';
-const wraptile = require('wraptile');
-const {promisify} = require('es6-promisify');
-const zipio = promisify(require('zipio'));
+const zipio = promisify(_zipio);
 
 const setValue = wraptile(_setValue);
 
-module.exports = function() {
+export default function() {
     save
         .call(this)
         .then(setValue(this))
         .catch(this._onSave.bind(this));
     
     return this;
-};
+}
 
 async function save() {
     const value = this.getValue();

@@ -1,6 +1,4 @@
-'use strict';
-
-const createElement = require('@cloudcmd/create-element');
+import createElement from '@cloudcmd/create-element';
 
 function createMsg() {
     const innerHTML = '<div class="dword-msg">/div>';
@@ -11,7 +9,7 @@ function createMsg() {
     return wrapper.firstChild;
 }
 
-module.exports = showMessage;
+export default showMessage;
 
 function showMessage(text) {
     const HIDE_TIME = 2000;

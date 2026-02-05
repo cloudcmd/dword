@@ -15,3 +15,4 @@ modules/jshint
 !modules/jshint/README.md
 
 coverage
+*.config.*

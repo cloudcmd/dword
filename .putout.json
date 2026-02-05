@@ -1,14 +1,11 @@
 {
     "match": {
+        "client": {
+            "nodejs/declare": "off"
+        },
         "client/dword.js": {
             "remove-console": "off"
-        },
-        "*.md": {
-            "remove-unused-variables": "off"
         }
-    },
-    "rules": {
-        "nodejs/declare": "off"
     },
     "ignore": [
         "modules",

@@ -1,36 +1,29 @@
-'use strict';
-
 /* global CodeMirror, exec, join */
-require('../css/dword.css');
-
-const restafary = require('restafary/client');
-const wraptile = require('wraptile');
-const currify = require('currify');
-const {createPatch} = require('daffy');
-const smalltalk = require('smalltalk');
-const jssha = require('jssha');
-const Emitify = require('emitify');
-const tryToCatch = require('try-to-catch');
-
-const Story = require('./story');
-const setKeyMap = require('./set-key-map');
-const showMessage = require('./show-message');
-const loadRemote = require('./loadremote');
-
-const exec = require('execon');
-const load = require('load.js');
-
-const _clipboard = require('./_clipboard');
-const save = require('./save');
-const _initSocket = require('./_init-socket');
+import '../css/dword.css';
+import * as restafary from 'restafary/client';
+import wraptile from 'wraptile';
+import currify from 'currify';
+import {createPatch} from 'daffy';
+import * as smalltalk from 'smalltalk';
+import jssha from 'jssha';
+import Emitify from 'emitify';
+import {tryToCatch} from 'try-to-catch';
+import exec from 'execon';
+import load from 'load.js';
+import Story from './story.js';
+import setKeyMap from './set-key-map.js';
+import showMessage from './show-message.js';
+import loadRemote from './loadremote.js';
+import _clipboard from './_clipboard.js';
+import save from './save.js';
+import _initSocket from './_init-socket.js';
+import _onSave from './_on-save.js';
 
 const notGlobal = (name) => !window[name];
 const addPrefix = currify((obj, prefix, name) => prefix + obj[name]);
 const isString = (a) => typeof a === 'string';
 
-module.exports = Dword;
-
-function Dword(el, options, callback) {
+export default function Dword(el, options, callback) {
     if (!(this instanceof Dword))
         return new Dword(el, options, callback);
     
@@ -94,74 +87,74 @@ Dword.prototype._init = async function(fn) {
     await loadFiles(this._PREFIX);
     exec.series([
         async (callback) => {
-            const [error, config] = await tryToCatch(load.json, this._PREFIX + '/edit.json');
-            
-            if (error)
-                return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
-            
-            this._Config = config;
-            callback();
-        },
+        const [error, config] = await tryToCatch(load.json, this._PREFIX + '/edit.json');
+        
+        if (error)
+            return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
+        
+        this._Config = config;
+        callback();
+    },
         async (cb) => {
-            await this._loadFilesAll();
-            await this._loadStyles();
-            cb();
-        },
+        await this._loadFilesAll();
+        await this._loadStyles();
+        cb();
+    },
         () => {
-            const {options} = this._Config;
-            const Value = this._Value;
-            const all = {
-                autofocus: true,
-                autoRefresh: true,
-                lineNumbers: true,
-                showTrailing: true,
-                autoCloseBrackets: true,
-                matchBrackets: true,
-                matchTags: false,
-                gutters: ['CodeMirror-lint-markers'],
-                maxInvisibles: 32,
-                searchbox: true,
-                continueComments: true,
-                
-                highlightSelectionMatches: true,
-            };
+        const {options} = this._Config;
+        const Value = this._Value;
+        const all = {
+            autofocus: true,
+            autoRefresh: true,
+            lineNumbers: true,
+            showTrailing: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            matchTags: false,
+            gutters: ['CodeMirror-lint-markers'],
+            maxInvisibles: 32,
+            searchbox: true,
+            continueComments: true,
             
-            this._Emitter = Emitify();
-            this._Emitter.on('auth', (username, password) => {
-                this._socket.emit('auth', username, password);
-            });
-            
-            for (const name of Object.keys(options)) {
-                if (name === 'tabSize') {
-                    all.indentUnit = options.tabSize;
-                    continue;
-                }
-                
-                if (name === 'wrap') {
-                    all.lineWrapping = options.wrap;
-                    continue;
-                }
-                
-                all[name] = options[name];
+            highlightSelectionMatches: true,
+        };
+        
+        this._Emitter = Emitify();
+        this._Emitter.on('auth', (username, password) => {
+            this._socket.emit('auth', username, password);
+        });
+        
+        for (const name of Object.keys(options)) {
+            if (name === 'tabSize') {
+                all.indentUnit = options.tabSize;
+                continue;
             }
             
-            this._Ace = CodeMirror(this._Element, all);
-            CodeMirror.commands.save = this.save.bind(this);
+            if (name === 'wrap') {
+                all.lineWrapping = options.wrap;
+                continue;
+            }
             
-            if (Value)
-                this._initValue(this._FileName, Value);
-            
-            this._Ace.on('change', () => {
-                this._Emitter.emit('change');
-            });
-            
-            addCommands(this);
-            
-            fn();
-            
-            this.setOptions(options);
-            this._initSocket();
-        },
+            all[name] = options[name];
+        }
+        
+        this._Ace = CodeMirror(this._Element, all);
+        CodeMirror.commands.save = this.save.bind(this);
+        
+        if (Value)
+            this._initValue(this._FileName, Value);
+        
+        this._Ace.on('change', () => {
+            this._Emitter.emit('change');
+        });
+        
+        addCommands(this);
+        
+        fn();
+        
+        this.setOptions(options);
+        this._initSocket();
+    },
     ]);
 };
 
@@ -195,7 +188,7 @@ Dword.prototype.evaluate = function() {
     const focus = this.focus.bind(this);
     const {_FileName, _TITLE} = this;
     
-    const isJS = /\.js$/.test(_FileName);
+    const isJS = _FileName.endsWith('.js');
     
     let msg;
     
@@ -322,9 +315,9 @@ Dword.prototype.setValueFirst = function(name, value) {
     const dword = this;
     
     dword.setValue(value);
-    // fix of linenumbers overlap
+        // fix of linenumbers overlap
     dword.refresh();
-    /*
+        /*
      * getCursor returns another
      * information so set
      * cursor manually
@@ -377,6 +370,7 @@ Dword.prototype.setOption = function(name, value) {
         _Ace.display.wrapper.style.fontSize = `${value}px`;
         break;
     }
+    
     
     return this;
 };
@@ -516,7 +510,7 @@ Dword.prototype._writeHttp = function(path, result) {
     restafary.write(path, result, onSave);
 };
 
-Dword.prototype._onSave = require('./_on-save');
+Dword.prototype._onSave = _onSave;
 Dword.prototype._doDiff = async function(path) {
     const value = this.getValue();
     
@@ -682,8 +676,8 @@ Dword.prototype._loadFilesAll = async function() {
         `${lint}lint`,
         `${lint}javascript-lint`,
         `${lint}json-lint`,
-        //client + 'show-trailing',
-        `${client}use-soft-tabs`,
+                //client + 'show-trailing',
+`${client}use-soft-tabs`,
         `${DIR}jshint/dist/jshint`,
         `${DIR}cm-searchbox/lib/searchbox`,
         `${DIR}cm-show-invisibles/lib/show-invisibles`,
@@ -692,21 +686,21 @@ Dword.prototype._loadFilesAll = async function() {
     ]
         .filter(Boolean)
         .concat([
-            'display/autorefresh',
-            'comment/comment',
-            'comment/continuecomment',
-            'mode/loadmode',
-            'mode/overlay',
-            'search/searchcursor',
-            'search/match-highlighter',
-            'search/matchesonscrollbar',
-            'dialog/dialog',
-            'scroll/annotatescrollbar',
-            'fold/xml-fold',
-            'edit/closebrackets',
-            'edit/matchbrackets',
-            'edit/matchtags',
-        ].map((name) => addon + name))
+        'display/autorefresh',
+        'comment/comment',
+        'comment/continuecomment',
+        'mode/loadmode',
+        'mode/overlay',
+        'search/searchcursor',
+        'search/match-highlighter',
+        'search/matchesonscrollbar',
+        'dialog/dialog',
+        'scroll/annotatescrollbar',
+        'fold/xml-fold',
+        'edit/closebrackets',
+        'edit/matchbrackets',
+        'edit/matchtags',
+    ].map((name) => addon + name))
         .map((name) => `${name}.js`));
     
     await load(urlJS);

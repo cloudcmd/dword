@@ -1,9 +1,7 @@
-'use strict';
+import {promisify} from 'es6-promisify';
+import * as restafary from 'restafary/client';
 
-const {promisify} = require('es6-promisify');
-const restafary = require('restafary/client');
-
-module.exports = Story;
+export default Story;
 
 function Story() {
     if (!(this instanceof Story))

@@ -1,28 +1,25 @@
-'use strict';
+import path, {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {restafary} from 'restafary';
+import restbox from 'restbox';
+import socketFile from 'socket-file';
+import {Router} from 'express';
+import currify from 'currify';
+import join from 'join-io';
+import editFn from './edit.js';
 
-const isUndefined = (a) => typeof a === 'undefined';
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const DIR_ROOT = `${__dirname}/..`;
-const path = require('path');
-
-const restafary = require('restafary');
-const restbox = require('restbox');
-const socketFile = require('socket-file');
-const {Router} = require('express');
-const currify = require('currify');
-const join = require('join-io');
-
-const editFn = require('./edit');
-
+const isUndefined = (a) => typeof a === 'undefined';
 const optionsFn = currify(configFn);
-const dword = currify(_dword);
 const restboxFn = currify(_restboxFn);
 const joinFn = currify(_joinFn);
 const restafaryFn = currify(_restafaryFn);
 
+const isFn = (a) => typeof a === 'function';
 const isDev = process.env.NODE_ENV === 'development';
 
-const isFn = (a) => typeof a === 'function';
 const maybe = (fn) => {
     if (isFn(fn))
         return fn();
@@ -35,7 +32,7 @@ const cut = currify((prefix, req, res, next) => {
     next();
 });
 
-module.exports = (options) => {
+export const dword = currify((options) => {
     options = options || {};
     
     const router = Router();
@@ -47,31 +44,31 @@ module.exports = (options) => {
     } = options;
     
     router
-        .route(`${prefix}/*`)
+        .route(`${prefix}/*path`)
         .all(cut(prefix))
-        .get(dword(prefix))
+        .get(dist(prefix))
         .get(optionsFn(options))
         .get(editFn)
         .get(modulesFn)
         .get(restboxFn({
-            root,
-            dropbox,
-            dropboxToken,
-        }))
+        root,
+        dropbox,
+        dropboxToken,
+    }))
         .get(restafaryFn(root))
         .get(joinFn(options))
         .get(staticFn)
         .put(restboxFn({
-            root,
-            dropbox,
-            dropboxToken,
-        }))
+        root,
+        dropbox,
+        dropboxToken,
+    }))
         .put(restafaryFn(root));
     
     return router;
-};
+});
 
-module.exports.listen = (socket, options) => {
+dword.listen = (socket, options) => {
     options = options || {};
     
     const {
@@ -95,16 +92,6 @@ function checkOption(isOption) {
         return true;
     
     return isOption;
-}
-
-function _dword(prefix, req, res, next) {
-    if (/^\/dword\.js(\.map)?$/.test(req.url))
-        req.url = `/dist${req.url}`;
-    
-    if (isDev)
-        req.url = req.url.replace(/^\/dist\//, '/dist-dev/');
-    
-    next();
 }
 
 function configFn(o, req, res, next) {
@@ -193,3 +180,13 @@ function staticFn(req, res) {
     const file = path.normalize(DIR_ROOT + req.url);
     res.sendFile(file);
 }
+
+const dist = currify((prefix, req, res, next) => {
+    if (/^\/dword\.js(\.map)?$/.test(req.url))
+        req.url = `/dist${req.url}`;
+
+    if (isDev)
+        req.url = req.url.replace(/^\/dist\//, '/dist-dev/');
+
+    next();
+});

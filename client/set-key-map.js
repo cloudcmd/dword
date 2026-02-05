@@ -1,5 +1,3 @@
-'use strict';
-
-module.exports = function(keyMap) {
+export default function(keyMap) {
     this.setOption('keyMap', keyMap);
-};
+}

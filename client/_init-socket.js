@@ -1,8 +1,6 @@
-'use strict';
-
 /* global io */
-const {applyPatch} = require('daffy');
-const {alert} = require('smalltalk');
+import {applyPatch} from 'daffy';
+import {alert} from 'smalltalk';
 
 const getHost = () => {
     const l = location;
@@ -10,7 +8,7 @@ const getHost = () => {
     return l.origin || l.protocol + '//' + l.host;
 };
 
-module.exports = function() {
+export default function() {
     const dword = this;
     const href = getHost();
     const FIVE_SECONDS = 5000;
@@ -70,10 +68,10 @@ module.exports = function() {
     });
     
     socket.on('disconnect', () => {
-        dword.save.patch = self._patchHttp;
+        dword.save.patch = globalThis._patchHttp;
     });
     
     socket.on('err', (error) => {
         alert(this._TITLE, error);
     });
-};
+}

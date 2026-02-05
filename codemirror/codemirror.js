@@ -1,4 +1,3 @@
-'use strict';
-
-module.exports = require('codemirror/src/codemirror').default;
+import codemirror from 'codemirror';
+export default codemirror;
 

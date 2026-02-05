@@ -60,8 +60,9 @@ For this purpuse API could be used.
 Middleware of `dword`. Options could be omitted.
 
 ```js
-const dword = require('dword');
-const express = require('express');
+import {dword} from 'dword';
+import express from 'express';
+
 const app = express();
 
 app.use(dword({
@@ -81,8 +82,8 @@ app.listen(31_337);
 Could be used with [socket.io](http://socket.io "Socket.io") to handle editor events with.
 
 ```js
-const io = require('socket.io');
-const socket = io.listen(server);
+import {Server} from 'socket.io';
+const socket = new Server(server);
 
 dword.listen(socket, {
     // optional
