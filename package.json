@@ -42,7 +42,7 @@
     "express": "^5.2.1",
     "join-io": "^5.0.0",
     "readjson": "^2.0.1",
-    "restafary": "^12.0.0",
+    "restafary": "^13.0.1",
     "restbox": "^4.0.1",
     "socket-file": "^7.0.0",
     "socket.io": "^4.0.0",
