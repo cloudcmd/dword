@@ -71,7 +71,7 @@
     "once": "^1.4.0",
     "putout": "^41.18.0",
     "rimraf": "^6.1.2",
-    "smalltalk": "^4.0.6",
+    "smalltalk": "^5.0.0",
     "style-loader": "^3.2.1",
     "url-loader": "^4.0.0",
     "webpack": "^5.1.3",
