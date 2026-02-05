@@ -1,3 +1,24 @@
+2026.02.05, v16.0.0
+
+feature:
+- c189463 dword: migrate to ESM
+- 7dd2705 dword: drop support of node < 22
+- 28cf7ad dword: webpack-cli v6.0.1
+- f4d9398 dword: try-to-catch v4.0.5
+- 98681d0 dword: style-loader v4.0.0
+- e74b126 dword: smalltalk v5.0.0
+- f5c1f3c dword: rimraf v6.1.2
+- d12dc81 dword: restafary v13.0.1
+- fadf67b dword: putout v41.18.0
+- 09740ed dword: madrun v12.1.3
+- f538eb8 dword: express v5.2.1
+- 055166c dword: eslint-plugin-putout v30.0.2
+- 2107bce dword: eslint v9.39.2
+- dc51660 dword: cssnano v7.1.2
+- cd9a92f dword: css-loader v7.1.3
+- d1ab090 dword: codemirror v6.0.2
+- ca5bcc6 dword: babel-loader v10.0.0
+
 2024.03.16, v15.0.4
 
 feature:
