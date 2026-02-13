@@ -1,3 +1,8 @@
+2026.02.13, v16.0.1
+
+feature:
+- f850ae4 dword: socket-file v8.0.0
+
 2026.02.05, v16.0.0
 
 feature:
