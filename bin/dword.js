@@ -98,7 +98,11 @@ function usage() {
 }
 
 async function help() {
-    const bin = await import('../json/bin');
+    const {default: bin} = await import('../json/bin.json', {
+        with: {
+            type: 'json',
+        },
+    });
     
     usage();
     console.log('Options:');
