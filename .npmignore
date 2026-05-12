@@ -1,18 +1,20 @@
+*.config.*
+*.log
+*.lock
+
 .*
-!.jshintrc
 ./src/index.js
+
 bower.json
 webpack.config.js
-yarn-error.log
 
 client
-!client/codemirror
 modules/execon
-
 modules/jshint
+coverage
+
+!.jshintrc
+!client/codemirror
 !modules/jshint/dist
 !modules/jshint/package.json
 !modules/jshint/README.md
-
-coverage
-*.config.*

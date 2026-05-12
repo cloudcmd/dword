@@ -87,74 +87,75 @@ Dword.prototype._init = async function(fn) {
     await loadFiles(this._PREFIX);
     exec.series([
         async (callback) => {
-        const [error, config] = await tryToCatch(load.json, this._PREFIX + '/edit.json');
-        
-        if (error)
-            return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
-        
-        this._Config = config;
-        callback();
-    },
+            const [error, config] = await tryToCatch(load.json, this._PREFIX + '/edit.json');
+            
+            if (error)
+                return smalltalk.alert(this._TITLE, 'Could not load edit.json!');
+            
+            this._Config = config;
+            callback();
+        },
         async (cb) => {
-        await this._loadFilesAll();
-        await this._loadStyles();
-        cb();
-    },
+            await this._loadFilesAll();
+            await this._loadStyles();
+            cb();
+        },
         () => {
-        const {options} = this._Config;
-        const Value = this._Value;
-        const all = {
-            autofocus: true,
-            autoRefresh: true,
-            lineNumbers: true,
-            showTrailing: true,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            matchTags: false,
-            gutters: ['CodeMirror-lint-markers'],
-            maxInvisibles: 32,
-            searchbox: true,
-            continueComments: true,
+            const {options} = this._Config;
+            const Value = this._Value;
             
-            highlightSelectionMatches: true,
-        };
-        
-        this._Emitter = Emitify();
-        this._Emitter.on('auth', (username, password) => {
-            this._socket.emit('auth', username, password);
-        });
-        
-        for (const name of Object.keys(options)) {
-            if (name === 'tabSize') {
-                all.indentUnit = options.tabSize;
-                continue;
+            const all = {
+                autofocus: true,
+                autoRefresh: true,
+                lineNumbers: true,
+                showTrailing: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                matchTags: false,
+                gutters: ['CodeMirror-lint-markers'],
+                maxInvisibles: 32,
+                searchbox: true,
+                continueComments: true,
+                
+                highlightSelectionMatches: true,
+            };
+            
+            this._Emitter = Emitify();
+            this._Emitter.on('auth', (username, password) => {
+                this._socket.emit('auth', username, password);
+            });
+            
+            for (const name of Object.keys(options)) {
+                if (name === 'tabSize') {
+                    all.indentUnit = options.tabSize;
+                    continue;
+                }
+                
+                if (name === 'wrap') {
+                    all.lineWrapping = options.wrap;
+                    continue;
+                }
+                
+                all[name] = options[name];
             }
             
-            if (name === 'wrap') {
-                all.lineWrapping = options.wrap;
-                continue;
-            }
+            this._Ace = CodeMirror(this._Element, all);
+            CodeMirror.commands.save = this.save.bind(this);
             
-            all[name] = options[name];
-        }
-        
-        this._Ace = CodeMirror(this._Element, all);
-        CodeMirror.commands.save = this.save.bind(this);
-        
-        if (Value)
-            this._initValue(this._FileName, Value);
-        
-        this._Ace.on('change', () => {
-            this._Emitter.emit('change');
-        });
-        
-        addCommands(this);
-        
-        fn();
-        
-        this.setOptions(options);
-        this._initSocket();
-    },
+            if (Value)
+                this._initValue(this._FileName, Value);
+            
+            this._Ace.on('change', () => {
+                this._Emitter.emit('change');
+            });
+            
+            addCommands(this);
+            
+            fn();
+            
+            this.setOptions(options);
+            this._initSocket();
+        },
     ]);
 };
 
@@ -315,9 +316,9 @@ Dword.prototype.setValueFirst = function(name, value) {
     const dword = this;
     
     dword.setValue(value);
-        // fix of linenumbers overlap
+    // fix of linenumbers overlap
     dword.refresh();
-        /*
+    /*
      * getCursor returns another
      * information so set
      * cursor manually
@@ -370,7 +371,6 @@ Dword.prototype.setOption = function(name, value) {
         _Ace.display.wrapper.style.fontSize = `${value}px`;
         break;
     }
-    
     
     return this;
 };
@@ -671,37 +671,38 @@ Dword.prototype._loadFilesAll = async function() {
     const addon = `${dir}addon/`;
     const lint = `${addon}lint/`;
     
-    const urlJS = prefix + join([
-        `${dir}mode/meta`,
-        `${lint}lint`,
-        `${lint}javascript-lint`,
-        `${lint}json-lint`,
-                //client + 'show-trailing',
-`${client}use-soft-tabs`,
-        `${DIR}jshint/dist/jshint`,
-        `${DIR}cm-searchbox/lib/searchbox`,
-        `${DIR}cm-show-invisibles/lib/show-invisibles`,
-        getKeyMapPath(dir, this._Config),
-        `${dir}keymap/vim`,
-    ]
-        .filter(Boolean)
-        .concat([
-        'display/autorefresh',
-        'comment/comment',
-        'comment/continuecomment',
-        'mode/loadmode',
-        'mode/overlay',
-        'search/searchcursor',
-        'search/match-highlighter',
-        'search/matchesonscrollbar',
-        'dialog/dialog',
-        'scroll/annotatescrollbar',
-        'fold/xml-fold',
-        'edit/closebrackets',
-        'edit/matchbrackets',
-        'edit/matchtags',
-    ].map((name) => addon + name))
-        .map((name) => `${name}.js`));
+    const urlJS = prefix +
+        join([
+            `${dir}mode/meta`,
+            `${lint}lint`,
+            `${lint}javascript-lint`,
+            `${lint}json-lint`,
+            //client + 'show-trailing',
+            `${client}use-soft-tabs`,
+            `${DIR}jshint/dist/jshint`,
+            `${DIR}cm-searchbox/lib/searchbox`,
+            `${DIR}cm-show-invisibles/lib/show-invisibles`,
+            getKeyMapPath(dir, this._Config),
+            `${dir}keymap/vim`,
+        ]
+            .filter(Boolean)
+            .concat([
+                'display/autorefresh',
+                'comment/comment',
+                'comment/continuecomment',
+                'mode/loadmode',
+                'mode/overlay',
+                'search/searchcursor',
+                'search/match-highlighter',
+                'search/matchesonscrollbar',
+                'dialog/dialog',
+                'scroll/annotatescrollbar',
+                'fold/xml-fold',
+                'edit/closebrackets',
+                'edit/matchbrackets',
+                'edit/matchtags',
+            ].map((name) => addon + name))
+            .map((name) => `${name}.js`));
     
     await load(urlJS);
 };

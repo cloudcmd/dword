@@ -54,10 +54,10 @@ function main(name) {
     app
         .use(express.static(DIR))
         .use(dword({
-        online: false,
-        diff: true,
-        zip: true,
-    }));
+            online: false,
+            diff: true,
+            zip: true,
+        }));
     
     server.listen(port, ip);
     

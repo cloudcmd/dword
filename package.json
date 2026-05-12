@@ -83,7 +83,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cloudcmd/dword"
+    "url": "git+https://github.com/cloudcmd/dword"
   },
   "keywords": [
     "editor",

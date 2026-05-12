@@ -1,5 +1,6 @@
 import path, {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import process from 'node:process';
 import {restafary} from 'restafary';
 import restbox from 'restbox';
 import {socketFile} from 'socket-file';
@@ -51,18 +52,18 @@ export const dword = currify((options) => {
         .get(editFn)
         .get(modulesFn)
         .get(restboxFn({
-        root,
-        dropbox,
-        dropboxToken,
-    }))
+            root,
+            dropbox,
+            dropboxToken,
+        }))
         .get(restafaryFn(root))
         .get(joinFn(options))
         .get(staticFn)
         .put(restboxFn({
-        root,
-        dropbox,
-        dropboxToken,
-    }))
+            root,
+            dropbox,
+            dropboxToken,
+        }))
         .put(restafaryFn(root));
     
     return router;
@@ -184,9 +185,9 @@ function staticFn(req, res) {
 const dist = currify((prefix, req, res, next) => {
     if (/^\/dword\.js(\.map)?$/.test(req.url))
         req.url = `/dist${req.url}`;
-
+    
     if (isDev)
         req.url = req.url.replace(/^\/dist\//, '/dist-dev/');
-
+    
     next();
 });
