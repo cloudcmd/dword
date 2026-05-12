@@ -5,12 +5,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NAME: dword
     strategy:
       matrix:
         node-version:
           - 22.x
           - 24.x
-          - 26.x
+          - 25.x
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -24,7 +26,32 @@ jobs:
         run: bun i redrun -g --no-save
       - name: Install
         run: bun i --no-save
-      - name: Bootstrap
-        run: redrun bootstrap
       - name: Lint
-        run: redrun lint
+        run: redrun fix:lint
+      - name: Install Rust
+        run: rustup update
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Typos Install
+        run: cargo install typos-cli || echo 'already installed'
+      - name: Typos
+        run: typos --write-changes
+      - name: Commit fixes
+        uses: EndBug/add-and-commit@v9
+        continue-on-error: true
+        with:
+          message: "chore: ${{ env.NAME }}: actions: lint ☘️"
+      - name: Coverage
+        run: redrun coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
