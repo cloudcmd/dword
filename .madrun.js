@@ -4,6 +4,8 @@ export default {
     'start': () => 'bin/dword.js package.json',
     'start:dev': async () => `NODE_ENV=development ${await run('start')}`,
     'lint': () => `putout .`,
+    'test': () => 'echo "no tests for now"',
+    'coverage': () => 'echo "no coverage now"',
     'fresh:lint': () => run('lint', '--fresh'),
     'lint:fresh': () => run('lint', '--fresh'),
     'fix:lint': () => run('lint', '--fix'),
