@@ -42,3 +42,31 @@ jobs:
           message: "chore: ${{ env.NAME }}: actions: lint ☘️"
       - name: Coverage
         run: redrun coverage
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+      - name: Install Redrun
+        run: bun i redrun -g --no-save
+      - name: Install
+        run: bun i --no-save
+      - name: Install Playwright
+        run: bunx playwright install --with-deps chromium
+      - name: Build
+        run: redrun build
+      - name: E2E
+        run: redrun test:e2e
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: test-results

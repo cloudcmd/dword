@@ -28,12 +28,14 @@ export default {
         CodeMirror: `${dir}/codemirror.js`,
     },
     output: {
-        library: 'CodeMirror',
+        library: {
+            name: 'CodeMirror',
+            export: 'default',
+            type: 'var',
+        },
         filename: 'codemirror.js',
         path: isDev ? distDev : dist,
         pathinfo: isDev,
-        libraryTarget: 'var',
-        libraryExport: 'default',
         devtoolModuleFilenameTemplate,
     },
     module: {

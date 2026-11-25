@@ -18,3 +18,5 @@ coverage
 !modules/jshint/dist
 !modules/jshint/package.json
 !modules/jshint/README.md
+e2e
+test-results

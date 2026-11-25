@@ -5,6 +5,10 @@
         },
         "client/dword.js": {
             "remove-console": "off"
+        },
+        "e2e": {
+            "tape/jest": "off",
+            "tape/convert-emitter-to-promise": "off"
         }
     },
     "ignore": [
