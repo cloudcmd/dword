@@ -2223,7 +2223,7 @@
     while (same < l && prevInput.charCodeAt(same) == text.charCodeAt(same)) ++same;
     var inserted = text.slice(same), textLines = splitLines(inserted);
 
-    // When pasing N lines into N selections, insert one line per selection
+    // When parsing N lines into N selections, insert one line per selection
     var multiPaste = cm.state.pasteIncoming && textLines.length > 1 && doc.sel.ranges.length == textLines.length;
 
     // Normal behavior is to insert the new text into every selection

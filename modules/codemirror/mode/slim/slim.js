@@ -24,7 +24,7 @@
       sass: "text/x-sass",
       scss: "text/x-scss",
       less: "text/x-less",
-      styl: "text/x-styl", // no highlighting so far
+      style: "text/x-styl", // no highlighting so far
       coffee: "coffeescript",
       asciidoc: "text/x-asciidoc",
       markdown: "text/x-markdown",

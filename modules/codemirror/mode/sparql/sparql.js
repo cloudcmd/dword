@@ -33,9 +33,9 @@ CodeMirror.defineMode("sparql", function(config) {
                              "true", "false", "with",
                              "data", "copy", "to", "move", "add", "create", "drop", "clear", "load", "into"]);
   var operatorChars = /[*+\-<>=&|\^\/!\?]/;
-  var PN_CHARS = "[A-Za-z_\\-0-9]";
+  var ON_CHARS = "[A-Za-z_\\-0-9]";
   var PREFIX_START = new RegExp("[A-Za-z]");
-  var PREFIX_REMAINDER = new RegExp("((" + PN_CHARS + "|\\.)*(" + PN_CHARS + "))?:");
+  var PREFIX_REMAINDER = new RegExp("((" + ON_CHARS + "|\\.)*(" + ON_CHARS + "))?:");
 
   function tokenBase(stream, state) {
     var ch = stream.next();
@@ -67,7 +67,7 @@ CodeMirror.defineMode("sparql", function(config) {
       return "operator";
     }
     else if (ch == ":") {
-      eatPnLocal(stream);
+      eatOnLocal(stream);
       return "atom";
     }
     else if (ch == "@") {
@@ -75,7 +75,7 @@ CodeMirror.defineMode("sparql", function(config) {
       return "meta";
     }
     else if (PREFIX_START.test(ch) && stream.match(PREFIX_REMAINDER)) {
-        eatPnLocal(stream);
+        eatOnLocal(stream);
         return "atom";
     }
     stream.eatWhile(/[_\w\d]/);
@@ -88,7 +88,7 @@ CodeMirror.defineMode("sparql", function(config) {
       return "variable";
   }
 
-  function eatPnLocal(stream) {
+  function eatOnLocal(stream) {
     stream.match(/(\.(?=[\w_\-\\%])|[:\w_-]|\\[-\\_~.!$&'()*+,;=/?#@%]|%[a-f\d][a-f\d])+/i);
   }
 

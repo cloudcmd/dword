@@ -735,12 +735,12 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
                     "reflect refract matrixCompMult " +
                     "lessThan lessThanEqual greaterThan greaterThanEqual " +
                     "equal notEqual any all not " +
-                    "texture1D texture1DProj texture1DLod texture1DProjLod " +
-                    "texture2D texture2DProj texture2DLod texture2DProjLod " +
-                    "texture3D texture3DProj texture3DLod texture3DProjLod " +
-                    "textureCube textureCubeLod " +
+                    "texture1D texture1DProj texture1DLoad texture1DProjLoad " +
+                    "texture2D texture2DProj texture2DLoad texture2DProjLoad " +
+                    "texture3D texture3DProj texture3DLoad texture3DProjLoad " +
+                    "textureCube textureCubeLoad " +
                     "shadow1D shadow2D shadow1DProj shadow2DProj " +
-                    "shadow1DLod shadow2DLod shadow1DProjLod shadow2DProjLod " +
+                    "shadow1DLoad shadow2DLoad shadow1DProjLoad shadow2DProjLoad " +
                     "dFdx dFdy fwidth " +
                     "noise1 noise2 noise3 noise4"),
     atoms: words("true false " +

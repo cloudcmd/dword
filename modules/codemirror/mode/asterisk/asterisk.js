@@ -28,7 +28,7 @@
 "use strict";
 
 CodeMirror.defineMode("asterisk", function() {
-  var atoms    = ["exten", "same", "include","ignorepat","switch"],
+  var atoms    = ["extend", "same", "include","ignorepat","switch"],
       dpcmd    = ["#include","#exec"],
       apps     = [
                   "addqueuemember","adsiprog","aelsub","agentlogin","agentmonitoroutgoing","agi",
@@ -170,7 +170,7 @@ CodeMirror.defineMode("asterisk", function() {
           return "error";
         }
       } else if(state.extenExten) {
-        // set exten and priority
+        // set extend and priority
         state.extenExten = false;
         state.extenPriority = true;
         stream.eatWhile(/[^,]/);

@@ -79,13 +79,13 @@
           stream.next();
           return "string";
         }
-        else if (state.inbraces > 0 && ch ==")") {
+        else if (state.embraces > 0 && ch ==")") {
           stream.next()
-          state.inbraces--;
+          state.embraces--;
         }
         else if (ch == "(") {
           stream.next()
-          state.inbraces++;
+          state.embraces++;
         }
         else if (state.inbrackets > 0 && ch =="]") {
           stream.next()
@@ -141,7 +141,7 @@
         } else if (ch = stream.eat(/\{|%/)) {
           //Cache close tag
           state.intag = ch;
-          state.inbraces = 0;
+          state.embraces = 0;
           state.inbrackets = 0;
           if(ch == "{") {
             state.intag = "}";
@@ -158,7 +158,7 @@
         else if (!stream.eol()) {
           state.intag = true;
           state.lineTag = true;
-          state.inbraces = 0;
+          state.embraces = 0;
           state.inbrackets = 0;
           return "tag";
         }
@@ -171,12 +171,12 @@
         return {
           tokenize: tokenBase,
           inbrackets:0,
-          inbraces:0
+          embraces:0
         };
       },
       token: function(stream, state) {
         var style = state.tokenize(stream, state);
-        if (stream.eol() && state.lineTag && !state.instring && state.inbraces == 0 && state.inbrackets == 0) {
+        if (stream.eol() && state.lineTag && !state.instring && state.embraces == 0 && state.inbrackets == 0) {
           //Close line statement at the EOL
           state.intag = false
           state.lineTag = false

@@ -21,7 +21,7 @@ CodeMirror.defineMode("oz", function (conf) {
   var doubleOperators = /(<-)|(:=)|(=<)|(>=)|(<=)|(<:)|(>:)|(=:)|(\\=)|(\\=:)|(!!)|(==)|(::)/;
   var tripleOperators = /(:::)|(\.\.\.)|(=<:)|(>=:)/;
 
-  var middle = ["in", "then", "else", "of", "elseof", "elsecase", "elseif", "catch",
+  var middle = ["in", "then", "else", "of", "elseif", "elsecase", "elseif", "catch",
     "finally", "with", "require", "prepare", "import", "export", "define", "do"];
   var end = ["end"];
 

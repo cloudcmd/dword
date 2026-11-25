@@ -19,7 +19,7 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 - Syntax highlighting based on extension of file for over 90 languages.
 - Built-in `emmet` (for html files)
 - Drag n drop (drag file from desktop to editor).
-- Configurable options ([json/edit.json][edit.json] could be overriden by `~/.dword.json`)
+- Configurable options ([json/edit.json][edit.json] could be overridden by `~/.dword.json`)
 
 ## Install
 
@@ -51,7 +51,7 @@ Usage: `dword [filename]`
 ## API
 
 dword could be used as middleware for [express](http://expressjs.com "Express").
-For this purpuse API could be used.
+For this purpose API could be used.
 
 ### Server
 

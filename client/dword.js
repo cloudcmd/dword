@@ -344,7 +344,7 @@ Dword.prototype.setValueFirst = function(name, value) {
  * and when trying to check that fact that file was changed
  * it's harder to do when you expect
  * to read saved file without change and
- * receive some changes insteed.
+ * receive some changes instead.
  */
 function getLineSeparator(value) {
     if (!isString(value))
@@ -454,14 +454,14 @@ Dword.prototype.selectAll = function() {
 };
 
 Dword.prototype.copyToClipboard = function() {
-    const msg = 'Could not copy, use &ltCtrl&gt + &ltС&gt insted!';
+    const msg = 'Could not copy, use &ltCtrl&gt + &ltС&gt instead!';
     
     if (!this._clipboard('copy'))
         smalltalk.alert(this._TITLE, msg);
 };
 
 Dword.prototype.cutToClipboard = function() {
-    const msg = 'Could not cut, use &ltCtrl&gt + &ltX&gt insted!';
+    const msg = 'Could not cut, use &ltCtrl&gt + &ltX&gt instead!';
     
     if (!this._clipboard('cut'))
         return smalltalk.alert(this._TITLE, msg);
@@ -470,7 +470,7 @@ Dword.prototype.cutToClipboard = function() {
 };
 
 Dword.prototype.pasteFromClipboard = function() {
-    const msg = 'Could not paste, use &ltCtrl&gt + &ltV&gt insted!';
+    const msg = 'Could not paste, use &ltCtrl&gt + &ltV&gt instead!';
     
     if (!this._clipboard('paste'))
         smalltalk.alert(this._TITLE, msg);

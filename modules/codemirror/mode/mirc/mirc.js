@@ -35,7 +35,7 @@ CodeMirror.defineMode("mirc", function() {
                             "$finddirn $findfile $findfilen $findtok $fline $floor $fopen $fread $fserve " +
                             "$fulladdress $fulldate $fullname $fullscreen $get $getdir $getdot $gettok $gmt " +
                             "$group $halted $hash $height $hfind $hget $highlight $hnick $hotline " +
-                            "$hotlinepos $ial $ialchan $ibl $idle $iel $ifmatch $ignore $iif $iil " +
+                            "$hotlinepos $ial $ialchan $ibl $idle $iel $ifmatch $ignore $if $iil " +
                             "$inelipse $ini $inmidi $inpaste $inpoly $input $inrect $inroundrect " +
                             "$insong $instok $int $inwave $ip $isalias $isbit $isdde $isdir $isfile " +
                             "$isid $islower $istok $isupper $keychar $keyrpt $keyval $knick $lactive " +
@@ -52,7 +52,7 @@ CodeMirror.defineMode("mirc", function() {
                             "$sdir $send $server $serverip $sfile $sha1 $shortfn $show $signal $sin " +
                             "$site $sline $snick $snicks $snotify $sock $sockbr $sockerr $sockname " +
                             "$sorttok $sound $sqrt $ssl $sreq $sslready $status $strip $str $stripped " +
-                            "$syle $submenu $switchbar $tan $target $ticks $time $timer $timestamp " +
+                            "$style $submenu $switchbar $tan $target $ticks $time $timer $timestamp " +
                             "$timestampfmt $timezone $tip $titlebar $toolbar $treebar $trust $ulevel " +
                             "$ulist $upper $uptime $url $usermode $v1 $v2 $var $vcmd $vcmdstat $vcmdver " +
                             "$version $vnick $vol $wid $width $wildsite $wildtok $window $wrap $xor");

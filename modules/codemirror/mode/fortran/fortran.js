@@ -45,7 +45,7 @@ CodeMirror.defineMode("fortran", function() {
                   "write"]);
   var builtins = words(["abort", "abs", "access", "achar", "acos",
                           "adjustl", "adjustr", "aimag", "aint", "alarm",
-                          "all", "allocated", "alog", "amax", "amin",
+                          "all", "allocated", "along", "amax", "amin",
                           "amod", "and", "anint", "any", "asin",
                           "associated", "atan", "besj", "besjn", "besy",
                           "besyn", "bit_size", "btest", "cabs", "ccos",

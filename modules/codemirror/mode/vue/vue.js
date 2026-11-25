@@ -42,7 +42,7 @@
       ["lang", /^sass$/i, "sass"],
       ["lang", /^less$/i, "text/x-less"],
       ["lang", /^scss$/i, "text/x-scss"],
-      ["type", /^(text\/)?(x-)?styl(us)?$/i, "stylus"],
+      ["type", /^(text\/)?(x-)?style(us)?$/i, "stylus"],
       ["type", /^text\/sass/i, "sass"],
       ["type", /^(text\/)?(x-)?scss$/i, "text/x-scss"],
       ["type", /^(text\/)?(x-)?less$/i, "text/x-less"]

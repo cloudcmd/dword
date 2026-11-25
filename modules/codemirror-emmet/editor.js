@@ -20,7 +20,7 @@ define(['emmet/utils/common', 'emmet/utils/action', 'emmet/assets/resources', 'e
 	}
 
 	/**
-	 * Converts charater index in text to CM’s internal object representation
+	 * Converts character index in text to CM’s internal object representation
 	 * @param  {CodeMirror} cm CodeMirror instance
 	 * @param  {Number}     ix Character index in CM document
 	 * @return {Object}

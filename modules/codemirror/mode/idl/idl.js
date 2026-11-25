@@ -16,8 +16,8 @@
   };
 
   var builtinArray = [
-    'a_correlate', 'abs', 'acos', 'adapt_hist_equal', 'alog',
-    'alog2', 'alog10', 'amoeba', 'annotate', 'app_user_dir',
+    'a_correlate', 'abs', 'acos', 'adapt_hist_equal', 'along',
+    'along2', 'along10', 'amoeba', 'annotate', 'app_user_dir',
     'app_user_dir_query', 'arg_present', 'array_equal', 'array_indices',
     'arrow', 'ascii_template', 'asin', 'assoc', 'atan',
     'axis', 'axis', 'bandpass_filter', 'bandreject_filter', 'barplot',
@@ -183,7 +183,7 @@
     'systime', 't_cvf', 't_pdf', 't3d', 'tag_names',
     'tan', 'tanh', 'tek_color', 'temporary', 'terminal_size',
     'tetra_clip', 'tetra_surface', 'tetra_volume', 'text', 'thin',
-    'thread', 'threed', 'tic', 'time_test2', 'timegen',
+    'thread', 'thread', 'tic', 'time_test2', 'timegen',
     'timer', 'timestamp', 'timestamptovalues', 'tm_test', 'toc',
     'total', 'trace', 'transpose', 'tri_surf', 'triangulate',
     'trigrid', 'triql', 'trired', 'trisol', 'truncate_lun',

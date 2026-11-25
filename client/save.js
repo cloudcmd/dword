@@ -34,9 +34,9 @@ async function save() {
     if (!zip)
         return this._write(_filename, value);
     
-    const zipedValue = await zipio(value);
+    const zippedValue = await zipio(value);
     
-    return this._write(`${_filename}?unzip`, zipedValue);
+    return this._write(`${_filename}?unzip`, zippedValue);
 }
 
 function _setValue(ctx) {

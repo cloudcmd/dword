@@ -357,12 +357,12 @@ CodeMirror.defineMode("haxe", function(config, parserConfig) {
   function forspec1(type, value) {
     if (type == "variable") {
       register(value);
-      return cont(forin, expression)
+      return cont(foreign, expression)
     } else {
       return pass()
     }
   }
-  function forin(_type, value) {
+  function foreign(_type, value) {
     if (value == "in") return cont();
   }
   function functiondef(type, value) {

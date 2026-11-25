@@ -898,7 +898,7 @@ Make sure `coordsChar` doesn't return positions inside collapsed ranges.
 
 ### New features
 
-New theme: [darcula](https://codemirror.net/5/demo/theme.html#darcula).
+New theme: [dracula](https://codemirror.net/5/demo/theme.html#darcula).
 
 [dialog addon](https://codemirror.net/5/doc/manual.html#addon_dialog): Add a CSS class (`dialog-opened`) to the editor when a dialog is open.
 
@@ -938,7 +938,7 @@ Fix issue that prevented edits whose origin starts with `+` from being combined 
 
 [show-hint addon](https://codemirror.net/5/doc/manual.html#addon_show-hint): Make `fromList` completion strategy act on the current token up to the cursor, rather than the entire token.
 
-[markdown mode](https://codemirror.net/5/mode/markdown/): Fix a regexp with potentially exponental complexity.
+[markdown mode](https://codemirror.net/5/mode/markdown/): Fix a regexp with potentially exponential complexity.
 
 ### New features
 
