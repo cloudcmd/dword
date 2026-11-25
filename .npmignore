@@ -6,7 +6,7 @@
 ./src/index.js
 
 bower.json
-webpack.config.js
+rspack.config.js
 
 client
 modules/execon
