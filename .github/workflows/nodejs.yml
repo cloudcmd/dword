@@ -1,4 +1,6 @@
 name: Node CI
+permissions:
+  contents: write
 on:
   - push
   - pull_request
@@ -13,36 +15,26 @@ jobs:
           - 22.x
           - 24.x
           - 26.x
+          - ">= 27.0.0-alpha.0 <= 27.x"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Redrun
-        run: bun i redrun -g --no-save
+        run: bun i redrun madrun -g --no-save
       - name: Install
         run: bun i --no-save
+      - name: Init Madrun
+        run: madrun --init
       - name: Lint
         run: redrun fix:lint
-      - name: Install Rust
-        run: rustup update
-      - uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Typos Install
-        run: cargo install typos-cli || echo 'already installed'
       - name: Typos
-        run: typos --write-changes
+        uses: coderaiser/typos.ai@v2.0.0
       - name: Commit fixes
         uses: EndBug/add-and-commit@v10
         continue-on-error: true

@@ -316,8 +316,10 @@ Dword.prototype.setValueFirst = function(name, value) {
     const dword = this;
     
     dword.setValue(value);
+    
     // fix of linenumbers overlap
     dword.refresh();
+    
     /*
      * getCursor returns another
      * information so set
@@ -672,37 +674,39 @@ Dword.prototype._loadFilesAll = async function() {
     const lint = `${addon}lint/`;
     
     const urlJS = prefix +
-        join([
-            `${dir}mode/meta`,
-            `${lint}lint`,
-            `${lint}javascript-lint`,
-            `${lint}json-lint`,
-            //client + 'show-trailing',
-            `${client}use-soft-tabs`,
-            `${DIR}jshint/dist/jshint`,
-            `${DIR}cm-searchbox/lib/searchbox`,
-            `${DIR}cm-show-invisibles/lib/show-invisibles`,
-            getKeyMapPath(dir, this._Config),
-            `${dir}keymap/vim`,
-        ]
-            .filter(Boolean)
-            .concat([
-                'display/autorefresh',
-                'comment/comment',
-                'comment/continuecomment',
-                'mode/loadmode',
-                'mode/overlay',
-                'search/searchcursor',
-                'search/match-highlighter',
-                'search/matchesonscrollbar',
-                'dialog/dialog',
-                'scroll/annotatescrollbar',
-                'fold/xml-fold',
-                'edit/closebrackets',
-                'edit/matchbrackets',
-                'edit/matchtags',
-            ].map((name) => addon + name))
-            .map((name) => `${name}.js`));
+        join(
+            [
+                `${dir}mode/meta`,
+                `${lint}lint`,
+                `${lint}javascript-lint`,
+                `${lint}json-lint`,
+                //client + 'show-trailing',
+                `${client}use-soft-tabs`,
+                `${DIR}jshint/dist/jshint`,
+                `${DIR}cm-searchbox/lib/searchbox`,
+                `${DIR}cm-show-invisibles/lib/show-invisibles`,
+                getKeyMapPath(dir, this._Config),
+                `${dir}keymap/vim`,
+            ]
+                .filter(Boolean)
+                .concat([
+                    'display/autorefresh',
+                    'comment/comment',
+                    'comment/continuecomment',
+                    'mode/loadmode',
+                    'mode/overlay',
+                    'search/searchcursor',
+                    'search/match-highlighter',
+                    'search/matchesonscrollbar',
+                    'dialog/dialog',
+                    'scroll/annotatescrollbar',
+                    'fold/xml-fold',
+                    'edit/closebrackets',
+                    'edit/matchbrackets',
+                    'edit/matchtags',
+                ].map((name) => addon + name))
+                .map((name) => `${name}.js`),
+        );
     
     await load(urlJS);
 };

@@ -27,26 +27,26 @@ Fork of [edward](https://github.com/cloudcmd/edward "Edward").
 npm i dword -g
 ```
 
-![NPM\_INFO][NPM_INFO_IMG]
+![NPM_INFO][NPM_INFO_IMG]
 
 ## Command line parameters
 
 Usage: `dword [filename]`
 
-|Parameter              |Operation
-|:----------------------|:--------------------------------------------
-| `-h, --help`          | display help and exit
-| `-v, --version`       | output version information and exit
+| Parameter       | Operation                           |
+|:-----------------|:-------------------------------------|
+| `-h, --help`    | display help and exit               |
+| `-v, --version` | output version information and exit |
 
 ## Hot keys
 
-|Key                    |Operation
-|:----------------------|:--------------------------------------------
-| `Ctrl + s`            | save
-| `Ctrl + f`            | find
-| `Ctrl + h`            | replace
-| `Ctrl + g`            | go to line
-| `Ctrl + e`            | evaluate (JavaScript only supported)
+| Key        | Operation                            |
+|:------------|:--------------------------------------|
+| `Ctrl + s` | save                                 |
+| `Ctrl + f` | find                                 |
+| `Ctrl + h` | replace                              |
+| `Ctrl + g` | go to line                           |
+| `Ctrl + e` | evaluate (JavaScript only supported) |
 
 ## API
 
@@ -83,6 +83,7 @@ Could be used with [socket.io](http://socket.io "Socket.io") to handle editor ev
 
 ```js
 import {Server} from 'socket.io';
+
 const socket = new Server(server);
 
 dword.listen(socket, {
